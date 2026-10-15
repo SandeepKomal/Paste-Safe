@@ -20,13 +20,25 @@ export const CATEGORY_NAMES = {
 const MAX_STAGGER = 24;
 
 /**
+ * A small, stable tilt for a label, so the Sticker theme looks hand-placed
+ * but each label keeps the same angle between renders.
+ * @param {string} placeholder
+ */
+export function tiltOf(placeholder) {
+  let h = 0;
+  for (const c of placeholder) h = (h * 31 + c.charCodeAt(0)) | 0;
+  return `${((Math.abs(h) % 9) - 4) * 0.9}deg`;
+}
+
+/**
  * Renders masked or restored text. Labels the user hasn't seen yet get the
  * `is-new` class so only they animate, not every label on every keystroke.
  * @param {HTMLElement} el
  * @param {readonly Segment[]} segments
  * @param {Set<string>} seen  Labels already shown; updated in place.
+ * @param {ReadonlyMap<string, Category>} [categoryOf]  Placeholder to category, for colour.
  */
-export function renderSegments(el, segments, seen) {
+export function renderSegments(el, segments, seen, categoryOf = new Map()) {
   const frag = document.createDocumentFragment();
   let fresh = 0;
   for (const s of segments) {
@@ -35,8 +47,8 @@ export function renderSegments(el, segments, seen) {
       frag.append(h("span", {
         className: isNew ? "redact is-new" : "redact",
         text: s.text,
-        attrs: { "data-ph": s.placeholder },
-        vars: isNew ? { i: Math.min(fresh++, MAX_STAGGER) } : {},
+        attrs: { "data-ph": s.placeholder, "data-cat": categoryOf.get(s.placeholder) ?? "unknown" },
+        vars: { r: tiltOf(s.placeholder), ...(isNew ? { i: Math.min(fresh++, MAX_STAGGER) } : {}) },
       }));
       seen.add(s.placeholder);
     } else if (s.restored) {
@@ -55,8 +67,9 @@ export function renderSegments(el, segments, seen) {
  * @param {string} text
  * @param {readonly Span[]} spans
  * @param {ReadonlySet<string>} shown
+ * @param {ReadonlyMap<string, Category>} [categoryOf]
  */
-export function renderMirror(el, text, spans, shown) {
+export function renderMirror(el, text, spans, shown, categoryOf = new Map()) {
   const frag = document.createDocumentFragment();
   let pos = 0;
   for (const s of spans) {
@@ -64,12 +77,12 @@ export function renderMirror(el, text, spans, shown) {
     frag.append(h("mark", {
       className: shown.has(s.value) ? "hit is-shown" : "hit",
       text: text.slice(s.start, s.end),
-      attrs: { "data-ph": s.placeholder },
+      attrs: { "data-ph": s.placeholder, "data-cat": categoryOf.get(s.placeholder) ?? "unknown" },
     }));
     pos = s.end;
   }
   // A trailing newline in a textarea adds a line; the mirror needs a character to match it.
-  frag.append(text.slice(pos) + "​");
+  frag.append(text.slice(pos) + "\u200b");
   el.replaceChildren(frag);
 }
 
@@ -97,7 +110,7 @@ export function renderLedger(tbody, findings, shown) {
       h("td", {}, [h("label", { className: "switch", attrs: { for: `hide-${i}` } }, [toggle, h("span", { className: "switch__track", attrs: { "aria-hidden": "true" } })])]),
       h("td", {}, [h("code", { className: "ph", text: f.placeholder })]),
       h("td", {}, [
-        h("span", { className: `chip chip--${f.category}`, text: CATEGORY_NAMES[f.category] }),
+        h("span", { className: "chip", text: CATEGORY_NAMES[f.category], attrs: { "data-cat": f.category } }),
         h("span", { className: "kind", text: f.label }),
       ]),
       h("td", { className: "num", text: f.count > 1 ? `×${f.count}` : "" }),

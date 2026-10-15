@@ -7,7 +7,13 @@ Hide passwords, keys, tokens and IPs before you paste logs or config into ChatGP
 
 **Use it:** https://sandeepkomal.github.io/paste-safe/
 
-![Paste-Safe hiding secrets in a deploy log](docs/screenshot.png)
+Two themes, same tool. Switch any time in the header, or link straight to one with `#lens` or `#sticker`.
+
+| Lens (default) | Sticker |
+| --- | --- |
+| ![Lens theme: frosted labels and a lens that peeks at a value](docs/screenshot-lens.png) | ![Sticker theme: colourful tilted stickers and a paper note showing a value](docs/screenshot-sticker.png) |
+
+**Lens** is calm frosted glass with light and dark modes. Hover a label and a lens shows the real value. **Sticker** is bold and playful. Stickers slap onto each secret and peel when you hover.
 
 ## How it works
 
@@ -15,7 +21,7 @@ Hide passwords, keys, tokens and IPs before you paste logs or config into ChatGP
 2. **Copy the safe version.** Every secret becomes a label like `[AWS_KEY_1]` or `[IP_2]`. The same value always gets the same label, so the AI can still follow your text.
 3. **Paste the AI's answer back.** Labels turn back into your real values, ready to use.
 
-Switch off anything in the findings list that's fine to share. Hover a finding to see everywhere it appears.
+Switch off anything in the findings list that's fine to share. Hover a finding to see everywhere it appears, and hover a label to peek at the value behind it.
 
 ## What it hides
 
@@ -58,10 +64,11 @@ npm run test:e2e     # browser tests, desktop and phone
 | `src/core/rules.js` | One rule per kind of secret |
 | `src/core/detect.js` | Finds secrets and assigns labels |
 | `src/core/transform.js` | Swaps secrets for labels and back |
-| `src/ui/` | Rendering, clipboard, request counter, DOM helpers |
+| `src/ui/` | Rendering, peek bubble, theme switcher, clipboard, request counter, DOM helpers |
+| `css/style.css` | Shared layout plus the Lens and Sticker themes, driven by design tokens |
 | `src/main.js` | App state and event wiring |
 | `tests/unit/` | Tests for every rule, including text that must not be hidden |
-| `tests/e2e/` | Browser tests: masking, restoring, copying, highlighting, HTML injection, layout |
+| `tests/e2e/` | Browser tests, run in both themes: masking, restoring, copying, peeking, highlighting, HTML injection, layout, theme switching |
 
 Code is plain JavaScript modules, type-checked with TypeScript through JSDoc (`strict` mode), and linted with ESLint. Every push runs all checks in [CI](.github/workflows/ci.yml).
 
@@ -82,8 +89,9 @@ New detectors are the most useful contribution. See [CONTRIBUTING.md](CONTRIBUTI
 Code: [MIT](LICENSE).
 
 Fonts, served from `assets/fonts/` under the [SIL Open Font License 1.1](assets/fonts/):
-- Bricolage Grotesque: © 2022 The Bricolage Grotesque Project Authors
 - Instrument Sans: © 2022 The Instrument Sans Project Authors
+- Instrument Serif: © 2022 The Instrument Serif Project Authors
+- Archivo: © 2020 The Archivo Project Authors
 - IBM Plex Mono: © 2017 IBM Corp.
 
 All other design, icons and code are original to this project.

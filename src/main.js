@@ -5,6 +5,8 @@ import { EXAMPLE, exampleAnswer } from "./example.js";
 import { copyText } from "./ui/clipboard.js";
 import { debounce, formatBytes, req } from "./ui/dom.js";
 import { watchExternalRequests } from "./ui/netwatch.js";
+import { wirePeek } from "./ui/peek.js";
+import { wireSkinSwitch } from "./ui/skin.js";
 import { CATEGORY_NAMES, renderLedger, renderMirror, renderSegments } from "./ui/render.js";
 
 /** Below this size, detection runs on every keystroke so the highlights never lag the text. */
@@ -31,6 +33,9 @@ const el = {
   netcount: req("#netcount", HTMLElement),
   netcheck: req("#netcheck", HTMLElement),
   status: req("#status", HTMLElement),
+  skinSwitch: req("#skinswitch", HTMLElement),
+  peek: req("#peek", HTMLElement),
+  peekValue: req("#peekValue", HTMLElement),
 };
 
 const state = {
@@ -40,11 +45,14 @@ const state = {
   shown: /** @type {Set<string>} */ (new Set()),
   safeText: "",
   restoredText: "",
+  /** Placeholder to category, for colouring labels. */
+  categoryOf: /** @type {Map<string, import("./core/rules.js").Category>} */ (new Map()),
 };
 const seenLabels = /** @type {Set<string>} */ (new Set());
 
 function analyse() {
   state.detection = detect(el.input.value);
+  state.categoryOf = new Map(state.detection.findings.map(f => [f.placeholder, f.category]));
   const values = new Set(state.detection.findings.map(f => f.value));
   for (const v of state.shown) if (!values.has(v)) state.shown.delete(v);
   paint();
@@ -59,8 +67,8 @@ function paint() {
 
   const current = new Set(spans.map(s => s.placeholder));
   for (const p of seenLabels) if (!current.has(p)) seenLabels.delete(p);
-  renderSegments(el.safe, segments, seenLabels);
-  renderMirror(el.mirror, text, spans, state.shown);
+  renderSegments(el.safe, segments, seenLabels, state.categoryOf);
+  renderMirror(el.mirror, text, spans, state.shown, state.categoryOf);
   renderLedger(el.ledger, findings, state.shown);
 
   const hidden = findings.filter(f => !state.shown.has(f.value));
@@ -75,7 +83,8 @@ function paint() {
   for (const f of hidden) byCategory[f.category] = (byCategory[f.category] ?? 0) + 1;
   el.categories.replaceChildren(...Object.entries(byCategory).map(([cat, n]) => {
     const chip = document.createElement("span");
-    chip.className = `chip chip--${cat}`;
+    chip.className = "chip";
+    chip.dataset.cat = cat;
     chip.textContent = `${n} ${CATEGORY_NAMES[/** @type {keyof typeof CATEGORY_NAMES} */ (cat)]}`;
     return chip;
   }));
@@ -156,6 +165,18 @@ el.ledger.addEventListener("change", e => {
 });
 for (const type of ["mouseover", "focusin"]) document.addEventListener(type, e => link(labelOf(e.target)));
 document.addEventListener("mouseleave", () => link(""));
+wirePeek({
+  container: el.safe,
+  bubble: el.peek,
+  valueEl: el.peekValue,
+  lookup: p => state.detection.findings.find(f => f.placeholder === p)?.value,
+});
+wireSkinSwitch(el.skinSwitch, skin => {
+  el.status.textContent = `${skin === "lens" ? "Lens" : "Sticker"} theme on.`;
+  // Replay the label animation so the new theme's effect is visible straight away.
+  seenLabels.clear();
+  paint();
+});
 wireCopy(el.copySafe, () => state.safeText, el.safe, "Copied the safe text. Paste it into your AI.");
 wireCopy(el.copyRestored, () => state.restoredText, el.restored, "Copied the answer with your real values.");
 el.loadExample.addEventListener("click", loadExample);
