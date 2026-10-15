@@ -1,94 +1,56 @@
 # Paste-Safe
 
 [![CI](https://github.com/SandeepKomal/paste-safe/actions/workflows/ci.yml/badge.svg)](https://github.com/SandeepKomal/paste-safe/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Hide passwords, keys, tokens and IPs before you paste logs or config into ChatGPT, Claude or any other AI, then put your real values back into the AI's answer.
+Strip secrets out of logs and configs before pasting them into ChatGPT, Claude or whatever AI you use, then put the real values back into its answer.
 
-**Use it:** https://sandeepkomal.github.io/paste-safe/
+https://sandeepkomal.github.io/paste-safe/
 
-Two themes, same tool. Switch any time in the header, or link straight to one with `#lens` or `#sticker`.
-
-| Lens (default) | Sticker |
+| Lens | Sticker |
 | --- | --- |
-| ![Lens theme: frosted labels and a lens that peeks at a value](docs/screenshot-lens.png) | ![Sticker theme: colourful tilted stickers and a paper note showing a value](docs/screenshot-sticker.png) |
+| ![Lens theme](docs/screenshot-lens.png) | ![Sticker theme](docs/screenshot-sticker.png) |
 
-**Lens** is calm frosted glass with light and dark modes. Hover a label and a lens shows the real value. **Sticker** is bold and playful. Stickers slap onto each secret and peel when you hover.
+## Usage
 
-## How it works
+1. Paste a log, config or stack trace. Anything that looks secret gets underlined.
+2. Copy the safe version. Secrets become labels like `[AWS_KEY_1]`; the same value always gets the same label.
+3. Paste the AI's reply into the bottom box and the labels turn back into your values.
 
-1. **Paste your text:** a log, a config file, a stack trace, some code. Secrets are underlined as you type.
-2. **Copy the safe version.** Every secret becomes a label like `[AWS_KEY_1]` or `[IP_2]`. The same value always gets the same label, so the AI can still follow your text.
-3. **Paste the AI's answer back.** Labels turn back into your real values, ready to use.
+You can switch individual findings off if they're fine to share. Hovering a label shows the value behind it.
 
-Switch off anything in the findings list that's fine to share. Hover a finding to see everywhere it appears, and hover a label to peek at the value behind it.
+There are two themes (switch in the header, or open `#lens` / `#sticker`).
 
-## What it hides
+## What gets hidden
 
-| Kind | Examples |
-| --- | --- |
-| Cloud and service keys | AWS access and secret keys, Azure storage keys, GitHub and GitLab tokens, npm tokens, Slack tokens, Stripe and SendGrid keys, Google API keys, OpenAI and Anthropic API keys |
-| Login tokens | JWTs, `Authorization: Bearer …` tokens |
-| Private keys | `-----BEGIN … PRIVATE KEY-----` blocks |
-| Passwords and secrets | passwords in connection URLs (`postgres://user:password@host`), settings such as `DB_PASSWORD=…`, `client_secret: …`, `api_key=…` |
-| Personal and network details | email addresses, IP addresses, internal and cloud hostnames (`.internal`, `.local`, `.corp`, `.amazonaws.com`) |
-| Anything else that looks random | long mixed-case strings with high randomness that no rule above named |
+- Keys and tokens: AWS, Azure, GitHub, GitLab, npm, Slack, Stripe, SendGrid, Google, OpenAI/Anthropic, JWTs, bearer tokens, private key blocks
+- Passwords in connection URLs and in settings like `DB_PASSWORD=`, `client_secret:`, `api_key=`
+- Emails, IP addresses, internal/cloud hostnames
+- Long random-looking strings that none of the above matched
 
-Once a value is found anywhere, every other copy of it is hidden too.
+Things like `localhost`, commit hashes, UUIDs, file paths and `${VAR}` references are left alone.
 
-Common harmless text is left alone: `localhost`, `0.0.0.0`, commit IDs, UUIDs, file paths, public URLs, and references like `${DB_PASS}`.
-
-**It can miss things.** Detection is pattern-based. Always read the safe text before you share it.
+Detection is pattern-based, so it can miss things. Check the output before you paste it anywhere.
 
 ## Privacy
 
-- Everything runs in your browser. There is no server, account, analytics or tracking.
-- The page's [Content-Security-Policy](index.html) sets `connect-src 'none'`, so the browser itself stops the page from sending data. Scripts and styles are served from this repo, never from other sites, and text uses your device's own fonts.
-- The header shows a live count of requests to other sites, read from your browser's own network records. It should always say 0.
-- Nothing is saved. Close or reload the tab and your text and labels are gone.
+Everything runs in the browser. There's no backend and nothing is stored. The page's CSP has `connect-src 'none'`, and the header shows a live count of requests to other sites (it should stay at 0).
 
 ## Development
 
-Requires Node 22 and Python 3 (for the local server). There is no build step: the files in this repo are the site.
+Node 22 and Python 3. No build step.
 
 ```bash
 npm ci
-npm start            # http://localhost:8080
-npm run check        # lint, type check and unit tests
+npm start              # localhost:8080
+npm run check          # eslint + tsc + unit tests
 npx playwright install chromium
-npm run test:e2e     # browser tests, desktop and phone
+npm run test:e2e
 ```
 
-| Path | What it does |
-| --- | --- |
-| `src/core/rules.js` | One rule per kind of secret |
-| `src/core/detect.js` | Finds secrets and assigns labels |
-| `src/core/transform.js` | Swaps secrets for labels and back |
-| `src/ui/` | Rendering, peek bubble, theme switcher, clipboard, request counter, DOM helpers |
-| `css/style.css` | Shared layout plus the Lens and Sticker themes, driven by design tokens |
-| `src/main.js` | App state and event wiring |
-| `tests/unit/` | Tests for every rule, including text that must not be hidden |
-| `tests/e2e/` | Browser tests, run in both themes: masking, restoring, copying, peeking, highlighting, HTML injection, layout, theme switching |
+Detection lives in `src/core/` (no DOM, tested in Node). UI code is in `src/ui/`, wired together in `src/main.js`. Types are in `types/index.d.ts`.
 
-Code is plain JavaScript modules, type-checked with TypeScript through JSDoc (`strict` mode), and linted with ESLint. Every push runs all checks in [CI](.github/workflows/ci.yml).
-
-### Hosting your own copy
-
-1. Fork the repo.
-2. Turn on **Settings → Pages → Source: GitHub Actions**.
-3. Push to `main`. The workflow runs the tests and publishes the site.
-
-If Pages is still off, the workflow passes but skips publishing and shows a warning saying where to turn it on.
-
-## Contributing
-
-New detectors are the most useful contribution. See [CONTRIBUTING.md](CONTRIBUTING.md). To report a missed secret type or a security issue, see [SECURITY.md](SECURITY.md).
+To host a fork, enable **Settings → Pages → Source: GitHub Actions** and push to `main`.
 
 ## License
 
-[MIT](LICENSE). Everything the site ships is original to this project: the code, both themes, the icon and the text.
-
-The site ships **no third-party code, fonts or images**:
-- Text uses the fonts already installed on your device (system fonts), so no font files are distributed.
-- There are no runtime libraries. The development tools in `package.json` (ESLint, TypeScript, Playwright) are only used to test the code and are never shipped to visitors.
-- A unit test (`tests/unit/assets.test.mjs`) fails the build if a font file, an external URL or a third-party script is ever added to the site.
+MIT. No third-party code, fonts or images are shipped; the site uses system fonts.

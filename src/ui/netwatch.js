@@ -1,8 +1,6 @@
 // @ts-check
 /**
- * Counts requests this page makes to other websites, using the browser's own
- * Resource Timing records. The Content-Security-Policy already blocks them;
- * this makes that visible to the user.
+ * The CSP already blocks external requests; this just shows the count.
  * @param {(count: number) => void} onChange
  */
 export function watchExternalRequests(onChange) {

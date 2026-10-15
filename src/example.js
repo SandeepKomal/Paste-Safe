@@ -1,6 +1,6 @@
 // @ts-check
-// Shown on first load. Every secret in it is fake; the AWS ones are AWS's own documentation examples.
-// Some fakes are joined from two halves so GitHub's secret scanner doesn't block pushes of this file.
+// All secrets here are fake (the AWS pair is AWS's documented example). Some are
+// split in two so GitHub secret scanning doesn't flag this file.
 const STRIPE = "sk_" + "live_51HxAmPLeK3yN0tR3aL4bCdEf";
 const GITHUB_TOKEN = "gh" + "p_8fJ2kLmQ0rS7tUvW1xYz3aBcD4eFgH5iJk6L";
 
@@ -21,11 +21,9 @@ LOG_LEVEL=debug
 curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZXBsb3ktYm90In0.c2lnbmF0dXJlLWV4YW1wbGU" https://api.internal.acme.corp/v1/deploys
 commit 9f2c7e1a4b8d3c6e5f0a1b2c3d4e5f6a7b8c9d0e`;
 
-/**
- * A reply written the way an AI would answer the safe version of EXAMPLE,
- * using whichever labels the current findings produced.
- * @param {readonly import("./core/detect.js").Finding[]} findings  Findings that are currently hidden.
- */
+/** @import { Finding } from "../types/index.js" */
+
+/** @param {readonly Finding[]} findings  the currently hidden ones */
 export function exampleAnswer(findings) {
   const label = (/** @type {string} */ type) => findings.find(f => f.type === type)?.placeholder;
   const host = label("HOST");

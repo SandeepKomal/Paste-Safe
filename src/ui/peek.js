@@ -1,12 +1,12 @@
 // @ts-check
 /**
- * Shows the real value behind a label while the pointer rests on it.
- * The bubble is anchored above the label and follows it on scroll.
- * The value is looked up when needed and never stored in the page markup.
+ * The value is looked up on hover so it never sits in the DOM. The bubble is
+ * anchored to the label, not the pointer: on touch devices hovering scrolls the
+ * page, and a pointer-anchored bubble closed immediately.
  * @param {object} opts
- * @param {HTMLElement} opts.container  Where labels live.
- * @param {HTMLElement} opts.bubble     The floating element to show.
- * @param {HTMLElement} opts.valueEl    Inside the bubble, receives the value as text.
+ * @param {HTMLElement} opts.container
+ * @param {HTMLElement} opts.bubble
+ * @param {HTMLElement} opts.valueEl
  * @param {(placeholder: string) => string | undefined} opts.lookup
  */
 export function wirePeek({ container, bubble, valueEl, lookup }) {

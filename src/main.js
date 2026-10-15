@@ -9,7 +9,7 @@ import { wirePeek } from "./ui/peek.js";
 import { wireSkinSwitch } from "./ui/skin.js";
 import { CATEGORY_NAMES, renderLedger, renderMirror, renderSegments } from "./ui/render.js";
 
-/** Below this size, detection runs on every keystroke so the highlights never lag the text. */
+// Above this size, detection is debounced instead of running on every keystroke.
 const SYNC_LIMIT = 50_000;
 
 const el = {
@@ -38,15 +38,16 @@ const el = {
   peekValue: req("#peekValue", HTMLElement),
 };
 
+/** @import { Detection, Category } from "../types/index.js" */
+
 const state = {
-  /** @type {import("./core/detect.js").Detection} */
+  /** @type {Detection} */
   detection: { spans: [], findings: [] },
-  /** Values the user chose to leave visible. */
+  /** Values the user switched off, i.e. left visible. */
   shown: /** @type {Set<string>} */ (new Set()),
   safeText: "",
   restoredText: "",
-  /** Placeholder to category, for colouring labels. */
-  categoryOf: /** @type {Map<string, import("./core/rules.js").Category>} */ (new Map()),
+  categoryOf: /** @type {Map<string, Category>} */ (new Map()),
 };
 const seenLabels = /** @type {Set<string>} */ (new Set());
 
@@ -107,7 +108,6 @@ function syncScroll() {
   el.backdrop.scrollLeft = el.input.scrollLeft;
 }
 
-/** Highlights every element tied to one label: in the input, the safe text, the findings and the answer. */
 let linked = "";
 function link(/** @type {string} */ placeholder) {
   if (placeholder === linked) return;
@@ -173,7 +173,6 @@ wirePeek({
 });
 wireSkinSwitch(el.skinSwitch, skin => {
   el.status.textContent = `${skin === "lens" ? "Lens" : "Sticker"} theme on.`;
-  // Replay the label animation so the new theme's effect is visible straight away.
   seenLabels.clear();
   paint();
 });
