@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { detect } from "../../src/core/detect.js";
 import { mask, restore, toText } from "../../src/core/transform.js";
-import { entropy, RULES } from "../../src/core/rules.js";
+import { entropy, RULES, RANDOM_RULE } from "../../src/core/rules.js";
 import { EXAMPLE } from "../../src/example.js";
 
 // Fake keys in well-known formats are joined from two halves so GitHub's
@@ -136,4 +136,23 @@ test("a 1 MB log is processed in well under a second", () => {
   const ms = performance.now() - t;
   assert.equal(findings.length, 11);
   assert.ok(ms < 1000, `took ${Math.round(ms)} ms`);
+});
+
+test("no rule slows down on hostile input (ReDoS guard)", () => {
+  // Inputs shaped to make backtracking regexes do quadratic work. Each used to
+  // take seconds on one rule or another; every rule must now stay fast.
+  const N = 50_000;
+  const hostile = [
+    "a".repeat(N), "a.".repeat(N / 2), "a@" + "a.".repeat(N / 2) + "-", "password_".repeat(N / 9),
+    ("x".repeat(30) + ".").repeat(N / 31), "https://" + "u:".repeat(N / 2), "Bearer " + " ".repeat(N),
+    "1.".repeat(N / 2), "key=".repeat(N / 4),
+  ];
+  for (const rule of [...RULES, RANDOM_RULE]) {
+    for (const text of hostile) {
+      const t = performance.now();
+      void [...text.matchAll(rule.re)].length;
+      const ms = performance.now() - t;
+      assert.ok(ms < 150, `${rule.type} took ${Math.round(ms)} ms on a hostile input`);
+    }
+  }
 });
