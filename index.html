@@ -14,8 +14,9 @@
   <meta property="og:description" content="Hide secrets in logs before pasting them into any AI. Put the real values back into the answer.">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/ibm-plex-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/bricolage-grotesque-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/style.css">
+  <script src="src/ui/skin-boot.js"></script>
   <script type="module" src="src/main.js"></script>
 </head>
 <body>
@@ -23,29 +24,40 @@
 
   <header class="masthead">
     <div class="masthead__inner">
-      <a class="wordmark" href="./" aria-label="Paste-Safe, home">
-        <span>Paste</span><span class="wordmark__bar"><span>Safe</span></span>
-      </a>
-      <nav class="nav" aria-label="Page">
-        <a href="#how">How it works</a>
-        <a href="#limits">Limits</a>
-        <a href="https://github.com/SandeepKomal/paste-safe">GitHub</a>
-      </nav>
-      <p class="netcheck" id="netcheck" title="Counted from your browser's own network records">
-        <span class="netcheck__dot" aria-hidden="true"></span>
-        <span><b id="netcount">0</b> requests to other sites</span>
-      </p>
+      <div class="masthead__bar">
+        <a class="wordmark" href="./" aria-label="Paste-Safe, home">
+          <span class="wordmark__mark" aria-hidden="true"></span><span>paste</span><span class="wordmark__safe">safe</span>
+        </a>
+        <nav class="nav" aria-label="Page">
+          <a href="#how">How it works</a>
+          <a href="#limits">Limits</a>
+          <a href="https://github.com/SandeepKomal/paste-safe">GitHub</a>
+        </nav>
+        <div class="skinswitch" id="skinswitch" role="group" aria-label="Theme">
+          <button type="button" data-skin-option="lens" aria-pressed="true">Lens</button>
+          <button type="button" data-skin-option="sticker" aria-pressed="false">Sticker</button>
+        </div>
+        <p class="netcheck" id="netcheck" title="Counted from your browser's own network records">
+          <span class="netcheck__dot" aria-hidden="true"></span>
+          <span><b id="netcount">0</b> requests to other sites</span>
+        </p>
+      </div>
     </div>
   </header>
 
   <main>
     <section class="intro">
-      <p class="eyebrow">For logs, configs and stack traces</p>
-      <h1>Paste into any AI without leaking a single <span class="h1-redact" tabindex="0">secret</span>.</h1>
-      <p class="lede">Paste-Safe swaps passwords, keys, tokens, IPs and emails for labels before you share. When the AI answers, it puts your real values back. Everything happens in this tab.</p>
+      <div class="intro__head">
+        <p class="eyebrow">For logs, configs and stack traces</p>
+        <h1>Ask any AI about your logs. Keep every <span class="h1-word" tabindex="0">secret</span> to yourself.</h1>
+      </div>
+      <div class="intro__side">
+        <p class="lede">Passwords, keys, tokens, IPs and emails become labels before you share. When the AI answers, your real values go back in. Everything happens in this tab.</p>
+        <div class="badges"><span class="badge">Runs in your browser</span><span class="badge">22 detectors</span><span class="badge">Free and open source</span></div>
+      </div>
     </section>
 
-    <section class="bench" aria-labelledby="benchTitle">
+    <section class="bench panel" aria-labelledby="benchTitle">
       <h2 class="visually-hidden" id="benchTitle">Hide secrets</h2>
       <div class="bench__bar">
         <p class="stats" aria-live="polite">
@@ -88,11 +100,11 @@
       </div>
     </section>
 
-    <section class="ledger" aria-labelledby="ledgerTitle">
+    <section class="ledger panel" aria-labelledby="ledgerTitle">
       <div class="ledger__head">
         <div>
           <h2 id="ledgerTitle">Findings</h2>
-          <p class="hint">Switch off anything that's fine to share. Hover a row to see where it appears.</p>
+          <p class="hint">Switch off anything that's fine to share. Hover a row to see where it appears, or hover a label to peek at its value.</p>
         </div>
         <div class="categories" id="categories"></div>
       </div>
@@ -107,7 +119,7 @@
       <p class="empty" id="ledgerEmpty" hidden></p>
     </section>
 
-    <section class="bench bench--restore" aria-labelledby="restoreTitle">
+    <section class="bench bench--restore panel" aria-labelledby="restoreTitle">
       <h2 class="visually-hidden" id="restoreTitle">Restore the answer</h2>
       <div class="bench__grid">
         <div class="pane">
@@ -168,9 +180,10 @@
   </main>
 
   <footer class="footer">
-    <p>Paste-Safe · MIT License · Fonts: Bricolage Grotesque, Instrument Sans and IBM Plex Mono under the SIL Open Font License</p>
+    <p>Paste-Safe · MIT License · Fonts: Instrument Sans, Instrument Serif, Archivo and IBM Plex Mono under the SIL Open Font License</p>
   </footer>
 
+  <div class="peek" id="peek" aria-hidden="true" hidden><span class="peek__label">Real value</span><span id="peekValue"></span></div>
   <noscript><p class="noscript">Paste-Safe needs JavaScript to find and hide secrets.</p></noscript>
 </body>
 </html>

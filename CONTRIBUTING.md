@@ -35,6 +35,10 @@ Opening `index.html` straight from disk won't work, because browsers block JavaS
 
 GitHub blocks pushes that contain values shaped like real keys, even fake ones. Join such values from two halves in tests, for example `fake("sk_", "live_…")`, so no file holds a complete key-shaped string.
 
+## Themes
+
+Lens and Sticker share all markup, logic and layout. A theme is a set of design tokens on `:root` (Lens) or `:root[data-skin="sticker"]`, plus a short block of theme-only rules at the end of `css/style.css`. To change how both themes look, change the shared rules. To change one theme, change its tokens or its block. Run the browser tests: every test runs in both themes.
+
 ## Code rules
 
 - **Never commit real secrets**, not even expired ones.

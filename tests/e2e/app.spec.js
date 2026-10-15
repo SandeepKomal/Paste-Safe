@@ -1,7 +1,9 @@
 import { test, expect } from "@playwright/test";
 
+const SKINS = ["lens", "sticker"];
+
 /** Fails the test on any console error, uncaught exception or request to another site. */
-test.beforeEach(async ({ page }) => {
+function watchProblems(page) {
   const problems = [];
   page.on("console", m => { if (m.type() === "error") problems.push(`console: ${m.text()}`); });
   page.on("pageerror", e => problems.push(`exception: ${e.message}`));
@@ -9,8 +11,15 @@ test.beforeEach(async ({ page }) => {
     const url = new URL(r.url());
     if (url.protocol !== "data:" && url.host !== "127.0.0.1:4173") problems.push(`external request: ${r.url()}`);
   });
-  page.problems = problems;
-  await page.goto("/");
+  return problems;
+}
+
+for (const skin of SKINS) {
+test.describe(`${skin} theme`, () => {
+test.beforeEach(async ({ page }) => {
+  page.problems = watchProblems(page);
+  await page.goto(`/#${skin}`);
+  await expect(page.locator("html")).toHaveAttribute("data-skin", skin);
   await expect(page.locator("#safe .redact").first()).toBeVisible();
 });
 
@@ -101,4 +110,58 @@ test("the page never scrolls sideways", async ({ page }) => {
 
 test("the request counter shows zero", async ({ page }) => {
   await expect(page.locator("#netcount")).toHaveText("0");
+});
+
+test("hovering a label peeks at its real value", async ({ page }) => {
+  await page.locator('#safe .redact[data-ph="[IP_1]"]').hover();
+  await expect(page.locator("#peek")).toBeVisible();
+  await expect(page.locator("#peekValue")).toHaveText("10.20.4.17");
+  await page.locator("#loadExample").hover();
+  await expect(page.locator("#peek")).toBeHidden();
+});
+});
+}
+
+test.describe("theme switching", () => {
+  test("Lens is the default", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("html")).toHaveAttribute("data-skin", "lens");
+    await expect(page.locator('[data-skin-option="lens"]')).toHaveAttribute("aria-pressed", "true");
+  });
+
+  test("the switch changes theme, updates the link and is remembered", async ({ page }) => {
+    await page.goto("/");
+    await page.locator('[data-skin-option="sticker"]').click();
+    await expect(page.locator("html")).toHaveAttribute("data-skin", "sticker");
+    expect(new URL(page.url()).hash).toBe("#sticker");
+    await page.goto("/");
+    await expect(page.locator("html")).toHaveAttribute("data-skin", "sticker");
+    await expect(page.locator('[data-skin-option="sticker"]')).toHaveAttribute("aria-pressed", "true");
+  });
+
+  test("switching theme keeps the text and the hidden values", async ({ page }) => {
+    await page.goto("/#lens");
+    await page.locator("#ledger tbody tr", { hasText: "[IP_1]" }).locator(".switch").click();
+    const before = await page.locator("#safe").textContent();
+    await page.locator('[data-skin-option="sticker"]').click();
+    await expect(page.locator("#safe")).toHaveText(before ?? "");
+  });
+
+  test("Sticker stays light even when the system is dark", async ({ browser }) => {
+    const context = await browser.newContext({ colorScheme: "dark" });
+    const page = await context.newPage();
+    await page.goto("/#sticker");
+    const bg = await page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor);
+    expect(bg).toBe("rgb(246, 240, 228)");
+    await context.close();
+  });
+
+  test("Lens follows a dark system setting", async ({ browser }) => {
+    const context = await browser.newContext({ colorScheme: "dark" });
+    const page = await context.newPage();
+    await page.goto("/#lens");
+    const bg = await page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor);
+    expect(bg).toBe("rgb(12, 17, 21)");
+    await context.close();
+  });
 });
