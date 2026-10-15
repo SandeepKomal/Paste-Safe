@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0
+
+- Bundled fonts removed. Both themes now use the visitor's own system fonts, so the site ships no third-party assets at all. The security policy now blocks font loading entirely (`font-src 'none'`).
+- New unit test that fails if font files, external URLs or third-party scripts are added to the site.
+
 ## 1.1.0
 
 - Two themes with a switch in the header: **Lens** (frosted glass, light and dark, the default) and **Sticker** (bold neo-brutalist, light). The choice is remembered, and `#lens` / `#sticker` links open a theme directly.

@@ -42,7 +42,8 @@ Lens and Sticker share all markup, logic and layout. A theme is a set of design 
 ## Code rules
 
 - **Never commit real secrets**, not even expired ones.
-- The page must make no network requests. Don't loosen the Content-Security-Policy in `index.html`, and don't add scripts, styles or fonts from other sites.
+- The page must make no network requests. Don't loosen the Content-Security-Policy in `index.html`.
+- Ship only original work. Don't add font files, images, icons, scripts or styles made by others, even under open licences. Use system font stacks. `tests/unit/assets.test.mjs` enforces this.
 - User text reaches the page only through text nodes, via `h()` in `src/ui/dom.js`. ESLint rejects `innerHTML`.
 - Keep `src/core/` free of DOM code so it stays testable in Node.
 - Keep rules specific. If the safe text is mostly labels, the AI can't help with it.
