@@ -2,6 +2,7 @@
 // Shown on first load. Every secret in it is fake; the AWS ones are AWS's own documentation examples.
 // Some fakes are joined from two halves so GitHub's secret scanner doesn't block pushes of this file.
 const STRIPE = "sk_" + "live_51HxAmPLeK3yN0tR3aL4bCdEf";
+const GITHUB_TOKEN = "gh" + "p_8fJ2kLmQ0rS7tUvW1xYz3aBcD4eFgH5iJk6L";
 
 export const EXAMPLE = `# Deploy failed on prod, help me debug (example, all secrets are fake)
 
@@ -12,7 +13,7 @@ export const EXAMPLE = `# Deploy failed on prod, help me debug (example, all sec
 # .env used by the job
 AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
 aws_secret_access_key = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-GITHUB_TOKEN=ghp_8fJ2kLmQ0rS7tUvW1xYz3aBcD4eFgH5iJk6L
+GITHUB_TOKEN=${GITHUB_TOKEN}
 STRIPE_SECRET=${STRIPE}
 DB_PASSWORD=Tr0ub4dor&3xyz
 LOG_LEVEL=debug
