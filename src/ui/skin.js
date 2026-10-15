@@ -1,5 +1,4 @@
 // @ts-check
-/** The visual themes. Detection, labels and copying behave the same in every theme. */
 export const SKINS = /** @type {const} */ (["lens", "sticker"]);
 /** @typedef {typeof SKINS[number]} Skin */
 
@@ -11,22 +10,17 @@ export function currentSkin() {
   return /** @type {Skin} */ (SKINS.includes(/** @type {Skin} */ (s)) ? s : "lens");
 }
 
-/**
- * Switches theme, remembers it in this browser, and keeps the link shareable.
- * @param {Skin} skin
- */
-export function setSkin(skin) {
+export function setSkin(/** @type {Skin} */ skin) {
   document.documentElement.dataset.skin = skin;
   try {
     localStorage.setItem(STORAGE_KEY, skin);
   } catch {
-    // Storage can be blocked (private windows); the theme still applies for this visit.
+    // Blocked in some private windows; the theme still applies for this visit.
   }
   history.replaceState(null, "", `#${skin}`);
 }
 
 /**
- * Wires a group of buttons that carry `data-skin-option`.
  * @param {HTMLElement} group
  * @param {(skin: Skin) => void} [onChange]
  */

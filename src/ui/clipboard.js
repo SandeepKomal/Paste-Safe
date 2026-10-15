@@ -1,7 +1,6 @@
 // @ts-check
 /**
- * Copies text. If the browser refuses clipboard access, selects the text in
- * `fallback` so the user can press Ctrl+C / Cmd+C instead.
+ * Falls back to selecting `fallback` when clipboard access is refused.
  * @param {string} text
  * @param {Element} fallback
  * @returns {Promise<"copied" | "selected">}

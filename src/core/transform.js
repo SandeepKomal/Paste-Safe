@@ -1,16 +1,7 @@
 // @ts-check
-/**
- * @typedef {import("./detect.js").Span} Span
- * @typedef {import("./detect.js").Finding} Finding
- *
- * @typedef {object} Segment  A run of output text. Plain text has neither field set.
- * @property {string} text
- * @property {string} [placeholder]  Set when this run is a label standing in for a secret.
- * @property {string} [restored]     Set when this run is a real value put back for a label.
- */
+/** @import { Span, Finding, Segment } from "../../types/index.js" */
 
 /**
- * Splits `text` into plain runs and labels, leaving values in `shown` visible.
  * @param {string} text
  * @param {readonly Span[]} spans
  * @param {ReadonlySet<string>} [shown]
@@ -30,7 +21,7 @@ export function mask(text, spans, shown = new Set()) {
 }
 
 /**
- * Puts the real value back for every known label in `answer`. Unknown labels are left as they are.
+ * Unknown labels are left as they are.
  * @param {string} answer
  * @param {readonly Finding[]} findings
  * @returns {Segment[]}
@@ -51,7 +42,6 @@ export function restore(answer, findings) {
   return out;
 }
 
-/** Joins segments back into plain text. */
 export const toText = (/** @type {readonly Segment[]} */ segments) => segments.map(s => s.text).join("");
 
 const escapeRegExp = (/** @type {string} */ s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

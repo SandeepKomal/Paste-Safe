@@ -1,22 +1,7 @@
-/*
-  Paste-Safe styles.
+/* Themes are picked with <html data-skin="lens|sticker">. Lens is the default
+   and follows the system dark mode; Sticker is light only. System fonts only. */
 
-  One layout, two themes ("skins"), chosen by <html data-skin="lens|sticker">:
-  - Lens: calm frosted glass over soft colour fields. Secrets become frosted pills;
-    hover a label to see its value through a lens. Light and dark.
-  - Sticker: bold neo-brutalist. Secrets get colourful stickers slapped on that
-    peel when you hover. Light only, on purpose.
-
-  Sections: fonts · tokens · base · masthead · intro · buttons · workbench ·
-  editor · labels · findings · peek · info sections · motion · skin details · responsive.
-*/
-
-/* ---------- Fonts ----------
-   No font files are shipped. Every face below is one the visitor's own device
-   already has, so the site distributes no third-party fonts and needs no font
-   licences. Each stack falls back cleanly on Windows, macOS, Linux, iOS and Android. */
-
-/* ---------- Tokens: Lens (default, light) ---------- */
+/* Lens tokens */
 :root {
   --bg: #eef1ee;
   --bg-art:
@@ -96,7 +81,7 @@
   }
 }
 
-/* ---------- Tokens: Sticker (light only) ---------- */
+/* Sticker tokens */
 :root[data-skin="sticker"] {
   --bg: #f6f0e4;
   --bg-art: radial-gradient(rgb(20 17 15 / 9%) 1.2px, transparent 1.6px) 0 0 / 26px 26px;
@@ -135,7 +120,7 @@
   color-scheme: light;
 }
 
-/* ---------- Base ---------- */
+/* Base */
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; scroll-padding-top: 88px; background: var(--bg); }
@@ -179,7 +164,7 @@ code { font-family: var(--font-mono); font-size: .88em; }
   box-shadow: var(--shadow-panel); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
 }
 
-/* ---------- Masthead ---------- */
+/* Masthead */
 .masthead { position: sticky; top: 0; z-index: 20; padding-top: calc(10px + env(safe-area-inset-top, 0px)); }
 .masthead__inner { display: flex; }
 .masthead__bar {
@@ -210,7 +195,7 @@ code { font-family: var(--font-mono); font-size: .88em; }
 .netcheck.is-warn b { color: var(--warn); }
 .netcheck.is-warn .netcheck__dot { background: var(--warn); }
 
-/* ---------- Intro ---------- */
+/* Intro */
 .intro { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px 48px; align-items: end; padding-block: 44px 6px; }
 .intro__head { display: grid; gap: 14px; }
 .intro h1 {
@@ -226,7 +211,7 @@ code { font-family: var(--font-mono); font-size: .88em; }
 }
 .h1-word { display: inline-block; position: relative; outline-offset: 6px; }
 
-/* ---------- Buttons ---------- */
+/* Buttons */
 .btn {
   position: relative; display: inline-grid; place-items: center; min-height: 40px; padding: 0 18px;
   border-radius: var(--radius-sm); border: var(--border-w) solid var(--rule); background: var(--surface-solid); color: var(--ink);
@@ -244,7 +229,7 @@ code { font-family: var(--font-mono); font-size: .88em; }
 .btn[data-state="done"] .btn__label { opacity: 0; transform: translateY(-8px); }
 .btn[data-state="done"] .btn__done { opacity: 1; transform: none; }
 
-/* ---------- Workbench ---------- */
+/* Workbench */
 .bench { overflow: hidden; }
 .bench__bar {
   display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
@@ -265,7 +250,8 @@ code { font-family: var(--font-mono); font-size: .88em; }
 }
 .step--done { background: var(--restore); color: var(--restore-ink); }
 
-/* ---------- Editor: transparent textarea over a mirror that draws highlights ---------- */
+/* Editor: a transparent textarea over a mirror div that draws the highlights.
+   Both layers must share every metric that affects wrapping. */
 .editor {
   position: relative; height: var(--editor-h); border-radius: var(--radius-md);
   border: var(--border-w) solid var(--rule); background: var(--surface-2);
@@ -295,7 +281,6 @@ code { font-family: var(--font-mono); font-size: .88em; }
 }
 .sheet:empty::before { content: attr(data-empty); color: var(--muted); }
 
-/* Category colour, shared by highlights, labels and chips */
 [data-cat="credential"] { --c: var(--cat-credential); }
 [data-cat="network"] { --c: var(--cat-network); }
 [data-cat="personal"] { --c: var(--cat-personal); }
@@ -310,12 +295,12 @@ code { font-family: var(--font-mono); font-size: .88em; }
 .hit.is-shown { background: transparent; box-shadow: inset 0 -1px 0 var(--muted); }
 .hit.is-linked { background: color-mix(in srgb, var(--c, var(--accent)) 32%, transparent); }
 
-/* ---------- Labels and restored values (base; each skin adds its look below) ---------- */
+/* Labels */
 .redact { font-weight: 600; cursor: help; transition: transform .25s var(--ease-out), box-shadow .2s, background-color .2s; }
 .restored { border-radius: 5px; padding: 0 3px; background: var(--restore); color: var(--restore-ink); animation: develop .7s var(--ease-out) both; }
 .redact.is-linked, .restored.is-linked { box-shadow: 0 0 0 2px var(--surface-solid), 0 0 0 4px var(--accent); }
 
-/* ---------- Findings ---------- */
+/* Findings */
 .ledger { display: grid; gap: 16px; padding: 24px 22px; }
 .ledger__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
 .ledger__head > div:first-child { display: grid; gap: 6px; }
@@ -354,7 +339,7 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
 .switch__input:checked + .switch__track::after { transform: translateX(16px); }
 .switch__input:focus-visible + .switch__track { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* ---------- Peek: the real value behind a label, shown on hover ---------- */
+/* Peek */
 .peek {
   position: fixed; left: 0; top: 0; z-index: 40; pointer-events: none;
   transform: translate(calc(var(--x, 0px) - 50%), calc(var(--y, 0px) - 100% - 16px));
@@ -362,7 +347,7 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
 }
 .peek__label { display: block; font: 500 10px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
 
-/* ---------- How it works / limits / footer ---------- */
+/* Info sections */
 .how, .limits { display: grid; gap: 20px; padding: 28px 0 0; }
 .how__steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; counter-reset: step; }
 .how__steps li { counter-increment: step; display: grid; gap: 8px; align-content: start; padding: 22px; }
@@ -375,7 +360,7 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
 .footer { padding-block: 28px 40px; color: var(--muted); font-size: .85rem; }
 .noscript { padding: 16px; text-align: center; }
 
-/* ---------- Motion ---------- */
+/* Motion */
 @keyframes develop { from { background-color: transparent; filter: blur(3px); opacity: .2; } to { filter: none; opacity: 1; } }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 55%, transparent); } 70%, 100% { box-shadow: 0 0 0 7px transparent; } }
 @keyframes frost-in { from { filter: blur(8px); opacity: 0; transform: scale(.94); } to { filter: none; opacity: 1; transform: none; } }
@@ -386,7 +371,7 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
 }
 @keyframes peek-in { from { opacity: 0; scale: .85; } to { opacity: 1; scale: 1; } }
 
-/* ================= Lens details ================= */
+/* Lens */
 :root:not([data-skin="sticker"]) .redact {
   display: inline; padding: 1px 7px; border-radius: 7px; color: var(--accent);
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 9%, transparent), color-mix(in srgb, var(--accent) 16%, transparent));
@@ -406,7 +391,7 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
 }
 :root:not([data-skin="sticker"]) .how__steps li { background: var(--surface); border: 1px solid var(--edge); border-radius: var(--radius-md); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
 
-/* ================= Sticker details ================= */
+/* Sticker */
 [data-skin="sticker"] .wordmark { font: 900 1.45rem/1 var(--font-display); letter-spacing: -0.04em; }
 [data-skin="sticker"] .wordmark__mark { display: none; }
 [data-skin="sticker"] .wordmark__safe {
@@ -472,12 +457,11 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
 [data-skin="sticker"] .facts > div { border-top: 2.5px solid var(--ink); }
 [data-skin="sticker"] .footer { border-top: 2.5px solid var(--ink); }
 
-/* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
-/* ---------- Responsive ---------- */
+/* Responsive */
 @media (max-width: 960px) {
   :root { --editor-h: 320px; }
   .intro { grid-template-columns: minmax(0, 1fr); padding-top: 28px; }
@@ -494,6 +478,6 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
   .pane { padding: 16px; }
 }
 
-/* Sticker: tighter headline so the tool stays near the top, and room for tilted labels */
+/* Sticker: smaller headline keeps the tool above the fold; taller lines fit tilted labels */
 [data-skin="sticker"] .intro h1 { font-size: clamp(2.3rem, 1.1rem + 3.2vw, 3.9rem); line-height: 1; }
 [data-skin="sticker"] .sheet { line-height: 2.05; }

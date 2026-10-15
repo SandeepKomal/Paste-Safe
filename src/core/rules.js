@@ -1,28 +1,13 @@
 // @ts-check
-/**
- * Detection rules. Each rule names one kind of secret.
- *
- * Patterns that scan a variable-length prefix start only at the beginning of a
- * word (a negative lookbehind instead of \b). Starting inside words lets a long
- * run like "a.a.a.…" make matching quadratic and freeze the page.
- *
- * Rules run in the order listed and the first rule to claim a piece of text
- * wins, so specific formats (known key prefixes) come before general ones
- * (`password=…` settings), and the entropy fallback runs last.
- *
- * @typedef {"credential" | "network" | "personal" | "unknown"} Category
- *
- * @typedef {object} Rule
- * @property {string} type       Upper-case id; becomes the label, e.g. `[AWS_KEY_1]`.
- * @property {string} label      What people call it, shown in the findings list.
- * @property {Category} category Groups findings in the UI.
- * @property {RegExp} re         Must use the `g` flag; add `d` when `group` is set.
- * @property {number} [group]    Capture group holding the secret, when only part of the match is secret.
- * @property {(value: string, match: RegExpMatchArray) => boolean} [skip]
- *   Return true to ignore a match, e.g. a known-harmless value. Gets the whole match too.
- */
+/** @import { Rule } from "../../types/index.js" */
 
-/** Setting names that hold secrets, e.g. DB_PASSWORD, client_secret, x-api-key. */
+// Order matters: the first rule to claim a piece of text wins, so specific
+// formats come before generic ones.
+//
+// Patterns with a variable-length prefix use a negative lookbehind instead of \b
+// so they only start at the beginning of a word. Starting inside words makes
+// input like "a.a.a.…" quadratic and freezes the page.
+
 const SECRET_NAME = /password|passwd|pwd|secret|token|api[_-]?key|access[_-]?key|private[_-]?key/i;
 
 /** @type {readonly Rule[]} */
@@ -68,9 +53,8 @@ export const RULES = Object.freeze([
   },
   {
     type: "SECRET", label: "Password or secret setting", category: "credential",
-    // Reads every `name = value` pair once, then keeps it only if the name says
-    // it's a secret. "(?=(…))\1" consumes the name without backtracking into it,
-    // so a long name can't make matching slow.
+    // Match every name=value pair, then keep it only if the name looks secret.
+    // (?=(…))\1 consumes the name atomically so long names can't backtrack.
     re: /(?<![\w.-])(?=([\w.-]+))\1["']?\s*[:=]\s*["']?([^\s"',;]{4,})/gd,
     group: 2,
     skip: (v, m) =>
@@ -88,7 +72,7 @@ export const RULES = Object.freeze([
   },
 ]);
 
-/** Shannon entropy in bits per character. Random tokens score above 4.2; words and hex never do. */
+// Shannon entropy in bits per char. Random tokens score above 4.2; words and hex don't.
 export function entropy(/** @type {string} */ s) {
   /** @type {Record<string, number>} */
   const freq = {};
@@ -101,17 +85,13 @@ export function entropy(/** @type {string} */ s) {
   return e;
 }
 
-/**
- * Fallback for long random-looking strings no named rule caught.
- * Needs upper case, lower case and digits, so hex hashes and plain words never match,
- * and skips slash-separated paths unless they carry base64 padding characters.
- * @type {Rule}
- */
-export const RANDOM_RULE = Object.freeze({
+// Catch-all for long random strings. Requiring mixed case and digits rules out
+// hex hashes; paths are skipped unless they contain base64 padding.
+export const RANDOM_RULE = Object.freeze(/** @type {Rule} */ ({
   type: "SECRET_LIKE", label: "Random-looking string", category: "unknown",
   re: /[A-Za-z0-9+/_=-]{24,}/g,
   skip: v =>
     !(/[a-z]/.test(v) && /[A-Z]/.test(v) && /\d/.test(v)) ||
     entropy(v) < 4.2 ||
     (v.includes("/") && !/[+=]/.test(v)),
-});
+}));

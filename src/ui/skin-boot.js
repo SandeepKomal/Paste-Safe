@@ -1,7 +1,5 @@
 // @ts-check
-// Runs before the page is drawn (a classic, blocking script) so the chosen theme
-// applies on the first frame, with no flash of the other one. Kept tiny on purpose;
-// the switcher itself lives in skin.js.
+// Blocking script in <head> so the theme is set before first paint (no flash).
 (() => {
   const SKINS = ["lens", "sticker"];
   let skin = location.hash.slice(1);

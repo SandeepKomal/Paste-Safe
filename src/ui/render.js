@@ -1,12 +1,7 @@
 // @ts-check
 import { h } from "./dom.js";
 
-/**
- * @typedef {import("../core/detect.js").Span} Span
- * @typedef {import("../core/detect.js").Finding} Finding
- * @typedef {import("../core/transform.js").Segment} Segment
- * @typedef {import("../core/rules.js").Category} Category
- */
+/** @import { Span, Finding, Segment, Category } from "../../types/index.js" */
 
 /** @type {Record<Category, string>} */
 export const CATEGORY_NAMES = {
@@ -16,27 +11,21 @@ export const CATEGORY_NAMES = {
   unknown: "Possible secret",
 };
 
-/** Longest stagger before the remaining redaction bars appear together. */
 const MAX_STAGGER = 24;
 
-/**
- * A small, stable tilt for a label, so the Sticker theme looks hand-placed
- * but each label keeps the same angle between renders.
- * @param {string} placeholder
- */
-export function tiltOf(placeholder) {
+// Stable per label, so a sticker keeps its angle across re-renders.
+export function tiltOf(/** @type {string} */ placeholder) {
   let h = 0;
   for (const c of placeholder) h = (h * 31 + c.charCodeAt(0)) | 0;
   return `${((Math.abs(h) % 9) - 4) * 0.9}deg`;
 }
 
 /**
- * Renders masked or restored text. Labels the user hasn't seen yet get the
- * `is-new` class so only they animate, not every label on every keystroke.
+ * Only labels not in `seen` get `is-new`, so typing doesn't replay every animation.
  * @param {HTMLElement} el
  * @param {readonly Segment[]} segments
- * @param {Set<string>} seen  Labels already shown; updated in place.
- * @param {ReadonlyMap<string, Category>} [categoryOf]  Placeholder to category, for colour.
+ * @param {Set<string>} seen
+ * @param {ReadonlyMap<string, Category>} [categoryOf]
  */
 export function renderSegments(el, segments, seen, categoryOf = new Map()) {
   const frag = document.createDocumentFragment();
@@ -61,8 +50,6 @@ export function renderSegments(el, segments, seen, categoryOf = new Map()) {
 }
 
 /**
- * Draws the highlight layer behind the input box: the same text, with each
- * detected secret wrapped in a mark. The text itself is transparent.
  * @param {HTMLElement} el
  * @param {string} text
  * @param {readonly Span[]} spans
@@ -81,12 +68,11 @@ export function renderMirror(el, text, spans, shown, categoryOf = new Map()) {
     }));
     pos = s.end;
   }
-  // A trailing newline in a textarea adds a line; the mirror needs a character to match it.
+  // A textarea shows a final empty line after a trailing newline; a div needs a char to match.
   frag.append(text.slice(pos) + "\u200b");
   el.replaceChildren(frag);
 }
 
-/** The first and last few characters of a secret, enough to recognise it. */
 export function preview(/** @type {string} */ value) {
   const v = value.replace(/\s+/g, " ");
   if (v.length <= 10) return v[0] + "•".repeat(Math.max(3, v.length - 1));

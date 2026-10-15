@@ -1,29 +1,23 @@
 # Changelog
 
-## 1.2.0
+## Unreleased
+- Fix slow matching on crafted input in the SECRET, HOST, EMAIL and DB_PASSWORD rules
+- Move JSDoc types into `types/index.d.ts`; trim comments
 
-- Bundled fonts removed. Both themes now use the visitor's own system fonts, so the site ships no third-party assets at all. The security policy now blocks font loading entirely (`font-src 'none'`).
-- New unit test that fails if font files, external URLs or third-party scripts are added to the site.
+## 1.2.0
+- Use system fonts; no third-party assets shipped (`font-src 'none'`)
+- Test that blocks font files, external URLs and key-shaped strings
 
 ## 1.1.0
-
-- Two themes with a switch in the header: **Lens** (frosted glass, light and dark, the default) and **Sticker** (bold neo-brutalist, light). The choice is remembered, and `#lens` / `#sticker` links open a theme directly.
-- Peek: hover a label in the safe text to see the real value behind it. Lens shows it through a magnifying lens, Sticker on a paper note.
-- Labels, highlights and chips are coloured by category: credential, network, personal, possible secret.
-- Shorter intro, so the tool is visible on the first screen.
-- Fonts: Instrument Serif and Archivo added, Bricolage Grotesque removed.
-- Browser tests run in both themes, with new tests for theme switching, peeking and dark mode.
+- Lens and Sticker themes with a switcher
+- Hover a label to peek at its value
+- Category colours for labels and findings
 
 ## 1.0.0
-
-- New interface: live highlights in the input, animated redaction, findings grouped by category with on/off switches, and hover-linking between the input, safe text, findings and answer.
-- New detectors: Azure storage keys, GitLab tokens, npm tokens and SendGrid keys.
-- Detection is now linear in the size of the text. A 1 MB log is processed in well under a second; before, large logs could stall the page.
-- Output is built from DOM nodes only; pasted text can never be read as HTML.
-- Live counter of requests to other sites in the header.
-- Fonts are served from the repo, so the page makes no third-party requests.
-- Tooling: strict type checking through JSDoc, ESLint, browser tests on desktop and phone, Dependabot.
+- New UI with live highlighting and a findings table
+- Azure, GitLab, npm and SendGrid detectors
+- Linear-time detection (1 MB in well under a second)
+- Request counter in the header
 
 ## 0.1.0
-
-- First release: masking, restoring, findings list.
+- First release

@@ -1,35 +1,12 @@
 // @ts-check
 import { RULES, RANDOM_RULE } from "./rules.js";
 
-/**
- * @typedef {import("./rules.js").Rule} Rule
- * @typedef {import("./rules.js").Category} Category
- *
- * @typedef {object} Span  One place in the text where a secret appears.
- * @property {number} start
- * @property {number} end
- * @property {string} value
- * @property {string} placeholder
- *
- * @typedef {object} Finding  One distinct secret value, however many times it appears.
- * @property {string} value
- * @property {string} type
- * @property {string} label
- * @property {Category} category
- * @property {string} placeholder  e.g. `[AWS_KEY_1]`
- * @property {number} count
- *
- * @typedef {object} Detection
- * @property {Span[]} spans        Sorted by position, never overlapping.
- * @property {Finding[]} findings  In order of first appearance.
- */
+/** @import { Rule, Finding, Detection } from "../../types/index.js" */
 
-/** Values this short are too likely to appear by chance to hide everywhere they occur. */
+// Shorter values match by chance too often to hide every occurrence.
 const MIN_REPEAT_LENGTH = 4;
 
 /**
- * Finds every secret in `text`.
- * The same value always gets the same placeholder, numbered per type in order of first appearance.
  * @param {string} text
  * @param {readonly Rule[]} [rules]
  * @returns {Detection}
@@ -37,9 +14,8 @@ const MIN_REPEAT_LENGTH = 4;
 export function detect(text, rules = RULES) {
   /** @type {{ start: number, end: number, value: string, rule: Rule }[]} */
   const raw = [];
-  // One flag per character, so checking a match against earlier ones costs only the
-  // match's own length. Comparing against every earlier match is quadratic and stalls
-  // on large logs.
+  // Per-character flags keep overlap checks linear; comparing against every
+  // earlier match was quadratic and stalled on large logs.
   const claimed = new Uint8Array(text.length);
   const isFree = (/** @type {number} */ s, /** @type {number} */ e) => claimed.subarray(s, e).every(c => c === 0);
   const claim = (/** @type {number} */ start, /** @type {number} */ end, /** @type {string} */ value, /** @type {Rule} */ rule) => {
@@ -57,7 +33,7 @@ export function detect(text, rules = RULES) {
     }
   }
 
-  // A value found once is hidden everywhere it appears, even where no rule would catch it.
+  // Hide every copy of a found value, even where no rule would match it.
   /** @type {Map<string, Rule>} */
   const firstRule = new Map();
   for (const r of raw) if (!firstRule.has(r.value)) firstRule.set(r.value, r.rule);
