@@ -4,65 +4,173 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <!-- The page may only load its own files and may not send data anywhere. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">
   <meta name="referrer" content="no-referrer">
   <title>Paste-Safe</title>
-  <meta name="description" content="Hide passwords, keys, tokens and IPs before pasting logs into any AI, then put the real values back into the answer. Runs entirely in your browser.">
+  <meta name="description" content="Hide passwords, keys, tokens and IPs before pasting logs into any AI, then put the real values back into the answer. Free, open source, and runs entirely in your browser.">
+  <meta name="theme-color" content="#eef0f2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+  <meta property="og:title" content="Paste-Safe">
+  <meta property="og:description" content="Hide secrets in logs before pasting them into any AI. Put the real values back into the answer.">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/ibm-plex-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/bricolage-grotesque-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23141a21'/%3E%3Crect x='6' y='13' width='20' height='6' rx='1.5' fill='%23f5f7fa'/%3E%3C/svg%3E">
-  <script type="module" src="src/app.js"></script>
+  <script type="module" src="src/main.js"></script>
 </head>
 <body>
-<div class="wrap">
-  <header class="top">
-    <div>
-    <h1>Paste-<span class="bar">Safe</span></h1>
-    <p class="lede">Hide passwords, keys, tokens, IPs and emails before you paste logs or config into ChatGPT, Claude or any AI. Then paste the AI's answer back and your real values return.</p>
-    <p class="badge">Runs in this page only · nothing is sent or saved</p>
+  <a class="skip" href="#input">Skip to the tool</a>
+
+  <header class="masthead">
+    <div class="masthead__inner">
+      <a class="wordmark" href="./" aria-label="Paste-Safe, home">
+        <span>Paste</span><span class="wordmark__bar"><span>Safe</span></span>
+      </a>
+      <nav class="nav" aria-label="Page">
+        <a href="#how">How it works</a>
+        <a href="#limits">Limits</a>
+        <a href="https://github.com/SandeepKomal/paste-safe">GitHub</a>
+      </nav>
+      <p class="netcheck" id="netcheck" title="Counted from your browser's own network records">
+        <span class="netcheck__dot" aria-hidden="true"></span>
+        <span><b id="netcount">0</b> requests to other sites</span>
+      </p>
     </div>
-    <a class="src-link" href="https://github.com/SandeepKomal/paste-safe">Source on GitHub</a>
   </header>
 
-  <div class="row">
-    <section class="panel" aria-labelledby="h1in">
-      <div class="phead"><span class="step">Step 1</span><button class="link" id="clearIn" type="button">Clear</button></div>
-      <h2 id="h1in">Paste your text</h2>
-      <p class="hint">A log, a config file, an error, code. The example below is made up and every secret in it is fake.</p>
-      <textarea id="input" spellcheck="false" aria-label="Your text"></textarea>
+  <main>
+    <section class="intro">
+      <p class="eyebrow">For logs, configs and stack traces</p>
+      <h1>Paste into any AI without leaking a single <span class="h1-redact" tabindex="0">secret</span>.</h1>
+      <p class="lede">Paste-Safe swaps passwords, keys, tokens, IPs and emails for labels before you share. When the AI answers, it puts your real values back. Everything happens in this tab.</p>
     </section>
-    <section class="panel" aria-labelledby="h1out">
-      <div class="phead"><span class="step">Step 2</span><button class="primary" id="copySafe" type="button">Copy safe text</button></div>
-      <h2 id="h1out">Paste this into the AI</h2>
-      <p class="hint">Each secret is swapped for a label like <code>[AWS_KEY_1]</code>. The same value always gets the same label, so the AI can still follow your text.</p>
-      <pre class="out" id="safe" tabindex="0" aria-label="Safe text"></pre>
-      <div class="status" id="copyStatus" aria-live="polite"></div>
-    </section>
-  </div>
 
-  <section class="panel" aria-labelledby="hfound">
-    <div class="phead"><h2 id="hfound">What was hidden</h2><span class="summary" id="summary"></span></div>
-    <p class="hint">Untick anything that's fine to share. Only the start and end of each value are shown here.</p>
-    <div class="items" id="items"></div>
-  </section>
+    <section class="bench" aria-labelledby="benchTitle">
+      <h2 class="visually-hidden" id="benchTitle">Hide secrets</h2>
+      <div class="bench__bar">
+        <p class="stats" aria-live="polite">
+          <span><b id="statHidden">0</b> hidden</span>
+          <span class="stats__sep" aria-hidden="true"></span>
+          <span id="statSize">0 B</span>
+        </p>
+        <div class="bench__actions">
+          <button class="btn btn--ghost" id="loadExample" type="button">Load example</button>
+          <button class="btn btn--ghost" id="clear" type="button">Clear</button>
+        </div>
+      </div>
 
-  <div class="row">
-    <section class="panel" aria-labelledby="hans">
-      <div class="phead"><span class="step">Step 3</span><button class="link" id="exampleAns" type="button">Use example answer</button></div>
-      <h2 id="hans">Paste the AI's answer</h2>
-      <p class="hint">Labels in the answer are turned back into your real values on the right.</p>
-      <textarea id="answer" spellcheck="false" aria-label="The AI's answer"></textarea>
-    </section>
-    <section class="panel" aria-labelledby="hres">
-      <div class="phead"><span class="step">Done</span><button class="primary" id="copyRestored" type="button">Copy answer</button></div>
-      <h2 id="hres">Answer with your real values</h2>
-      <p class="hint" id="restoreNote">Restored values are highlighted.</p>
-      <pre class="out" id="restored" tabindex="0" aria-label="Answer with real values"></pre>
-      <div class="status" id="copyStatus2" aria-live="polite"></div>
-    </section>
-  </div>
+      <div class="bench__grid">
+        <div class="pane">
+          <div class="pane__head">
+            <span class="step">1</span>
+            <div>
+              <h3><label for="input">Your text</label></h3>
+              <p class="hint">Secrets are underlined as you type. The example is made up.</p>
+            </div>
+          </div>
+          <div class="editor">
+            <div class="editor__backdrop" id="backdrop" aria-hidden="true"><div class="editor__mirror" id="mirror"></div></div>
+            <textarea class="editor__input" id="input" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Paste a log, config file, error or code"></textarea>
+          </div>
+        </div>
 
-  <p class="foot">Detection uses patterns for well-known key formats plus a check for long random-looking strings. It can miss things. Always glance at the safe text before you paste it.</p>
-</div>
-  <noscript><p class="wrap">Paste-Safe needs JavaScript to find and hide secrets.</p></noscript>
+        <div class="pane pane--safe">
+          <div class="pane__head">
+            <span class="step">2</span>
+            <div>
+              <h3 id="safeTitle">Safe to share</h3>
+              <p class="hint">Copy this into ChatGPT, Claude or any AI.</p>
+            </div>
+            <button class="btn btn--primary" id="copySafe" type="button"><span class="btn__label">Copy</span><span class="btn__done" aria-hidden="true">Copied</span></button>
+          </div>
+          <pre class="sheet" id="safe" tabindex="0" aria-labelledby="safeTitle" data-empty="Your safe text appears here."></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="ledger" aria-labelledby="ledgerTitle">
+      <div class="ledger__head">
+        <div>
+          <h2 id="ledgerTitle">Findings</h2>
+          <p class="hint">Switch off anything that's fine to share. Hover a row to see where it appears.</p>
+        </div>
+        <div class="categories" id="categories"></div>
+      </div>
+      <div class="table-wrap" id="ledgerWrap">
+        <table id="ledger">
+          <thead>
+            <tr><th scope="col">Hide</th><th scope="col">Label</th><th scope="col">Kind</th><th scope="col" class="num">Seen</th><th scope="col">Value</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="empty" id="ledgerEmpty" hidden></p>
+    </section>
+
+    <section class="bench bench--restore" aria-labelledby="restoreTitle">
+      <h2 class="visually-hidden" id="restoreTitle">Restore the answer</h2>
+      <div class="bench__grid">
+        <div class="pane">
+          <div class="pane__head">
+            <span class="step">3</span>
+            <div>
+              <h3><label for="answer">The AI's answer</label></h3>
+              <p class="hint">Paste the reply. Labels are only remembered while this tab is open.</p>
+            </div>
+          </div>
+          <div class="editor editor--plain">
+            <textarea class="editor__input" id="answer" spellcheck="false" placeholder="Paste the AI's answer here"></textarea>
+          </div>
+        </div>
+        <div class="pane pane--safe">
+          <div class="pane__head">
+            <span class="step step--done" aria-hidden="true">✓</span>
+            <div>
+              <h3 id="restoredTitle">With your real values</h3>
+              <p class="hint" id="restoreNote">Real values come back highlighted.</p>
+            </div>
+            <button class="btn btn--primary" id="copyRestored" type="button"><span class="btn__label">Copy</span><span class="btn__done" aria-hidden="true">Copied</span></button>
+          </div>
+          <pre class="sheet" id="restored" tabindex="0" aria-labelledby="restoredTitle" data-empty="The answer with your real values appears here."></pre>
+        </div>
+      </div>
+    </section>
+
+    <p class="visually-hidden" id="status" role="status" aria-live="polite"></p>
+
+    <section class="how" id="how" aria-labelledby="howTitle">
+      <h2 id="howTitle">How it works</h2>
+      <ol class="how__steps">
+        <li>
+          <h3>Find</h3>
+          <p>Patterns for well-known formats such as AWS, GitHub, Stripe and JWTs catch keys and tokens. Settings like <code>DB_PASSWORD=</code>, passwords inside URLs, emails, IPs and internal hostnames are caught too. Long random-looking strings are flagged even when no pattern names them.</p>
+        </li>
+        <li>
+          <h3>Swap</h3>
+          <p>Each distinct value gets one label, like <code>[AWS_KEY_1]</code>, everywhere it appears. The AI can still tell that two lines mention the same host or key.</p>
+        </li>
+        <li>
+          <h3>Restore</h3>
+          <p>Labels in the AI's reply are swapped back for your real values, so you can run its commands or apply its fix straight away.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="limits" id="limits" aria-labelledby="limitsTitle">
+      <h2 id="limitsTitle">What to know</h2>
+      <dl class="facts">
+        <div><dt>It can miss things.</dt><dd>Detection is pattern-based. Read the safe text before you paste it anywhere.</dd></div>
+        <div><dt>Nothing leaves this tab.</dt><dd>There is no server. The page's security policy blocks it from sending data, and the counter at the top shows requests to other sites.</dd></div>
+        <div><dt>Nothing is saved.</dt><dd>Close or reload the tab and your text and labels are gone.</dd></div>
+        <div><dt>Open source.</dt><dd>MIT licensed. Read every line on <a href="https://github.com/SandeepKomal/paste-safe">GitHub</a>.</dd></div>
+      </dl>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Paste-Safe · MIT License · Fonts: Bricolage Grotesque, Instrument Sans and IBM Plex Mono under the SIL Open Font License</p>
+  </footer>
+
+  <noscript><p class="noscript">Paste-Safe needs JavaScript to find and hide secrets.</p></noscript>
 </body>
 </html>
