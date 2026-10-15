@@ -48,3 +48,18 @@ test("scripts never fetch or import from other sites", () => {
     assert.doesNotMatch(js, /from\s+["'](?:https?:)?\/\//, `${f} imports from another site`);
   }
 });
+
+test("no file holds a complete key in a well-known format", () => {
+  // GitHub scans public repos for these formats and raises alerts even for fake
+  // values. Fakes must be joined from two halves; see CONTRIBUTING.
+  const KEY_SHAPES = [
+    /\bgh[pousr]_[A-Za-z0-9]{36,}/, /\bgithub_pat_[A-Za-z0-9_]{40,}/, /\bglpat-[A-Za-z0-9_-]{20,}/,
+    /\bnpm_[A-Za-z0-9]{36}\b/, /\bxox[abprs]-[A-Za-z0-9-]{10,}/, /\b(?:sk|rk)_live_[A-Za-z0-9]{16,}/,
+    /\bAIza[0-9A-Za-z_-]{35}\b/, /\bSG\.[A-Za-z0-9_-]{16,}\.[A-Za-z0-9_-]{16,}/, /\bsk-ant-[A-Za-z0-9_-]{20,}/,
+  ];
+  const checked = [...files, ...walk("tests"), "README.md", "CONTRIBUTING.md"].filter(f => /\.(js|mjs|html|css|md)$/.test(f));
+  for (const f of checked) {
+    const text = read(f);
+    for (const shape of KEY_SHAPES) assert.doesNotMatch(text, shape, `${f} contains a complete key matching ${shape}`);
+  }
+});
