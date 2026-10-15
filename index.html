@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- The page may only load its own files and may not send data anywhere. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Paste-Safe</title>
+  <meta name="description" content="Hide passwords, keys, tokens and IPs before pasting logs into any AI, then put the real values back into the answer. Runs entirely in your browser.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23141a21'/%3E%3Crect x='6' y='13' width='20' height='6' rx='1.5' fill='%23f5f7fa'/%3E%3C/svg%3E">
+  <script type="module" src="src/app.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+    <h1>Paste-<span class="bar">Safe</span></h1>
+    <p class="lede">Hide passwords, keys, tokens, IPs and emails before you paste logs or config into ChatGPT, Claude or any AI. Then paste the AI's answer back and your real values return.</p>
+    <p class="badge">Runs in this page only · nothing is sent or saved</p>
+    </div>
+    <a class="src-link" href="https://github.com/SandeepKomal/paste-safe">Source on GitHub</a>
+  </header>
+
+  <div class="row">
+    <section class="panel" aria-labelledby="h1in">
+      <div class="phead"><span class="step">Step 1</span><button class="link" id="clearIn" type="button">Clear</button></div>
+      <h2 id="h1in">Paste your text</h2>
+      <p class="hint">A log, a config file, an error, code. The example below is made up and every secret in it is fake.</p>
+      <textarea id="input" spellcheck="false" aria-label="Your text"></textarea>
+    </section>
+    <section class="panel" aria-labelledby="h1out">
+      <div class="phead"><span class="step">Step 2</span><button class="primary" id="copySafe" type="button">Copy safe text</button></div>
+      <h2 id="h1out">Paste this into the AI</h2>
+      <p class="hint">Each secret is swapped for a label like <code>[AWS_KEY_1]</code>. The same value always gets the same label, so the AI can still follow your text.</p>
+      <pre class="out" id="safe" tabindex="0" aria-label="Safe text"></pre>
+      <div class="status" id="copyStatus" aria-live="polite"></div>
+    </section>
+  </div>
+
+  <section class="panel" aria-labelledby="hfound">
+    <div class="phead"><h2 id="hfound">What was hidden</h2><span class="summary" id="summary"></span></div>
+    <p class="hint">Untick anything that's fine to share. Only the start and end of each value are shown here.</p>
+    <div class="items" id="items"></div>
+  </section>
+
+  <div class="row">
+    <section class="panel" aria-labelledby="hans">
+      <div class="phead"><span class="step">Step 3</span><button class="link" id="exampleAns" type="button">Use example answer</button></div>
+      <h2 id="hans">Paste the AI's answer</h2>
+      <p class="hint">Labels in the answer are turned back into your real values on the right.</p>
+      <textarea id="answer" spellcheck="false" aria-label="The AI's answer"></textarea>
+    </section>
+    <section class="panel" aria-labelledby="hres">
+      <div class="phead"><span class="step">Done</span><button class="primary" id="copyRestored" type="button">Copy answer</button></div>
+      <h2 id="hres">Answer with your real values</h2>
+      <p class="hint" id="restoreNote">Restored values are highlighted.</p>
+      <pre class="out" id="restored" tabindex="0" aria-label="Answer with real values"></pre>
+      <div class="status" id="copyStatus2" aria-live="polite"></div>
+    </section>
+  </div>
+
+  <p class="foot">Detection uses patterns for well-known key formats plus a check for long random-looking strings. It can miss things. Always glance at the safe text before you paste it.</p>
+</div>
+  <noscript><p class="wrap">Paste-Safe needs JavaScript to find and hide secrets.</p></noscript>
+</body>
+</html>
