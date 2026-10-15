@@ -43,7 +43,7 @@ Common harmless text is left alone: `localhost`, `0.0.0.0`, commit IDs, UUIDs, f
 ## Privacy
 
 - Everything runs in your browser. There is no server, account, analytics or tracking.
-- The page's [Content-Security-Policy](index.html) sets `connect-src 'none'`, so the browser itself stops the page from sending data. Fonts and scripts are served from this repo, never from other sites.
+- The page's [Content-Security-Policy](index.html) sets `connect-src 'none'`, so the browser itself stops the page from sending data. Scripts and styles are served from this repo, never from other sites, and text uses your device's own fonts.
 - The header shows a live count of requests to other sites, read from your browser's own network records. It should always say 0.
 - Nothing is saved. Close or reload the tab and your text and labels are gone.
 
@@ -86,12 +86,9 @@ New detectors are the most useful contribution. See [CONTRIBUTING.md](CONTRIBUTI
 
 ## License
 
-Code: [MIT](LICENSE).
+[MIT](LICENSE). Everything the site ships is original to this project: the code, both themes, the icon and the text.
 
-Fonts, served from `assets/fonts/` under the [SIL Open Font License 1.1](assets/fonts/):
-- Instrument Sans: © 2022 The Instrument Sans Project Authors
-- Instrument Serif: © 2022 The Instrument Serif Project Authors
-- Archivo: © 2020 The Archivo Project Authors
-- IBM Plex Mono: © 2017 IBM Corp.
-
-All other design, icons and code are original to this project.
+The site ships **no third-party code, fonts or images**:
+- Text uses the fonts already installed on your device (system fonts), so no font files are distributed.
+- There are no runtime libraries. The development tools in `package.json` (ESLint, TypeScript, Playwright) are only used to test the code and are never shipped to visitors.
+- A unit test (`tests/unit/assets.test.mjs`) fails the build if a font file, an external URL or a third-party script is ever added to the site.

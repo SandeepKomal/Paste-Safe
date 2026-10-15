@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <!-- The page may only load its own files and may not send data anywhere. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'none'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">
   <meta name="referrer" content="no-referrer">
   <title>Paste-Safe</title>
   <meta name="description" content="Hide passwords, keys, tokens and IPs before pasting logs into any AI, then put the real values back into the answer. Free, open source, and runs entirely in your browser.">
@@ -13,8 +13,6 @@
   <meta property="og:title" content="Paste-Safe">
   <meta property="og:description" content="Hide secrets in logs before pasting them into any AI. Put the real values back into the answer.">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/fonts/ibm-plex-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/style.css">
   <script src="src/ui/skin-boot.js"></script>
   <script type="module" src="src/main.js"></script>
@@ -180,7 +178,7 @@
   </main>
 
   <footer class="footer">
-    <p>Paste-Safe · MIT License · Fonts: Instrument Sans, Instrument Serif, Archivo and IBM Plex Mono under the SIL Open Font License</p>
+    <p>Paste-Safe · MIT License · Original design and code · Uses your device's own fonts</p>
   </footer>
 
   <div class="peek" id="peek" aria-hidden="true" hidden><span class="peek__label">Real value</span><span id="peekValue"></span></div>
