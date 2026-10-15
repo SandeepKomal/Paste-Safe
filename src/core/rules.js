@@ -2,6 +2,10 @@
 /**
  * Detection rules. Each rule names one kind of secret.
  *
+ * Patterns that scan a variable-length prefix start only at the beginning of a
+ * word (a negative lookbehind instead of \b). Starting inside words lets a long
+ * run like "a.a.a.…" make matching quadratic and freeze the page.
+ *
  * Rules run in the order listed and the first rule to claim a piece of text
  * wins, so specific formats (known key prefixes) come before general ones
  * (`password=…` settings), and the entropy fallback runs last.
@@ -14,8 +18,12 @@
  * @property {Category} category Groups findings in the UI.
  * @property {RegExp} re         Must use the `g` flag; add `d` when `group` is set.
  * @property {number} [group]    Capture group holding the secret, when only part of the match is secret.
- * @property {(value: string) => boolean} [skip] Return true to ignore a known-harmless value.
+ * @property {(value: string, match: RegExpMatchArray) => boolean} [skip]
+ *   Return true to ignore a match, e.g. a known-harmless value. Gets the whole match too.
  */
+
+/** Setting names that hold secrets, e.g. DB_PASSWORD, client_secret, x-api-key. */
+const SECRET_NAME = /password|passwd|pwd|secret|token|api[_-]?key|access[_-]?key|private[_-]?key/i;
 
 /** @type {readonly Rule[]} */
 export const RULES = Object.freeze([
@@ -52,7 +60,7 @@ export const RULES = Object.freeze([
   },
   {
     type: "DB_PASSWORD", label: "Password in a connection URL", category: "credential",
-    re: /\b[a-z][a-z0-9+.-]*:\/\/[^:/\s@]+:([^@/\s]+)@/gid, group: 1,
+    re: /(?<![a-z0-9+.-])[a-z][a-z0-9+.-]*:\/\/[^:/\s@]+:([^@/\s]+)@/gid, group: 1,
   },
   {
     type: "BEARER", label: "Bearer token", category: "credential",
@@ -60,11 +68,15 @@ export const RULES = Object.freeze([
   },
   {
     type: "SECRET", label: "Password or secret setting", category: "credential",
-    re: /\b[\w.-]*?(?:password|passwd|pwd|secret|token|api[_-]?key|access[_-]?key|client[_-]?secret|private[_-]?key)\w*["']?\s*[:=]\s*["']?([^\s"',;]{4,})/gid,
-    group: 1,
-    skip: v => /^[$<{%]/.test(v) || /^(?:true|false|null|none|changeme|\*+)$/i.test(v),
+    // Reads every `name = value` pair once, then keeps it only if the name says
+    // it's a secret. "(?=(…))\1" consumes the name without backtracking into it,
+    // so a long name can't make matching slow.
+    re: /(?<![\w.-])(?=([\w.-]+))\1["']?\s*[:=]\s*["']?([^\s"',;]{4,})/gd,
+    group: 2,
+    skip: (v, m) =>
+      !SECRET_NAME.test(m[1] ?? "") || /^[$<{%]/.test(v) || /^(?:true|false|null|none|changeme|\*+)$/i.test(v),
   },
-  { type: "EMAIL", label: "Email address", category: "personal", re: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g },
+  { type: "EMAIL", label: "Email address", category: "personal", re: /(?<![\w.%+-])[\w.%+-]+@(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}(?![A-Za-z0-9-])/g },
   {
     type: "IP", label: "IP address", category: "network",
     re: /\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b/g,
@@ -72,7 +84,7 @@ export const RULES = Object.freeze([
   },
   {
     type: "HOST", label: "Internal or cloud hostname", category: "network",
-    re: /\b(?:[a-z0-9-]+\.)+(?:internal|local|corp|lan|intra|amazonaws\.com)\b/gi,
+    re: /(?<![a-z0-9.-])(?:[a-z0-9-]+\.)+(?:internal|local|corp|lan|intra|amazonaws\.com)(?![a-z0-9-])/gi,
   },
 ]);
 

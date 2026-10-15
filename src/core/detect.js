@@ -52,7 +52,7 @@ export function detect(text, rules = RULES) {
       const [start, end] = rule.group ? (m.indices?.[rule.group] ?? [-1, -1]) : [m.index, m.index + m[0].length];
       if (start < 0 || end <= start) continue;
       const value = text.slice(start, end);
-      if (rule.skip?.(value) || !isFree(start, end)) continue;
+      if (rule.skip?.(value, m) || !isFree(start, end)) continue;
       claim(start, end, value, rule);
     }
   }
