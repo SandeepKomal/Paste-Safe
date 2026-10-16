@@ -211,3 +211,74 @@ test.describe("theme switching", () => {
     await context.close();
   });
 });
+
+test.describe("files, own words and the AI round trip", () => {
+  test.beforeEach(async ({ page }) => {
+    page.problems = watchProblems(page);
+    await page.goto("/#lens");
+    await expect(page.locator("#statHidden")).toHaveText("11");
+  });
+  test.afterEach(async ({ page }) => {
+    expect(page.problems).toEqual([]);
+  });
+
+  test("copy adds a note for the AI unless switched off", async ({ page, context, browserName }) => {
+    test.skip(browserName !== "chromium", "clipboard permissions are Chromium-only in Playwright");
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.locator("#copySafe").click();
+    let clip = await page.evaluate(() => navigator.clipboard.readText());
+    expect(clip.startsWith("Note: values in square brackets")).toBe(true);
+    expect(clip).toContain("[AWS_KEY_1]");
+    await page.locator("#withNote").uncheck();
+    await page.locator("#copySafe").click();
+    clip = await page.evaluate(() => navigator.clipboard.readText());
+    expect(clip.startsWith("# Deploy failed")).toBe(true);
+  });
+
+  test("labels the AI changed slightly still come back", async ({ page }) => {
+    await page.locator("#answer").fill("Rotate aws_key_1 and block [ip-2].");
+    await expect(page.locator("#restored")).toHaveText("Rotate AKIAIOSFODNN7EXAMPLE and block 10.20.9.250.");
+  });
+
+  test("a chosen file is opened and checked", async ({ page }) => {
+    await page.locator("#fileInput").setInputFiles({ name: "app.log", mimeType: "text/plain", buffer: Buffer.from("db at 10.1.2.3 mail a@b.io") });
+    await expect(page.locator("#input")).toHaveValue("db at 10.1.2.3 mail a@b.io");
+    await expect(page.locator("#safe")).toHaveText("db at [IP_1] mail [EMAIL_1]");
+    await expect(page.locator("#status")).toHaveText("Opened app.log.");
+  });
+
+  test("a dropped file is opened", async ({ page }) => {
+    await page.evaluate(() => {
+      const dt = new DataTransfer();
+      dt.items.add(new File(["host 10.9.8.7"], "drop.txt", { type: "text/plain" }));
+      document.querySelector("#dropZone")?.dispatchEvent(new DragEvent("drop", { dataTransfer: dt, bubbles: true, cancelable: true }));
+    });
+    await expect(page.locator("#safe")).toHaveText("host [IP_1]");
+  });
+
+  test("binary files are refused", async ({ page }) => {
+    await page.locator("#fileInput").setInputFiles({ name: "a.bin", mimeType: "application/octet-stream", buffer: Buffer.from([0, 1, 2, 0]) });
+    await expect(page.locator("#status")).toHaveText("a.bin doesn't look like a text file.");
+    await expect(page.locator("#statHidden")).toHaveText("11");
+  });
+
+  test("a large file is checked without freezing the page", async ({ page }) => {
+    const line = "2026-10-15 conn from 10.20.4.17 user ops@acme-payments.io ok\n";
+    await page.locator("#fileInput").setInputFiles({ name: "big.log", mimeType: "text/plain", buffer: Buffer.from(line.repeat(20_000)) });
+    await expect(page.locator("#statHidden")).toHaveText("2", { timeout: 15_000 });
+    await expect(page.locator("#safe")).toContainText("conn from [IP_1] user [EMAIL_1] ok");
+    await expect(page.locator("#statPlain")).toBeVisible();
+  });
+
+  test("your own words are hidden and remembered", async ({ page }) => {
+    await page.locator("#input").fill("invoice for Acme Payments");
+    await page.locator(".words summary").click();
+    await page.locator("#words").fill("Acme Payments");
+    await expect(page.locator("#safe")).toHaveText("invoice for [PRIVATE_1]");
+    await page.reload();
+    await page.locator(".words summary").click();
+    await expect(page.locator("#words")).toHaveValue("Acme Payments");
+    await page.locator("#input").fill("invoice for acme payments");
+    await expect(page.locator("#safe")).toHaveText("invoice for [PRIVATE_1]");
+  });
+});

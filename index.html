@@ -57,16 +57,19 @@
       </div>
     </section>
 
-    <section class="bench panel" aria-labelledby="benchTitle">
+    <section class="bench bench--main panel" aria-labelledby="benchTitle">
       <h2 class="visually-hidden" id="benchTitle">Hide secrets</h2>
       <div class="bench__bar">
         <p class="stats" aria-live="polite">
           <span><b id="statHidden">0</b> hidden</span>
           <span class="stats__sep" aria-hidden="true"></span>
           <span id="statSize">0 B</span>
+          <span id="statPlain" hidden>· highlights off for very large text</span>
         </p>
         <div class="bench__actions">
           <button class="btn btn--flip" id="flip" type="button" aria-pressed="false">Show safe side</button>
+          <button class="btn btn--ghost" id="openFile" type="button">Open file</button>
+          <input class="visually-hidden" id="fileInput" type="file" tabindex="-1" aria-hidden="true" accept=".log,.txt,.env,.yaml,.yml,.json,.conf,.cfg,.ini,.toml,.xml,.properties,.out,.err,text/*">
           <button class="btn btn--ghost" id="loadExample" type="button">Load example</button>
           <button class="btn btn--ghost" id="clear" type="button">Clear</button>
         </div>
@@ -78,10 +81,10 @@
             <span class="step">1</span>
             <div>
               <h3><label for="input">Your text</label></h3>
-              <p class="hint">Secrets are underlined as you type. The example is made up.</p>
+              <p class="hint">Secrets are underlined as you type. You can also drop a file here. The example is made up.</p>
             </div>
           </div>
-          <div class="editor">
+          <div class="editor" id="dropZone">
             <div class="editor__backdrop" id="backdrop" aria-hidden="true"><div class="editor__mirror" id="mirror"></div></div>
             <textarea class="editor__input" id="input" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Paste a log, config file, error or code"></textarea>
           </div>
@@ -97,6 +100,7 @@
             <button class="btn btn--primary" id="copySafe" type="button"><span class="btn__label">Copy</span><span class="btn__done" aria-hidden="true">Copied</span></button>
           </div>
           <pre class="sheet" id="safe" tabindex="0" aria-labelledby="safeTitle" data-empty="Your safe text appears here."></pre>
+          <label class="check"><input type="checkbox" id="withNote" checked> Copy with a note asking the AI to keep the labels as they are</label>
         </div>
       </div>
     </section>
@@ -118,6 +122,13 @@
         </table>
       </div>
       <p class="empty" id="ledgerEmpty" hidden></p>
+      <details class="words">
+        <summary>Always hide your own words</summary>
+        <div class="words__body">
+          <label class="hint" for="words">One per line, such as your company, client or server names. They become labels like <code>[PRIVATE_1]</code>. Saved in this browser only.</label>
+          <textarea class="words__input" id="words" rows="4" spellcheck="false" autocomplete="off" placeholder="Acme Payments&#10;prod-eu-cluster"></textarea>
+        </div>
+      </details>
     </section>
 
     <section class="bench bench--restore panel" aria-labelledby="restoreTitle">

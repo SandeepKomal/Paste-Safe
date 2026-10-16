@@ -1,8 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { detect } from "../../src/core/detect.js";
-import { mask, restore, toText } from "../../src/core/transform.js";
-import { entropy, RULES, RANDOM_RULE } from "../../src/core/rules.js";
+import { AI_NOTE, mask, restore, toText, withNote } from "../../src/core/transform.js";
+import { entropy, isIPv6, luhn, RULES, RANDOM_RULE, wordRules } from "../../src/core/rules.js";
 import { EXAMPLE } from "../../src/example.js";
 
 // Fake keys in well-known formats are joined from two halves so GitHub's
@@ -42,7 +42,7 @@ test("spans are sorted and never overlap", () => {
 test("every rule is well formed", () => {
   const types = new Set();
   for (const r of RULES) {
-    assert.match(r.type, /^[A-Z][A-Z_]*$/, r.type);
+    assert.match(r.type, /^[A-Z][A-Z0-9_]*$/, r.type);
     assert.ok(!types.has(r.type), `duplicate type ${r.type}`);
     types.add(r.type);
     assert.ok(r.re.global, `${r.type} needs the g flag`);
@@ -74,6 +74,23 @@ const detected = {
   "IP address": ["from 10.20.4.17", "IP"],
   "cloud hostname": ["mydb.abc123.us-east-1.rds.amazonaws.com", "HOST"],
   "unnamed random token": ["X-Session: Qm9vT2xLp7sW2xZ8nV4bR1tY6uE3iO0a", "SECRET_LIKE"],
+  "Hugging Face token": [fake("HF=hf", "_AbCdEfGhIjKlMnOpQrStUvWxYz012345"), "HF_TOKEN"],
+  "Shopify token": [fake("shp", "at_0123456789abcdef0123456789abcdef"), "SHOPIFY_TOKEN"],
+  "Twilio API key": [fake("SK", "0123456789abcdef0123456789abcdef"), "TWILIO_KEY"],
+  "Discord webhook": [fake("https://discord.com/api/webhooks/123456789012345678/", "abcDEF_ghiJKL-mnoPQR_stuVWX-yzabcDEF_ghiJKL-mnoPQR_stuVWXyzab"), "DISCORD_TOKEN"],
+  "Google Cloud key ID": ['"private_key_id": "0123456789abcdef0123456789abcdef01234567",', "GCP_KEY"],
+  "basic auth header": ["Authorization: Basic YWRtaW46c3VwZXJzZWNyZXQ=", "BASIC_AUTH"],
+  "Docker registry login": ['{"auths":{"ghcr.io":{"auth":"dXNlcjpwYXNzd29yZDEyMw=="}}}', "DOCKER_AUTH"],
+  "token in a URL": ["GET https://example.com/cb?state=ok&access_token=ya29.a0AfH6SMBx&x=1", "URL_TOKEN"],
+  "signed URL": ["https://bucket.s3.amazonaws.com/f.zip?X-Amz-Signature=4f1c9e0d2b7a", "URL_TOKEN"],
+  "session cookie": ["Cookie: theme=dark; sessionid=8f14e45fceea167a5a36dedd4bea2543", "SESSION"],
+  "card number": ["card 4111 1111 1111 1111 exp 12/29", "CARD"],
+  "phone number": ["call +44 20 7946 0958 or", "PHONE"],
+  "US phone number": ["support (415) 555-0132 today", "PHONE"],
+  "username in a path": ["at /home/sandeep/projects/api/main.py:12", "USERNAME"],
+  "Windows username": ["C:\\Users\\jdoe\\AppData\\Local\\app.log", "USERNAME"],
+  "IPv6 address": ["peer 2001:db8:85a3::8a2e:370:7334 refused", "IPV6"],
+  "MAC address": ["eth0 link 3c:22:fb:7a:10:9e up", "MAC"],
 };
 for (const [name, [text, type]] of Object.entries(detected)) {
   test(`detects: ${name}`, () => {
@@ -94,6 +111,17 @@ const ignored = {
   "plain prose": "The deployment failed because the pod ran out of memory.",
   "public hostname": "see https://docs.github.com/en/actions",
   "empty text": "",
+  "time of day": "started 12:30:45, done 13:02:11",
+  "IPv6 loopback": "listening on [::1]:8080",
+  "C++ scope": "std::vector<int> and Foo::bar()",
+  "13-digit epoch milliseconds": "ts=1729000000000 took 1234567890123",
+  "number that fails the card check": "order 4111 1111 1111 1112",
+  "Docker image digest": "image@sha256:4f1c9e0d2b7a6e5f3c8d9a0b1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f",
+  "semantic version": "upgraded from 1.24.3 to 1.25.0",
+  "Kubernetes pod name": "pod api-7d9f8b6c5-x2x9z restarted",
+  "CI runner path": "/home/runner/work/app/app/src/index.ts",
+  "short port list": "ports 8080-8090, 9000",
+  "URL with a harmless query": "https://example.com/search?q=timeout&page=2",
 };
 for (const [name, text] of Object.entries(ignored)) {
   test(`leaves alone: ${name}`, () => {
@@ -111,6 +139,34 @@ test("restore puts real values back, only for known labels", () => {
   const segs = restore("Block [IP_1], rotate [AWS_KEY_1] and [AWS_KEY_1] again. [IP_9] is unknown.", findings);
   assert.equal(toText(segs), "Block 10.20.4.17, rotate AKIAIOSFODNN7EXAMPLE and AKIAIOSFODNN7EXAMPLE again. [IP_9] is unknown.");
   assert.equal(segs.filter(s => s.restored).length, 3);
+});
+
+test("restore accepts labels the AI changed slightly", () => {
+  const { findings } = detect("from 10.20.4.17 and 10.2.2.2 key AKIAIOSFODNN7EXAMPLE");
+  const out = toText(restore("Block IP_1, [ip-2] and [aws_key_1]. Not IP_10, MYIP_1 or [IP_9].", findings));
+  assert.equal(out, "Block 10.20.4.17, 10.2.2.2 and AKIAIOSFODNN7EXAMPLE. Not IP_10, MYIP_1 or [IP_9].");
+});
+
+test("the AI note goes on top, and only when there is text", () => {
+  assert.equal(withNote("x [IP_1]"), `${AI_NOTE}\n\nx [IP_1]`);
+  assert.equal(withNote(""), "");
+});
+
+test("your own words are hidden, whole words only, in any case", () => {
+  const rules = [...wordRules(["Acme Payments", "orion", " ", "x"]), ...RULES];
+  const text = "ACME PAYMENTS runs orion";
+  assert.equal(toText(mask(text, detect(text, rules).spans)), "[PRIVATE_1] runs [PRIVATE_2]");
+  assert.deepEqual(detect("orionx", rules).findings, []);
+  assert.deepEqual(wordRules(["", " "]), []);
+});
+
+test("card and IPv6 checks", () => {
+  assert.ok(luhn("4111111111111111"));
+  assert.ok(!luhn("4111111111111112"));
+  assert.ok(isIPv6("fe80::1"));
+  assert.ok(isIPv6("2001:0db8:0000:0000:0000:ff00:0042:8329"));
+  assert.ok(!isIPv6("12:30:45"));
+  assert.ok(!isIPv6("1::2::3"));
 });
 
 test("restore handles empty input and no findings", () => {
@@ -145,9 +201,10 @@ test("no rule slows down on hostile input (ReDoS guard)", () => {
   const hostile = [
     "a".repeat(N), "a.".repeat(N / 2), "a@" + "a.".repeat(N / 2) + "-", "password_".repeat(N / 9),
     ("x".repeat(30) + ".").repeat(N / 31), "https://" + "u:".repeat(N / 2), "Bearer " + " ".repeat(N),
-    "1.".repeat(N / 2), "key=".repeat(N / 4),
+    "1.".repeat(N / 2), "key=".repeat(N / 4), "1 ".repeat(N / 2), "+1 ".repeat(N / 3), "a:".repeat(N / 2),
+    ":".repeat(N), "?key=".repeat(N / 5), "/home/".repeat(N / 6), "0".repeat(N),
   ];
-  for (const rule of [...RULES, RANDOM_RULE]) {
+  for (const rule of [...wordRules(["a", "aa", "password"]), ...RULES, RANDOM_RULE]) {
     for (const text of hostile) {
       const t = performance.now();
       void [...text.matchAll(rule.re)].length;

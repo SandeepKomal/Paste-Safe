@@ -21,26 +21,40 @@ export function mask(text, spans, shown = new Set()) {
 }
 
 /**
- * Unknown labels are left as they are.
+ * Unknown labels are left as they are. AIs often change a label slightly, so
+ * `IP_1`, `[ip_1]` and `[IP-1]` are all read as `[IP_1]`.
  * @param {string} answer
  * @param {readonly Finding[]} findings
  * @returns {Segment[]}
  */
 export function restore(answer, findings) {
   if (!findings.length || !answer) return answer ? [{ text: answer }] : [];
-  const byLabel = new Map(findings.map(f => [f.placeholder, f.value]));
-  const re = new RegExp([...byLabel.keys()].map(escapeRegExp).join("|"), "g");
+  const byKey = new Map(findings.map(f => [keyOf(f.placeholder), f]));
+  const names = findings
+    .map(f => f.placeholder.slice(1, -1).split("_").map(escapeRegExp).join("[_ -]"))
+    .sort((a, b) => b.length - a.length);
+  const re = new RegExp(`\\[?(?<![A-Za-z0-9_])(?:${names.join("|")})(?![A-Za-z0-9_])\\]?`, "gi");
   /** @type {Segment[]} */
   const out = [];
   let pos = 0;
   for (const m of answer.matchAll(re)) {
+    const f = byKey.get(keyOf(m[0]));
+    if (!f) continue;
     if (m.index > pos) out.push({ text: answer.slice(pos, m.index) });
-    out.push({ text: /** @type {string} */ (byLabel.get(m[0])), restored: m[0] });
+    out.push({ text: f.value, restored: f.placeholder });
     pos = m.index + m[0].length;
   }
   if (pos < answer.length) out.push({ text: answer.slice(pos) });
   return out;
 }
+
+const keyOf = (/** @type {string} */ label) => label.replace(/[[\]]/g, "").replace(/[ -]/g, "_").toUpperCase();
+
+/** Put in front of the safe text so the AI keeps labels intact in its reply. */
+export const AI_NOTE =
+  "Note: values in square brackets, like [IP_1], are placeholders for private data. Keep them exactly as written in your answer.";
+
+export const withNote = (/** @type {string} */ text) => (text ? `${AI_NOTE}\n\n${text}` : text);
 
 export const toText = (/** @type {readonly Segment[]} */ segments) => segments.map(s => s.text).join("");
 

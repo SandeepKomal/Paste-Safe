@@ -18,13 +18,20 @@ https://sandeepkomal.github.io/paste-safe/
 
 You can switch individual findings off if they're fine to share. Hovering a label shows the value behind it.
 
+You can also open or drop a file (`.log`, `.env`, `.yaml`, `.json` and other text files up to 50 MB). Large files are checked in a background worker so the page doesn't freeze.
+
+By default, copying adds one line on top asking the AI to keep labels like `[IP_1]` as they are. If the AI still changes them a little (`IP_1`, `[ip-1]`), they're put back anyway.
+
 There are three themes (switch in the header, or open `#board`, `#lens` or `#sticker`). Board is the default: labels are drawn as split-flap tiles and the workbench turns over, with your text on the front and the safe text on the back.
 
 ## What gets hidden
 
-- Keys and tokens: AWS, Azure, GitHub, GitLab, npm, Slack, Stripe, SendGrid, Google, OpenAI/Anthropic, JWTs, bearer tokens, private key blocks
+- Keys and tokens: AWS, Azure, Google Cloud, GitHub, GitLab, npm, Slack, Stripe, SendGrid, Twilio, Shopify, Hugging Face, Discord, Google, OpenAI/Anthropic, JWTs, private key blocks
+- Auth headers and logins: bearer tokens, `Authorization: Basic`, Docker registry logins, session cookies, tokens in URLs (`?access_token=`, signed S3/GCS links)
 - Passwords in connection URLs and in settings like `DB_PASSWORD=`, `client_secret:`, `api_key=`
-- Emails, IP addresses, internal/cloud hostnames
+- Personal details: emails, phone numbers, payment card numbers (Luhn-checked), usernames in paths like `/home/jane` or `C:\Users\jane`
+- Network details: IPv4 and IPv6 addresses, MAC addresses, internal/cloud hostnames
+- Your own words, such as a company or server name (set under Findings, saved in your browser only)
 - Long random-looking strings that none of the above matched
 
 Things like `localhost`, commit hashes, UUIDs, file paths and `${VAR}` references are left alone.
