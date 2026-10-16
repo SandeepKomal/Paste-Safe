@@ -33,12 +33,12 @@ export function renderSegments(el, segments, seen, categoryOf = new Map()) {
   for (const s of segments) {
     if (s.placeholder) {
       const isNew = !seen.has(s.placeholder);
+      // One span per character so the Board theme can draw each as a flap.
       frag.append(h("span", {
         className: isNew ? "redact is-new" : "redact",
-        text: s.text,
         attrs: { "data-ph": s.placeholder, "data-cat": categoryOf.get(s.placeholder) ?? "unknown" },
         vars: { r: tiltOf(s.placeholder), ...(isNew ? { i: Math.min(fresh++, MAX_STAGGER) } : {}) },
-      }));
+      }, [...s.text].map((ch, j) => h("span", { className: "fl", text: ch, vars: { j } }))));
       seen.add(s.placeholder);
     } else if (s.restored) {
       frag.append(h("span", { className: "restored", text: s.text, attrs: { "data-ph": s.restored, title: `Was ${s.restored}` } }));

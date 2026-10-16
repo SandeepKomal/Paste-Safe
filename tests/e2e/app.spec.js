@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const SKINS = ["lens", "sticker"];
+const SKINS = ["board", "lens", "sticker"];
 
 /** Fails the test on any console error, uncaught exception or request to another site. */
 function watchProblems(page) {
@@ -14,13 +14,25 @@ function watchProblems(page) {
   return problems;
 }
 
+/** In the Board theme only one side of the workbench is usable at a time. */
+async function showSide(page, side) {
+  if (!(await page.locator("#flip").isVisible())) return;
+  const card = page.locator("#workbench");
+  if ((await card.getAttribute("data-side")) !== side) await page.locator("#flip").click();
+  await expect(card).toHaveAttribute("data-side", side);
+  // Wait for the turn to finish so elements are where they will stay.
+  await page.waitForFunction(() => !document.getAnimations().some(a => a instanceof CSSTransition));
+}
+
 for (const skin of SKINS) {
 test.describe(`${skin} theme`, () => {
 test.beforeEach(async ({ page }) => {
   page.problems = watchProblems(page);
   await page.goto(`/#${skin}`);
   await expect(page.locator("html")).toHaveAttribute("data-skin", skin);
-  await expect(page.locator("#safe .redact").first()).toBeVisible();
+  await expect(page.locator("#safe .redact").first()).toBeAttached();
+  // Board turns the card to the safe side by itself after the example loads.
+  if (skin === "board") await expect(page.locator("#workbench")).toHaveAttribute("data-side", "safe");
 });
 
 test.afterEach(async ({ page }) => {
@@ -45,6 +57,7 @@ test("highlights in the input line up with the text", async ({ page }) => {
     document.querySelector("#mirror")?.textContent ?? "",
   ]);
   expect(mirror).toBe(input + "​");
+  await showSide(page, "text");
   const box = await page.locator("#input").boundingBox();
   const back = await page.locator("#backdrop").boundingBox();
   expect(back).toEqual(box);
@@ -52,6 +65,7 @@ test("highlights in the input line up with the text", async ({ page }) => {
 
 test("typing updates the safe text immediately", async ({ page }) => {
   await page.locator("#clear").click();
+  await showSide(page, "text");
   await page.locator("#input").fill("db at 10.1.2.3 with key AKIAIOSFODNN7EXAMPLE");
   await expect(page.locator("#safe")).toHaveText("db at [IP_1] with key [AWS_KEY_1]");
   await expect(page.locator("#statHidden")).toHaveText("2");
@@ -69,6 +83,7 @@ test("switching a finding off shows it in the safe text", async ({ page }) => {
 test("copy puts the safe text on the clipboard", async ({ page, context, browserName }) => {
   test.skip(browserName !== "chromium", "clipboard permissions are Chromium-only in Playwright");
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await showSide(page, "safe");
   await page.locator("#copySafe").click();
   await expect(page.locator("#copySafe")).toHaveAttribute("data-state", "done");
   const clip = await page.evaluate(() => navigator.clipboard.readText());
@@ -89,6 +104,7 @@ test("hovering a finding highlights it everywhere", async ({ page }) => {
 });
 
 test("pasted HTML is shown as text and never runs", async ({ page }) => {
+  await showSide(page, "text");
   await page.locator("#input").fill('<img src=x onerror="window.__xss=1"> password=<script>window.__xss=2</script>');
   await page.locator("#answer").fill("<b>[SECRET_1]</b><img src=y onerror=window.__xss=3>");
   await expect(page.locator("#safe img, #safe script, #restored img, #restored b, #mirror img")).toHaveCount(0);
@@ -113,6 +129,7 @@ test("the request counter shows zero", async ({ page }) => {
 });
 
 test("hovering a label peeks at its real value", async ({ page }) => {
+  await showSide(page, "safe");
   await page.locator('#safe .redact[data-ph="[IP_1]"]').hover();
   await expect(page.locator("#peek")).toBeVisible();
   await expect(page.locator("#peekValue")).toHaveText("10.20.4.17");
@@ -123,10 +140,39 @@ test("hovering a label peeks at its real value", async ({ page }) => {
 }
 
 test.describe("theme switching", () => {
-  test("Lens is the default", async ({ page }) => {
+  test("Board is the default", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator("html")).toHaveAttribute("data-skin", "lens");
-    await expect(page.locator('[data-skin-option="lens"]')).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("html")).toHaveAttribute("data-skin", "board");
+    await expect(page.locator('[data-skin-option="board"]')).toHaveAttribute("aria-pressed", "true");
+  });
+
+  test("Board turns the workbench over and only the facing side is usable", async ({ page }) => {
+    await page.goto("/#board");
+    const card = page.locator("#workbench");
+    await expect(card).toHaveAttribute("data-side", "safe");
+    expect(await page.locator("#paneText").evaluate(e => /** @type {HTMLElement} */ (e).inert)).toBe(true);
+    await page.locator("#flip").click();
+    await expect(card).toHaveAttribute("data-side", "text");
+    await expect(page.locator("#flip")).toHaveText("Show safe side");
+    expect(await page.locator("#paneSafe").evaluate(e => /** @type {HTMLElement} */ (e).inert)).toBe(true);
+    await page.locator("#clear").click();
+    await expect(page.locator("#input")).toBeFocused();
+  });
+
+  test("other themes show both panes side by side", async ({ page }) => {
+    await page.goto("/#lens");
+    await expect(page.locator("#flip")).toBeHidden();
+    expect(await page.locator("#paneText").evaluate(e => /** @type {HTMLElement} */ (e).inert)).toBe(false);
+    expect(await page.locator("#paneSafe").evaluate(e => /** @type {HTMLElement} */ (e).inert)).toBe(false);
+  });
+
+  test("Board stays dark even when the system is light", async ({ browser }) => {
+    const context = await browser.newContext({ colorScheme: "light" });
+    const page = await context.newPage();
+    await page.goto("/#board");
+    const bg = await page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor);
+    expect(bg).toBe("rgb(18, 18, 16)");
+    await context.close();
   });
 
   test("the switch changes theme, updates the link and is remembered", async ({ page }) => {

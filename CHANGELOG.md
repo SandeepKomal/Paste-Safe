@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- Board theme, now the default: split-flap labels and a departure board in the intro; the workbench turns over between your text and the safe text
 - Fix slow matching on crafted input in the SECRET, HOST, EMAIL and DB_PASSWORD rules
 - Move JSDoc types into `types/index.d.ts`; trim comments
 

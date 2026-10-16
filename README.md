@@ -6,9 +6,9 @@ Strip secrets out of logs and configs before pasting them into ChatGPT, Claude o
 
 https://sandeepkomal.github.io/paste-safe/
 
-| Lens | Sticker |
-| --- | --- |
-| ![Lens theme](docs/screenshot-lens.png) | ![Sticker theme](docs/screenshot-sticker.png) |
+| Board | Lens | Sticker |
+| --- | --- | --- |
+| ![Board theme](docs/screenshot-board.png) | ![Lens theme](docs/screenshot-lens.png) | ![Sticker theme](docs/screenshot-sticker.png) |
 
 ## Usage
 
@@ -18,7 +18,7 @@ https://sandeepkomal.github.io/paste-safe/
 
 You can switch individual findings off if they're fine to share. Hovering a label shows the value behind it.
 
-There are two themes (switch in the header, or open `#lens` / `#sticker`).
+There are three themes (switch in the header, or open `#board`, `#lens` or `#sticker`). Board is the default: labels are drawn as split-flap tiles and the workbench turns over, with your text on the front and the safe text on the back.
 
 ## What gets hidden
 
