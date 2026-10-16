@@ -282,3 +282,22 @@ test.describe("files, own words and the AI round trip", () => {
     await expect(page.locator("#safe")).toHaveText("invoice for [PRIVATE_1]");
   });
 });
+
+test.describe("install and offline", () => {
+  test("the page opens offline after the first visit", async ({ page, context }) => {
+    await page.goto("/");
+    await page.evaluate(() => navigator.serviceWorker.ready);
+    await expect(page.locator("#statHidden")).toHaveText("11");
+    await context.setOffline(true);
+    await page.reload();
+    await expect(page.locator("#statHidden")).toHaveText("11");
+    await expect(page.locator("#safe .redact").first()).toBeAttached();
+  });
+
+  test("the app manifest is linked", async ({ page }) => {
+    await page.goto("/");
+    const res = await page.request.get("/manifest.webmanifest");
+    expect(res.ok()).toBe(true);
+    expect((await res.json()).name).toBe("Paste-Safe");
+  });
+});

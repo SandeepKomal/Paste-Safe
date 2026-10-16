@@ -28,4 +28,6 @@ Use fake values in tests. GitHub flags key-shaped strings even when they're fake
 - User text goes into the DOM as text only (`h()` in `src/ui/dom.js`). ESLint blocks `innerHTML`.
 - Keep `src/core/` free of DOM code.
 
-Themes are CSS tokens: Lens on `:root`, Sticker on `:root[data-skin="sticker"]`, plus a short block of theme-only rules at the end of `css/style.css`. Browser tests run in both.
+Themes are CSS tokens: Lens on `:root`, Sticker on `:root[data-skin="sticker"]`, Board on `:root[data-skin="board"]`, plus a block of theme-only rules for each in `css/style.css`. Browser tests run in all three.
+
+If you add a file the site needs, add it to `FILES` in `sw.js` too, so it works offline. A unit test checks this. Bump `CACHE` in `sw.js` when you release.

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security problem
+    url: https://github.com/SandeepKomal/paste-safe/security/advisories/new
+    about: If the page can be made to leak data, report it privately here instead of opening an issue.

@@ -4,7 +4,9 @@
 
 Strip secrets out of logs and configs before pasting them into ChatGPT, Claude or whatever AI you use, then put the real values back into its answer.
 
-https://sandeepkomal.github.io/paste-safe/
+**Use it now: https://sandeepkomal.github.io/paste-safe/** (free, no sign-up, nothing to install)
+
+![Paste-Safe turning secrets in a log into labels](docs/demo.gif)
 
 | Board | Lens | Sticker |
 | --- | --- | --- |
@@ -40,7 +42,28 @@ Detection is pattern-based, so it can miss things. Check the output before you p
 
 ## Privacy
 
-Everything runs in the browser. There's no backend and nothing is stored. The page's CSP has `connect-src 'none'`, and the header shows a live count of requests to other sites (it should stay at 0).
+Everything runs in your browser. There's no backend, no analytics and no account.
+
+- The page's security policy (`connect-src 'none'`) stops it from sending data anywhere, and the header shows a live count of requests to other sites. It should stay at 0.
+- Your text and the labels are never saved. Close or reload the tab and they're gone.
+- Only your settings are kept in your browser: the theme, your own words list, and whether copy adds the note.
+- The offline cache holds only the site's own files.
+
+## Install it or use it offline
+
+After your first visit, Paste-Safe works with no internet connection. In Chrome or Edge, use **Install** in the address bar (or the menu); on iPhone, **Share → Add to Home Screen**. It then opens like an app.
+
+## Browser support
+
+Current Chrome, Edge, Firefox and Safari (16.4 or newer), on desktop and mobile.
+
+## FAQ
+
+**Is it safe to paste real secrets into this page?** The page can't send them anywhere, and you can check: the request counter, the CSP in `index.html`, and the source code are all public. Still, treat it like any tool: use it on a device you trust, and check the safe text before you share it.
+
+**Can I run it on my own server?** Yes. It's static files: serve the repository folder with any web server, or fork it and turn on GitHub Pages (see below).
+
+**It missed a secret, or hid something harmless.** Please [open an issue](https://github.com/SandeepKomal/paste-safe/issues/new/choose) with a made-up example in the same format. Never post a real secret.
 
 ## Development
 
@@ -54,10 +77,14 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Detection lives in `src/core/` (no DOM, tested in Node). UI code is in `src/ui/`, wired together in `src/main.js`. Types are in `types/index.d.ts`.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add a detector. Detection lives in `src/core/` (no DOM, tested in Node). UI code is in `src/ui/`, wired together in `src/main.js`. Types are in `types/index.d.ts`.
 
 To host a fork, enable **Settings → Pages → Source: GitHub Actions** and push to `main`.
 
+## Security
+
+Found a way to make the page leak data? Please report it privately, see [SECURITY.md](SECURITY.md).
+
 ## License
 
-MIT. No third-party code, fonts or images are shipped; the site uses system fonts.
+MIT, see [LICENSE](LICENSE). No third-party code, fonts or images are shipped; the site uses system fonts. Please follow the [code of conduct](CODE_OF_CONDUCT.md).
