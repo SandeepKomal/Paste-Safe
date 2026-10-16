@@ -1,5 +1,5 @@
 // @ts-check
-export const SKINS = /** @type {const} */ (["lens", "sticker"]);
+export const SKINS = /** @type {const} */ (["lens", "sticker", "holo"]);
 /** @typedef {typeof SKINS[number]} Skin */
 
 const STORAGE_KEY = "paste-safe:skin";

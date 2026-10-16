@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const SKINS = ["lens", "sticker"];
+const SKINS = ["lens", "sticker", "holo"];
 
 /** Fails the test on any console error, uncaught exception or request to another site. */
 function watchProblems(page) {
@@ -153,6 +153,15 @@ test.describe("theme switching", () => {
     await page.goto("/#sticker");
     const bg = await page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor);
     expect(bg).toBe("rgb(246, 240, 228)");
+    await context.close();
+  });
+
+  test("Holo stays dark even when the system is light", async ({ browser }) => {
+    const context = await browser.newContext({ colorScheme: "light" });
+    const page = await context.newPage();
+    await page.goto("/#holo");
+    const bg = await page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor);
+    expect(bg).toBe("rgb(5, 7, 14)");
     await context.close();
   });
 

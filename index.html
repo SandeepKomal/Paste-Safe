@@ -34,6 +34,7 @@
         <div class="skinswitch" id="skinswitch" role="group" aria-label="Theme">
           <button type="button" data-skin-option="lens" aria-pressed="true">Lens</button>
           <button type="button" data-skin-option="sticker" aria-pressed="false">Sticker</button>
+          <button type="button" data-skin-option="holo" aria-pressed="false">Holo</button>
         </div>
         <p class="netcheck" id="netcheck" title="Counted from your browser's own network records">
           <span class="netcheck__dot" aria-hidden="true"></span>
@@ -45,13 +46,19 @@
 
   <main>
     <section class="intro">
-      <div class="intro__head">
+      <div class="intro__head" data-tilt="3">
         <p class="eyebrow">For logs, configs and stack traces</p>
         <h1>Ask any AI about your logs. Keep every <span class="h1-word" tabindex="0">secret</span> to yourself.</h1>
       </div>
       <div class="intro__side">
+        <div class="vault" aria-hidden="true" data-tilt="18">
+          <div class="vault__cube">
+            <span class="vault__face">[AWS_KEY_1]</span><span class="vault__face">[IP_1]</span><span class="vault__face">[EMAIL_1]</span>
+            <span class="vault__face">[JWT_1]</span><span class="vault__face">[SECRET_1]</span><span class="vault__face">[HOST_1]</span>
+          </div>
+        </div>
         <p class="lede">Passwords, keys, tokens, IPs and emails become labels before you share. When the AI answers, your real values go back in. Everything happens in this tab.</p>
-        <div class="badges"><span class="badge">Runs in your browser</span><span class="badge">22 detectors</span><span class="badge">Free and open source</span></div>
+        <div class="badges"><span class="badge" data-tilt="14">Runs in your browser</span><span class="badge" data-tilt="14">22 detectors</span><span class="badge" data-tilt="14">Free and open source</span></div>
       </div>
     </section>
 
@@ -151,15 +158,15 @@
     <section class="how" id="how" aria-labelledby="howTitle">
       <h2 id="howTitle">How it works</h2>
       <ol class="how__steps">
-        <li>
+        <li data-tilt="7">
           <h3>Find</h3>
           <p>Patterns for well-known formats such as AWS, GitHub, Stripe and JWTs catch keys and tokens. Settings like <code>DB_PASSWORD=</code>, passwords inside URLs, emails, IPs and internal hostnames are caught too. Long random-looking strings are flagged even when no pattern names them.</p>
         </li>
-        <li>
+        <li data-tilt="7">
           <h3>Swap</h3>
           <p>Each distinct value gets one label, like <code>[AWS_KEY_1]</code>, everywhere it appears. The AI can still tell that two lines mention the same host or key.</p>
         </li>
-        <li>
+        <li data-tilt="7">
           <h3>Restore</h3>
           <p>Labels in the AI's reply are swapped back for your real values, so you can run its commands or apply its fix straight away.</p>
         </li>

@@ -3,10 +3,11 @@ import { detect } from "./core/detect.js";
 import { mask, restore, toText } from "./core/transform.js";
 import { EXAMPLE, exampleAnswer } from "./example.js";
 import { copyText } from "./ui/clipboard.js";
+import { sweep, wireDepth } from "./ui/depth.js";
 import { debounce, formatBytes, req } from "./ui/dom.js";
 import { watchExternalRequests } from "./ui/netwatch.js";
 import { wirePeek } from "./ui/peek.js";
-import { wireSkinSwitch } from "./ui/skin.js";
+import { currentSkin, wireSkinSwitch } from "./ui/skin.js";
 import { CATEGORY_NAMES, renderLedger, renderMirror, renderSegments } from "./ui/render.js";
 
 // Above this size, detection is debounced instead of running on every keystroke.
@@ -57,6 +58,7 @@ function analyse() {
   const values = new Set(state.detection.findings.map(f => f.value));
   for (const v of state.shown) if (!values.has(v)) state.shown.delete(v);
   paint();
+  sweep(el.safe);
 }
 const analyseLater = debounce(analyse, 120);
 
@@ -172,7 +174,7 @@ wirePeek({
   lookup: p => state.detection.findings.find(f => f.placeholder === p)?.value,
 });
 wireSkinSwitch(el.skinSwitch, skin => {
-  el.status.textContent = `${skin === "lens" ? "Lens" : "Sticker"} theme on.`;
+  el.status.textContent = `${skin[0].toUpperCase()}${skin.slice(1)} theme on.`;
   seenLabels.clear();
   paint();
 });
@@ -187,6 +189,7 @@ el.clear.addEventListener("click", () => {
   el.input.focus();
 });
 new ResizeObserver(syncScroll).observe(el.input);
+wireDepth(() => currentSkin() === "holo");
 
 watchExternalRequests(n => {
   el.netcount.textContent = String(n);

@@ -6,9 +6,9 @@ Strip secrets out of logs and configs before pasting them into ChatGPT, Claude o
 
 https://sandeepkomal.github.io/paste-safe/
 
-| Lens | Sticker |
-| --- | --- |
-| ![Lens theme](docs/screenshot-lens.png) | ![Sticker theme](docs/screenshot-sticker.png) |
+| Lens | Sticker | Holo |
+| --- | --- | --- |
+| ![Lens theme](docs/screenshot-lens.png) | ![Sticker theme](docs/screenshot-sticker.png) | ![Holo theme](docs/screenshot-holo.png) |
 
 ## Usage
 
@@ -18,7 +18,7 @@ https://sandeepkomal.github.io/paste-safe/
 
 You can switch individual findings off if they're fine to share. Hovering a label shows the value behind it.
 
-There are two themes (switch in the header, or open `#lens` / `#sticker`).
+There are three themes (switch in the header, or open `#lens`, `#sticker` or `#holo`).
 
 ## What gets hidden
 

@@ -1,7 +1,7 @@
 // @ts-check
 // Blocking script in <head> so the theme is set before first paint (no flash).
 (() => {
-  const SKINS = ["lens", "sticker"];
+  const SKINS = ["lens", "sticker", "holo"];
   let skin = location.hash.slice(1);
   if (!SKINS.includes(skin)) {
     try {

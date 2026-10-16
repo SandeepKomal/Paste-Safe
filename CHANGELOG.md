@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- Holo theme: dark, with 3D tilt, a turning label cube, a grid floor and a scan line over the safe text
 - Fix slow matching on crafted input in the SECRET, HOST, EMAIL and DB_PASSWORD rules
 - Move JSDoc types into `types/index.d.ts`; trim comments
 
