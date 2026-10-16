@@ -1,0 +1,19 @@
+name: Something was hidden that shouldn't be
+description: Paste-Safe replaced text that is safe to share.
+labels: [false positive]
+body:
+  - type: markdown
+    attributes:
+      value: Issues are public, so only share text that is safe to show.
+  - type: textarea
+    id: example
+    attributes:
+      label: The text that was hidden
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: label
+    attributes:
+      label: Which label did it get?
+      placeholder: e.g. [SECRET_LIKE_1]

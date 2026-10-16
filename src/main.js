@@ -365,3 +365,6 @@ watchExternalRequests(n => {
 });
 
 loadExample();
+
+// Offline support and "install as an app". Only works over https or localhost.
+navigator.serviceWorker?.register("sw.js").catch(() => {});

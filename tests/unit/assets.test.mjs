@@ -7,7 +7,7 @@ import { join, extname } from "node:path";
 
 const ROOT = new URL("../../", import.meta.url).pathname;
 /** Everything the Pages workflow publishes. */
-const SHIPPED = ["index.html", "css", "src", "assets"];
+const SHIPPED = ["index.html", "sw.js", "manifest.webmanifest", "css", "src", "assets"];
 
 const walk = p => (statSync(join(ROOT, p)).isDirectory() ? readdirSync(join(ROOT, p)).flatMap(f => walk(join(p, f))) : [p]);
 const files = SHIPPED.flatMap(walk);
@@ -19,7 +19,7 @@ test("no font files are shipped", () => {
 });
 
 test("only expected kinds of files are shipped", () => {
-  const unexpected = files.filter(f => ![".html", ".css", ".js", ".svg"].includes(extname(f)));
+  const unexpected = files.filter(f => ![".html", ".css", ".js", ".svg", ".png", ".webmanifest"].includes(extname(f)));
   assert.deepEqual(unexpected, []);
 });
 
@@ -42,7 +42,9 @@ test("the page loads scripts and styles only from this site", () => {
 });
 
 test("scripts never fetch or import from other sites", () => {
-  for (const f of files.filter(f => f.endsWith(".js"))) {
+  // sw.js may fetch, but only this site's own files (it checks the origin).
+  assert.match(read("sw.js"), /origin !== self\.location\.origin\) return;/);
+  for (const f of files.filter(f => f.endsWith(".js") && f !== "sw.js")) {
     const js = read(f);
     assert.doesNotMatch(js, /\bfetch\s*\(|XMLHttpRequest|WebSocket|sendBeacon|importScripts/, `${f} makes network requests`);
     assert.doesNotMatch(js, /from\s+["'](?:https?:)?\/\//, `${f} imports from another site`);
@@ -62,4 +64,16 @@ test("no file holds a complete key in a well-known format", () => {
     const text = read(f);
     for (const shape of KEY_SHAPES) assert.doesNotMatch(text, shape, `${f} contains a complete key matching ${shape}`);
   }
+});
+
+test("the offline cache lists every file the site needs", () => {
+  const listed = new Set([...read("sw.js").matchAll(/^\s+"([^"]+)",$/gm)].map(m => m[1]));
+  const needed = files.filter(f => f !== "sw.js" && f !== "assets/og.png");
+  assert.deepEqual(needed.filter(f => !listed.has(f)), []);
+  assert.deepEqual([...listed].filter(f => f !== "./" && !files.includes(f)), []);
+});
+
+test("the app manifest points at icons that exist", () => {
+  const manifest = JSON.parse(read("manifest.webmanifest"));
+  for (const icon of manifest.icons) assert.ok(files.includes(icon.src), icon.src);
 });

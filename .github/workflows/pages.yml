@@ -57,7 +57,7 @@ jobs:
         if: steps.pages.outputs.enabled == 'true'
         run: |
           mkdir -p _site
-          cp -r index.html css src assets _site/
+          cp -r index.html sw.js manifest.webmanifest css src assets _site/
           touch _site/.nojekyll
 
       - uses: actions/upload-pages-artifact@v4

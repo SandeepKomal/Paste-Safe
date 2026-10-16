@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 2.0.0
+- Installable as an app and works offline (service worker caches only this site's files)
+- Share image, app icons, issue and PR templates, code of conduct
 - Copy adds a note asking the AI to keep labels as they are; restore also accepts labels the AI changed slightly (`IP_1`, `[ip-1]`)
 - New detectors: Google Cloud key IDs, Hugging Face, Shopify, Twilio and Discord tokens, Basic auth, Docker logins, session cookies, tokens in URLs, card numbers, phone numbers, usernames in paths, IPv6 and MAC addresses
 - Your own words to always hide, saved in the browser
