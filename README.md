@@ -1,6 +1,13 @@
 # Paste-Safe
 
+[![Try it](https://img.shields.io/badge/try_it-online-ffb000)](https://sandeepkomal.github.io/paste-safe/)
 [![CI](https://github.com/SandeepKomal/paste-safe/actions/workflows/ci.yml/badge.svg)](https://github.com/SandeepKomal/paste-safe/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/SandeepKomal/paste-safe/actions/workflows/codeql.yml/badge.svg)](https://github.com/SandeepKomal/paste-safe/actions/workflows/codeql.yml)
+[![Deploy](https://github.com/SandeepKomal/paste-safe/actions/workflows/pages.yml/badge.svg)](https://github.com/SandeepKomal/paste-safe/actions/workflows/pages.yml)
+[![Release](https://img.shields.io/github/v/release/SandeepKomal/paste-safe)](https://github.com/SandeepKomal/paste-safe/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Runs in your browser](https://img.shields.io/badge/runs_in-your_browser-2ea043)](#privacy)
+[![Works offline](https://img.shields.io/badge/works-offline-2ea043)](#install-it-or-use-it-offline)
 
 Strip secrets out of logs and configs before pasting them into ChatGPT, Claude or whatever AI you use, then put the real values back into its answer.
 
