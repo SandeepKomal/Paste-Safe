@@ -1,6 +1,12 @@
 # Changelog
 
 ## Unreleased
+- Copy adds a note asking the AI to keep labels as they are; restore also accepts labels the AI changed slightly (`IP_1`, `[ip-1]`)
+- New detectors: Google Cloud key IDs, Hugging Face, Shopify, Twilio and Discord tokens, Basic auth, Docker logins, session cookies, tokens in URLs, card numbers, phone numbers, usernames in paths, IPv6 and MAC addresses
+- Your own words to always hide, saved in the browser
+- Open or drop a text file; large inputs are checked in a worker
+- Fix: very large logs no longer freeze the page (highlights switch off above 2,000 labels)
+- Warn before closing the tab while labels are in use
 - Board theme, now the default: split-flap labels and a departure board in the intro; the workbench turns over between your text and the safe text
 - Fix slow matching on crafted input in the SECRET, HOST, EMAIL and DB_PASSWORD rules
 - Move JSDoc types into `types/index.d.ts`; trim comments

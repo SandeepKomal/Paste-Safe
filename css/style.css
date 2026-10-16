@@ -327,6 +327,16 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
 }
 .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .empty { color: var(--muted); padding: 6px 0; }
+.check { display: flex; align-items: center; gap: 8px; font-size: .86rem; color: var(--ink-soft); cursor: pointer; }
+.check input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+.editor.is-dropping { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.words { border-top: 1px solid var(--rule); padding-top: 14px; }
+.words summary { cursor: pointer; font-weight: 600; width: fit-content; }
+.words__body { display: grid; gap: 8px; margin-top: 10px; max-width: 640px; }
+.words__input {
+  width: 100%; resize: vertical; padding: 10px 12px; border-radius: var(--radius-sm); border: var(--border-w) solid var(--rule);
+  background: var(--surface-2); color: var(--ink); font: 13.5px/1.6 var(--font-mono);
+}
 
 .switch { position: relative; display: inline-block; width: 40px; height: 24px; cursor: pointer; }
 .switch__input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; z-index: 1; }
@@ -562,6 +572,7 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
 [data-skin="board"] .sheet { line-height: 2.15; }
 [data-skin="board"] .hit { box-shadow: inset 0 -2px 0 var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); }
 [data-skin="board"] .redact { font-weight: 700; white-space: nowrap; border-radius: 4px; }
+[data-skin="board"] .redact--flat { padding: 0 3px; color: var(--c, var(--accent)); background: var(--tile); }
 [data-skin="board"] .redact.is-new .fl { animation: flap .13s calc(var(--i, 0) * 60ms + var(--j, 0) * 28ms + 350ms) 3 ease-in-out both; }
 [data-skin="board"] .redact.is-shown .fl, [data-skin="board"] .redact:hover .fl { filter: brightness(1.3); }
 [data-skin="board"] .restored { background: var(--restore); color: var(--restore-ink); border-radius: 3px; }
@@ -578,7 +589,7 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
 [data-skin="board"] .footer { font-family: var(--font-mono); font-size: .76rem; letter-spacing: .05em; }
 
 /* The workbench turns over: your text on the front, the safe text on the back. */
-[data-skin="board"] .bench:has(#workbench) { overflow: visible; perspective: 2200px; }
+[data-skin="board"] .bench--main { overflow: visible; perspective: 2200px; }
 [data-skin="board"] #workbench {
   grid-template-columns: minmax(0, 1fr); transform-style: preserve-3d;
   transition: transform .95s cubic-bezier(.3, 1.3, .45, 1);

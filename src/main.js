@@ -1,6 +1,7 @@
 // @ts-check
 import { detect } from "./core/detect.js";
-import { mask, restore, toText } from "./core/transform.js";
+import { RULES, wordRules } from "./core/rules.js";
+import { mask, restore, toText, withNote } from "./core/transform.js";
 import { EXAMPLE, exampleAnswer } from "./example.js";
 import { copyText } from "./ui/clipboard.js";
 import { debounce, formatBytes, req } from "./ui/dom.js";
@@ -13,6 +14,13 @@ import { CATEGORY_NAMES, renderLedger, renderMirror, renderSegments } from "./ui
 
 // Above this size, detection is debounced instead of running on every keystroke.
 const SYNC_LIMIT = 50_000;
+// Above this size, detection runs in a worker so the page stays responsive.
+const WORKER_LIMIT = 200_000;
+// Above this many labels, the text is drawn without per-label highlights:
+// laying out tens of thousands of inline elements takes the browser seconds.
+const RICH_LIMIT = 2_000;
+const MAX_FILE_BYTES = 50 * 1024 * 1024;
+const WORDS_KEY = "paste-safe:words";
 
 const el = {
   input: req("#input", HTMLTextAreaElement),
@@ -27,6 +35,7 @@ const el = {
   categories: req("#categories", HTMLElement),
   statHidden: req("#statHidden", HTMLElement),
   statSize: req("#statSize", HTMLElement),
+  statPlain: req("#statPlain", HTMLElement),
   restoreNote: req("#restoreNote", HTMLElement),
   copySafe: req("#copySafe", HTMLButtonElement),
   copyRestored: req("#copyRestored", HTMLButtonElement),
@@ -43,6 +52,11 @@ const el = {
   paneSafe: req("#paneSafe", HTMLElement),
   flip: req("#flip", HTMLButtonElement),
   gate: req("#gate", HTMLElement),
+  withNote: req("#withNote", HTMLInputElement),
+  words: req("#words", HTMLTextAreaElement),
+  openFile: req("#openFile", HTMLButtonElement),
+  fileInput: req("#fileInput", HTMLInputElement),
+  dropZone: req("#dropZone", HTMLElement),
 };
 
 /** @import { Detection, Category } from "../types/index.js" */
@@ -58,8 +72,45 @@ const state = {
 };
 const seenLabels = /** @type {Set<string>} */ (new Set());
 
+/** @type {string[]} */
+let words = [];
+const rules = () => [...wordRules(words), ...RULES];
+
+/** @type {Worker | null | undefined} */
+let worker;
+let job = 0;
+function startWorker() {
+  try {
+    const w = new Worker(new URL("./core/worker.js", import.meta.url), { type: "module" });
+    w.addEventListener("message", e => {
+      if (e.data.id === job) apply(e.data.detection);
+    });
+    w.addEventListener("error", () => {
+      worker = null;
+      apply(detect(el.input.value, rules()));
+    });
+    return w;
+  } catch {
+    return null;
+  }
+}
+
 function analyse() {
-  state.detection = detect(el.input.value);
+  const text = el.input.value;
+  const id = ++job;
+  if (text.length > WORKER_LIMIT) {
+    if (worker === undefined) worker = startWorker();
+    if (worker) {
+      el.statHidden.textContent = "…";
+      worker.postMessage({ id, text, words });
+      return;
+    }
+  }
+  apply(detect(text, rules()));
+}
+
+function apply(/** @type {Detection} */ detection) {
+  state.detection = detection;
   state.categoryOf = new Map(state.detection.findings.map(f => [f.placeholder, f.category]));
   const values = new Set(state.detection.findings.map(f => f.value));
   for (const v of state.shown) if (!values.has(v)) state.shown.delete(v);
@@ -75,8 +126,15 @@ function paint() {
 
   const current = new Set(spans.map(s => s.placeholder));
   for (const p of seenLabels) if (!current.has(p)) seenLabels.delete(p);
-  renderSegments(el.safe, segments, seenLabels, state.categoryOf);
-  renderMirror(el.mirror, text, spans, state.shown, state.categoryOf);
+  const rich = spans.length <= RICH_LIMIT;
+  if (rich) {
+    renderSegments(el.safe, segments, seenLabels, state.categoryOf);
+    renderMirror(el.mirror, text, spans, state.shown, state.categoryOf);
+  } else {
+    el.safe.textContent = state.safeText;
+    el.mirror.textContent = text + "\u200b";
+  }
+  el.statPlain.hidden = rich;
   renderLedger(el.ledger, findings, state.shown);
 
   const hidden = findings.filter(f => !state.shown.has(f.value));
@@ -170,7 +228,34 @@ function turnToSafe(/** @type {number} */ ms) {
   if (isBoard()) turnLater = setTimeout(() => card.set(true), ms);
 }
 
+// Labels only live in this tab, so warn before losing them.
+let edited = false;
+addEventListener("beforeunload", e => {
+  if (edited && state.detection.findings.length) e.preventDefault();
+});
+
+/** @param {File} file */
+async function openFile(file) {
+  if (file.size > MAX_FILE_BYTES) {
+    el.status.textContent = `${file.name} is too large. Files up to 50 MB can be opened.`;
+    return;
+  }
+  const text = await file.text();
+  if (text.includes("\u0000")) {
+    el.status.textContent = `${file.name} doesn't look like a text file.`;
+    return;
+  }
+  card.set(false);
+  el.input.value = text;
+  edited = true;
+  state.shown.clear();
+  analyse();
+  el.status.textContent = `Opened ${file.name}.`;
+  turnToSafe(450);
+}
+
 function loadExample() {
+  edited = false;
   card.set(false);
   turnToSafe(1200);
   el.input.value = EXAMPLE;
@@ -183,6 +268,55 @@ function loadExample() {
 el.input.addEventListener("input", () => (el.input.value.length <= SYNC_LIMIT ? analyse() : analyseLater()));
 el.input.addEventListener("scroll", syncScroll, { passive: true });
 el.input.addEventListener("paste", () => turnToSafe(450));
+el.input.addEventListener("input", () => (edited = true));
+el.openFile.addEventListener("click", () => el.fileInput.click());
+el.fileInput.addEventListener("change", () => {
+  const file = el.fileInput.files?.[0];
+  if (file) openFile(file);
+  el.fileInput.value = "";
+});
+el.dropZone.addEventListener("dragover", e => {
+  if (!e.dataTransfer?.types.includes("Files")) return;
+  e.preventDefault();
+  el.dropZone.classList.add("is-dropping");
+});
+el.dropZone.addEventListener("dragleave", () => el.dropZone.classList.remove("is-dropping"));
+el.dropZone.addEventListener("drop", e => {
+  const file = e.dataTransfer?.files[0];
+  el.dropZone.classList.remove("is-dropping");
+  if (!file) return;
+  e.preventDefault();
+  openFile(file);
+});
+
+try {
+  el.words.value = localStorage.getItem(WORDS_KEY) ?? "";
+} catch {
+  // Storage can be blocked; the list then lasts for this visit only.
+}
+const readWords = () => (words = el.words.value.split("\n"));
+readWords();
+el.words.addEventListener("input", debounce(() => {
+  readWords();
+  try {
+    localStorage.setItem(WORDS_KEY, el.words.value);
+  } catch {
+    // See above.
+  }
+  analyse();
+}, 250));
+el.withNote.addEventListener("change", () => {
+  try {
+    localStorage.setItem("paste-safe:note", el.withNote.checked ? "1" : "0");
+  } catch {
+    // See above.
+  }
+});
+try {
+  el.withNote.checked = localStorage.getItem("paste-safe:note") !== "0";
+} catch {
+  // See above.
+}
 el.answer.addEventListener("input", paintAnswer);
 el.ledger.addEventListener("change", e => {
   const t = e.target;
@@ -210,10 +344,11 @@ wireSkinSwitch(el.skinSwitch, skin => {
   seenLabels.clear();
   paint();
 });
-wireCopy(el.copySafe, () => state.safeText, el.safe, "Copied the safe text. Paste it into your AI.");
+wireCopy(el.copySafe, () => (el.withNote.checked ? withNote(state.safeText) : state.safeText), el.safe, "Copied the safe text. Paste it into your AI.");
 wireCopy(el.copyRestored, () => state.restoredText, el.restored, "Copied the answer with your real values.");
 el.loadExample.addEventListener("click", loadExample);
 el.clear.addEventListener("click", () => {
+  edited = false;
   clearTimeout(turnLater);
   card.set(false);
   el.input.value = "";
