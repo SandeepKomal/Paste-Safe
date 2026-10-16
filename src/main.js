@@ -4,9 +4,11 @@ import { mask, restore, toText } from "./core/transform.js";
 import { EXAMPLE, exampleAnswer } from "./example.js";
 import { copyText } from "./ui/clipboard.js";
 import { debounce, formatBytes, req } from "./ui/dom.js";
+import { wireFlip } from "./ui/flip.js";
+import { wireGate } from "./ui/gate.js";
 import { watchExternalRequests } from "./ui/netwatch.js";
 import { wirePeek } from "./ui/peek.js";
-import { wireSkinSwitch } from "./ui/skin.js";
+import { currentSkin, wireSkinSwitch } from "./ui/skin.js";
 import { CATEGORY_NAMES, renderLedger, renderMirror, renderSegments } from "./ui/render.js";
 
 // Above this size, detection is debounced instead of running on every keystroke.
@@ -36,6 +38,11 @@ const el = {
   skinSwitch: req("#skinswitch", HTMLElement),
   peek: req("#peek", HTMLElement),
   peekValue: req("#peekValue", HTMLElement),
+  workbench: req("#workbench", HTMLElement),
+  paneText: req("#paneText", HTMLElement),
+  paneSafe: req("#paneSafe", HTMLElement),
+  flip: req("#flip", HTMLButtonElement),
+  gate: req("#gate", HTMLElement),
 };
 
 /** @import { Detection, Category } from "../types/index.js" */
@@ -142,7 +149,30 @@ function wireCopy(button, getText, fallback, doneMessage) {
   });
 }
 
+const isBoard = () => currentSkin() === "board";
+const card = wireFlip({
+  card: el.workbench,
+  button: el.flip,
+  front: el.paneText,
+  back: el.paneSafe,
+  isOn: isBoard,
+  // Replay the label flaps each time the safe side comes round.
+  onTurn: safe => {
+    if (!safe) return;
+    seenLabels.clear();
+    paint();
+  },
+});
+/** @type {ReturnType<typeof setTimeout> | undefined} */
+let turnLater;
+function turnToSafe(/** @type {number} */ ms) {
+  clearTimeout(turnLater);
+  if (isBoard()) turnLater = setTimeout(() => card.set(true), ms);
+}
+
 function loadExample() {
+  card.set(false);
+  turnToSafe(1200);
   el.input.value = EXAMPLE;
   state.shown.clear();
   analyse();
@@ -152,6 +182,7 @@ function loadExample() {
 
 el.input.addEventListener("input", () => (el.input.value.length <= SYNC_LIMIT ? analyse() : analyseLater()));
 el.input.addEventListener("scroll", syncScroll, { passive: true });
+el.input.addEventListener("paste", () => turnToSafe(450));
 el.answer.addEventListener("input", paintAnswer);
 el.ledger.addEventListener("change", e => {
   const t = e.target;
@@ -171,8 +202,11 @@ wirePeek({
   valueEl: el.peekValue,
   lookup: p => state.detection.findings.find(f => f.placeholder === p)?.value,
 });
+const gate = wireGate(el.gate, isBoard);
 wireSkinSwitch(el.skinSwitch, skin => {
-  el.status.textContent = `${skin === "lens" ? "Lens" : "Sticker"} theme on.`;
+  el.status.textContent = `${skin[0].toUpperCase()}${skin.slice(1)} theme on.`;
+  card.sync();
+  gate.refresh();
   seenLabels.clear();
   paint();
 });
@@ -180,6 +214,8 @@ wireCopy(el.copySafe, () => state.safeText, el.safe, "Copied the safe text. Past
 wireCopy(el.copyRestored, () => state.restoredText, el.restored, "Copied the answer with your real values.");
 el.loadExample.addEventListener("click", loadExample);
 el.clear.addEventListener("click", () => {
+  clearTimeout(turnLater);
+  card.set(false);
   el.input.value = "";
   el.answer.value = "";
   state.shown.clear();

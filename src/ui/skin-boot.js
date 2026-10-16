@@ -1,7 +1,7 @@
 // @ts-check
 // Blocking script in <head> so the theme is set before first paint (no flash).
 (() => {
-  const SKINS = ["lens", "sticker"];
+  const SKINS = ["board", "lens", "sticker"];
   let skin = location.hash.slice(1);
   if (!SKINS.includes(skin)) {
     try {
@@ -10,5 +10,5 @@
       skin = "";
     }
   }
-  document.documentElement.dataset.skin = SKINS.includes(skin) ? skin : "lens";
+  document.documentElement.dataset.skin = SKINS.includes(skin) ? skin : "board";
 })();

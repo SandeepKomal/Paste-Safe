@@ -32,7 +32,8 @@
           <a href="https://github.com/SandeepKomal/paste-safe">GitHub</a>
         </nav>
         <div class="skinswitch" id="skinswitch" role="group" aria-label="Theme">
-          <button type="button" data-skin-option="lens" aria-pressed="true">Lens</button>
+          <button type="button" data-skin-option="board" aria-pressed="true">Board</button>
+          <button type="button" data-skin-option="lens" aria-pressed="false">Lens</button>
           <button type="button" data-skin-option="sticker" aria-pressed="false">Sticker</button>
         </div>
         <p class="netcheck" id="netcheck" title="Counted from your browser's own network records">
@@ -47,9 +48,10 @@
     <section class="intro">
       <div class="intro__head">
         <p class="eyebrow">For logs, configs and stack traces</p>
-        <h1>Ask any AI about your logs. Keep every <span class="h1-word" tabindex="0">secret</span> to yourself.</h1>
+        <h1>Ask any AI about your logs. Keep every <span class="h1-word" tabindex="0"><span class="fl">s</span><span class="fl">e</span><span class="fl">c</span><span class="fl">r</span><span class="fl">e</span><span class="fl">t</span></span> to yourself.</h1>
       </div>
       <div class="intro__side">
+        <div class="gate" id="gate" aria-hidden="true"></div>
         <p class="lede">Passwords, keys, tokens, IPs and emails become labels before you share. When the AI answers, your real values go back in. Everything happens in this tab.</p>
         <div class="badges"><span class="badge">Runs in your browser</span><span class="badge">22 detectors</span><span class="badge">Free and open source</span></div>
       </div>
@@ -64,13 +66,14 @@
           <span id="statSize">0 B</span>
         </p>
         <div class="bench__actions">
+          <button class="btn btn--flip" id="flip" type="button" aria-pressed="false">Show safe side</button>
           <button class="btn btn--ghost" id="loadExample" type="button">Load example</button>
           <button class="btn btn--ghost" id="clear" type="button">Clear</button>
         </div>
       </div>
 
-      <div class="bench__grid">
-        <div class="pane">
+      <div class="bench__grid" id="workbench">
+        <div class="pane" id="paneText">
           <div class="pane__head">
             <span class="step">1</span>
             <div>
@@ -84,7 +87,7 @@
           </div>
         </div>
 
-        <div class="pane pane--safe">
+        <div class="pane pane--safe" id="paneSafe">
           <div class="pane__head">
             <span class="step">2</span>
             <div>

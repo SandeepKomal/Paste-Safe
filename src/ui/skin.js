@@ -1,5 +1,5 @@
 // @ts-check
-export const SKINS = /** @type {const} */ (["lens", "sticker"]);
+export const SKINS = /** @type {const} */ (["board", "lens", "sticker"]);
 /** @typedef {typeof SKINS[number]} Skin */
 
 const STORAGE_KEY = "paste-safe:skin";
@@ -7,7 +7,7 @@ const STORAGE_KEY = "paste-safe:skin";
 /** @returns {Skin} */
 export function currentSkin() {
   const s = document.documentElement.dataset.skin;
-  return /** @type {Skin} */ (SKINS.includes(/** @type {Skin} */ (s)) ? s : "lens");
+  return /** @type {Skin} */ (SKINS.includes(/** @type {Skin} */ (s)) ? s : "board");
 }
 
 export function setSkin(/** @type {Skin} */ skin) {
