@@ -124,6 +124,19 @@ test("the page never scrolls sideways", async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
+test("capture Board screenshots for the visual audit", async ({ page, browserName, viewport }, testInfo) => {
+  test.skip(browserName !== "chromium", "Capture documentation previews once using Chromium.");
+  const mobile = (viewport?.width ?? 1280) <= 960;
+  await page.goto("/#board");
+  await expect(page.locator("#statHidden")).toHaveText("11");
+  await expect(page.locator("#workbench")).toHaveAttribute("data-side", "safe");
+  await page.screenshot({
+    path: testInfo.outputPath(mobile ? "board-mobile.png" : "board-desktop.png"),
+    fullPage: true,
+    animations: "disabled",
+  });
+});
+
 test("Board styling stays monochrome and responsive", async ({ page, viewport }) => {
   await page.goto("/#board");
   const metrics = await page.evaluate(() => {
