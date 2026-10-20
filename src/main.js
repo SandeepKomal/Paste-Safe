@@ -11,7 +11,6 @@ import { watchExternalRequests } from "./ui/netwatch.js";
 import { wirePeek } from "./ui/peek.js";
 import { currentSkin, wireSkinSwitch } from "./ui/skin.js";
 import { wireScrollStory } from "./ui/scroll-story.js";
-import { wireRibbonHero } from "./ui/ribbon-hero.js";
 import { CATEGORY_NAMES, renderLedger, renderMirror, renderSegments } from "./ui/render.js";
 
 // Above this size, detection is debounced instead of running on every keystroke.
@@ -367,7 +366,6 @@ watchExternalRequests(n => {
 });
 
 wireScrollStory();
-wireRibbonHero();
 loadExample();
 
 // Offline support and "install as an app". Only works over https or localhost.
