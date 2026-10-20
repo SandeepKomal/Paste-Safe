@@ -1596,8 +1596,9 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
   50% { transform: translateY(5px); opacity: 1; }
 }
 @media (max-width: 960px) {
-  .scroll-story__layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "stage" "chapters"; gap: 0; }
-  .scroll-story__stage-shell { top: 78px; z-index: 4; margin-bottom: 24px; }
+  /* In the narrow layout the pinned stage overlays the chapter rail while the text keeps scrolling. */
+  .scroll-story__layout { display: block; }
+  .scroll-story__stage-shell { position: sticky; top: 78px; z-index: 4; margin-bottom: 24px; }
   .scroll-story__stage { height: clamp(330px, 54svh, 500px); min-height: 330px; padding: 15px; border-radius: 19px; }
   .scroll-story__scene { inset: 54px 15px 54px; gap: 14px; }
   .scroll-story__scene-heading h3 { font-size: clamp(1.6rem, 4vw, 2.35rem); }
