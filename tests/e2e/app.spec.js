@@ -183,6 +183,9 @@ test("Board hero illustrates the local masking flow", async ({ page }) => {
   await expect(visual.locator(".privacy-visual__aurora--two")).toBeAttached();
   await expect(visual.locator(".privacy-visual__aurora-glow")).toBeAttached();
   await expect(visual.locator(".privacy-visual__motion-field")).toBeAttached();
+  await expect(visual.locator(".privacy-visual__contour")).toBeAttached();
+  const stageBackground = await visual.evaluate(element => getComputedStyle(element).backgroundColor);
+  expect(stageBackground).toBe("rgb(8, 9, 14)");
   await expect(visual.locator("svg")).toHaveAttribute("viewBox", "0 0 880 360");
   const heroBox = await visual.boundingBox();
   if (!heroBox) throw new Error("Privacy hero has no layout box");
