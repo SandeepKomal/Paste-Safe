@@ -2227,3 +2227,23 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
   }
   .scroll-story__scene { transition: none !important; }
 }
+
+
+/* The hero keeps its slim ribbon, not the two inset example-card panels. */
+:root[data-skin="board"] .privacy-visual__source,
+:root[data-skin="board"] .privacy-visual__safe,
+:root[data-skin="board"] .privacy-visual__mobile-flow {
+  display: none !important;
+}
+:root[data-skin="board"] .privacy-visual__art {
+  display: block !important;
+  width: 100%;
+  height: clamp(145px, 22vw, 205px);
+  min-height: 0;
+  align-self: center;
+}
+@media (max-width: 560px) {
+  :root[data-skin="board"] .privacy-visual__art {
+    height: 145px;
+  }
+}
