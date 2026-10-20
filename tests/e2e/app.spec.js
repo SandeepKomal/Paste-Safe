@@ -124,6 +124,37 @@ test("the page never scrolls sideways", async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
+test("Board styling stays monochrome and responsive", async ({ page, viewport }) => {
+  await page.goto("/#board");
+  const metrics = await page.evaluate(() => {
+    const main = document.querySelector("main");
+    const intro = document.querySelector(".intro");
+    const workspace = document.querySelector(".bench--main");
+    const gate = document.querySelector(".gate");
+    if (!main || !intro || !workspace || !gate) throw new Error("Expected layout elements are missing");
+    return {
+      background: getComputedStyle(document.documentElement).backgroundColor,
+      colorScheme: getComputedStyle(document.documentElement).colorScheme,
+      gateDisplay: getComputedStyle(gate).display,
+      gridTracks: getComputedStyle(main).gridTemplateColumns.split(" ").length,
+      introWidth: intro.getBoundingClientRect().width,
+      workspaceWidth: workspace.getBoundingClientRect().width,
+      viewportWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    };
+  });
+  expect(metrics.background).toBe("rgb(255, 255, 255)");
+  expect(metrics.colorScheme).toBe("light");
+  expect(metrics.gateDisplay).toBe("none");
+  expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.viewportWidth);
+  if ((viewport?.width ?? 1280) > 960) {
+    expect(metrics.gridTracks).toBe(12);
+    expect(metrics.workspaceWidth).toBeGreaterThan(metrics.introWidth);
+  } else {
+    expect(metrics.gridTracks).toBe(1);
+  }
+});
+
 test("the request counter shows zero", async ({ page }) => {
   await expect(page.locator("#netcount")).toHaveText("0");
 });
