@@ -1888,7 +1888,7 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
 :root[data-skin="board"] .intro h1 {
   max-width: 14ch;
   color: #17191d;
-  font: 700 clamp(3.1rem, 6.7vw, 6.4rem)/.94 var(--font-display);
+  font: 700 clamp(2.8rem, 5.4vw, 5rem)/.96 var(--font-display);
   letter-spacing: -.065em;
   text-wrap: balance;
   overflow-wrap: normal;
@@ -2098,13 +2098,13 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
     gap: 22px;
     padding: 30px 0 32px;
   }
-  :root[data-skin="board"] .intro h1 { max-width: 16ch; font-size: clamp(2.8rem, 6.7vw, 4.5rem); }
+  :root[data-skin="board"] .intro h1 { max-width: 16ch; font-size: clamp(2.5rem, 5.4vw, 3.9rem); }
   :root[data-skin="board"] .privacy-visual { padding: 15px; }
 }
 @media (max-width: 560px) {
   :root[data-skin="board"] main { gap: 19px; }
   :root[data-skin="board"] main > .intro { padding: 24px 0 28px; }
-  :root[data-skin="board"] .intro h1 { max-width: 15ch; font-size: clamp(2.55rem, 10.5vw, 3.55rem); }
+  :root[data-skin="board"] .intro h1 { max-width: 15ch; font-size: clamp(2.3rem, 8.7vw, 3rem); }
   :root[data-skin="board"] .privacy-visual { min-height: 0; padding: 13px 12px 11px; border-radius: 16px; }
   :root[data-skin="board"] .privacy-visual__header { font-size: .55rem; }
   :root[data-skin="board"] .privacy-visual__progress-row { margin-top: 10px; font-size: .51rem; }
@@ -2226,4 +2226,24 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
     transition: none !important;
   }
   .scroll-story__scene { transition: none !important; }
+}
+
+
+/* The hero keeps its slim ribbon, not the two inset example-card panels. */
+:root[data-skin="board"] .privacy-visual__source,
+:root[data-skin="board"] .privacy-visual__safe,
+:root[data-skin="board"] .privacy-visual__mobile-flow {
+  display: none !important;
+}
+:root[data-skin="board"] .privacy-visual__art {
+  display: block !important;
+  width: 100%;
+  height: clamp(145px, 22vw, 205px);
+  min-height: 0;
+  align-self: center;
+}
+@media (max-width: 560px) {
+  :root[data-skin="board"] .privacy-visual__art {
+    height: 145px;
+  }
 }
