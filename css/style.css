@@ -1665,7 +1665,7 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
 }
 
 
-/* Afterhours-inspired privacy ribbon: enlarge the hero and let the wave react gently. */
+/* Afterhours-inspired ribbon stage: dark editorial canvas, spectral flow, light glass cards. */
 @media (min-width: 961px) {
   :root[data-skin="board"] main > .intro {
     grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
@@ -1681,22 +1681,22 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
   min-height: clamp(390px, 34vw, 440px);
   padding: 18px 18px 15px;
   border-radius: 22px;
-  border-color: rgba(105, 185, 151, .58);
+  border: 1px solid rgba(184, 179, 220, .26);
   background:
-    radial-gradient(80% 120% at 9% 34%, rgba(13, 178, 144, .3), transparent 75%),
-    radial-gradient(66% 105% at 96% 60%, rgba(193, 235, 91, .43), transparent 70%),
-    linear-gradient(124deg, #c5f0e1 0%, #a9e8d3 31%, #b8edb8 65%, #e0f4a7 100%);
+    radial-gradient(60% 125% at 8% 18%, rgba(92, 70, 180, .23), transparent 76%),
+    radial-gradient(58% 120% at 94% 74%, rgba(22, 150, 220, .19), transparent 74%),
+    linear-gradient(128deg, #08090e 0%, #0b0b12 54%, #0c0912 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.85),
-    0 24px 60px rgba(16, 111, 77, .14);
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 24px 64px rgba(0,0,0,.19);
 }
 :root[data-skin="board"] .privacy-visual::before {
-  inset: -22%;
+  inset: -24%;
   background:
-    radial-gradient(32% 65% at 20% 38%, rgba(0, 160, 132, .5), transparent 100%),
-    radial-gradient(37% 72% at 57% 60%, rgba(39, 190, 135, .34), transparent 100%),
-    radial-gradient(33% 66% at 86% 38%, rgba(194, 233, 75, .54), transparent 100%);
-  filter: blur(24px);
+    radial-gradient(32% 62% at 17% 38%, rgba(116, 74, 239, .42), transparent 100%),
+    radial-gradient(36% 68% at 48% 58%, rgba(22, 190, 236, .3), transparent 100%),
+    radial-gradient(32% 62% at 84% 37%, rgba(210, 75, 211, .31), transparent 100%);
+  filter: blur(27px);
   animation: privacy-orbit 12s cubic-bezier(.45,0,.25,1) infinite alternate;
 }
 :root[data-skin="board"] .privacy-visual::after {
@@ -1705,14 +1705,16 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
   inset: -18% -30%;
   z-index: 0;
   pointer-events: none;
-  background: linear-gradient(112deg, transparent 26%, rgba(255,255,255,.05) 37%, rgba(255,255,255,.52) 47%, rgba(229,255,195,.28) 53%, transparent 64%);
+  background: linear-gradient(112deg, transparent 26%, rgba(255,255,255,.015) 37%, rgba(211,222,255,.18) 47%, rgba(255,190,248,.1) 53%, transparent 64%);
   background-size: 220% 100%;
   mix-blend-mode: screen;
-  opacity: .9;
+  opacity: .8;
   animation: privacy-sheen 12s cubic-bezier(.45,0,.25,1) infinite;
 }
 :root[data-skin="board"] .privacy-visual__art {
   display: block;
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: clamp(300px, 26vw, 340px);
   min-height: 300px;
@@ -1728,17 +1730,68 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
 }
 :root[data-skin="board"] .privacy-visual__ribbon-field { transform-box: view-box; transform-origin: center; }
 :root[data-skin="board"] .privacy-visual__aurora--one { opacity: .98; }
-:root[data-skin="board"] .privacy-visual__aurora--two { opacity: .94; }
-:root[data-skin="board"] .privacy-visual__aurora-glow { opacity: .62; stroke-width: 42px; filter: blur(2px); }
-:root[data-skin="board"] .privacy-visual__ribbon { opacity: .96; }
+:root[data-skin="board"] .privacy-visual__aurora--two { opacity: .92; }
+:root[data-skin="board"] .privacy-visual__aurora-glow {
+  opacity: .68;
+  stroke-width: 42px;
+  filter: blur(2.5px);
+}
+:root[data-skin="board"] .privacy-visual__ribbon { opacity: .98; }
+:root[data-skin="board"] .privacy-visual__contour {
+  opacity: .72;
+  stroke-dasharray: 5 3;
+  animation: privacy-contour-flow 18s linear infinite;
+}
+:root[data-skin="board"] .privacy-visual__contour--fine {
+  opacity: .36;
+  stroke-dasharray: 2 6;
+  animation-duration: 24s;
+  animation-direction: reverse;
+}
 :root[data-skin="board"] .privacy-visual__status,
-:root[data-skin="board"] .privacy-visual__local { color: #176c58; }
+:root[data-skin="board"] .privacy-visual__local { color: rgba(244,241,255,.82); }
+:root[data-skin="board"] .privacy-visual__status i {
+  background: #7fe9ff;
+  box-shadow: 0 0 0 4px rgba(127,233,255,.12), 0 0 18px rgba(127,233,255,.3);
+}
 :root[data-skin="board"] .privacy-visual__footer {
   padding-top: 11px;
-  border-top-color: rgba(70, 151, 118, .3);
-  color: #356b58;
+  border-top-color: rgba(226,223,255,.18);
+  color: rgba(237,238,255,.76);
 }
-:root[data-skin="board"] .privacy-visual__footer i { box-shadow: 0 0 0 3px rgba(37, 143, 111, .1); }
+:root[data-skin="board"] .privacy-visual__footer i {
+  background: #8beaff;
+  box-shadow: 0 0 0 3px rgba(139,234,255,.11);
+}
+:root[data-skin="board"] .privacy-visual__panel-label {
+  fill: #687286;
+}
+:root[data-skin="board"] .privacy-visual__code { fill: #30394a; }
+:root[data-skin="board"] .privacy-visual__secret { fill: #626c7d; }
+:root[data-skin="board"] .privacy-visual__small { fill: #8590a3; }
+:root[data-skin="board"] .privacy-visual__label { fill: #285f87; }
+:root[data-skin="board"] .privacy-visual__source > rect:first-of-type,
+:root[data-skin="board"] .privacy-visual__safe > rect:first-of-type {
+  fill: url(#privacy-card-sheen);
+  stroke: rgba(255,255,255,.82);
+  stroke-width: 1.15;
+}
+:root[data-skin="board"] .privacy-visual__safe rect:not(:first-of-type) { fill: #e6f5ff; }
+:root[data-skin="board"] .privacy-visual__source rect:nth-of-type(2) { fill: #eef0f5; }
+:root[data-skin="board"] .privacy-visual__source,
+:root[data-skin="board"] .privacy-visual__safe {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: privacy-card-float 9s ease-in-out infinite;
+}
+:root[data-skin="board"] .privacy-visual__safe { animation-delay: -3.4s; }
+@keyframes privacy-contour-flow {
+  to { stroke-dashoffset: -160; }
+}
+@keyframes privacy-card-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
 @media (max-width: 960px) {
   :root[data-skin="board"] .privacy-visual {
     min-height: clamp(350px, 47vw, 400px);
@@ -1755,11 +1808,50 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
     padding: 14px 13px 12px;
     border-radius: 17px;
   }
-  :root[data-skin="board"] .privacy-visual__art { display: none; height: auto; min-height: 0; }
-  :root[data-skin="board"] .privacy-visual__mobile-flow { padding: 18px 0 16px; }
+  :root[data-skin="board"] .privacy-visual__art {
+    display: block;
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    opacity: .92;
+    pointer-events: none;
+  }
+  :root[data-skin="board"] .privacy-visual__source,
+  :root[data-skin="board"] .privacy-visual__safe { display: none; }
+  :root[data-skin="board"] .privacy-visual__mobile-flow {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 7px;
+    padding: 18px 0 16px;
+  }
+  :root[data-skin="board"] .privacy-visual__mobile-card {
+    background: rgba(250,251,255,.91);
+    border-color: rgba(214,220,244,.72);
+    box-shadow: 0 8px 24px rgba(0,0,0,.13);
+  }
+  :root[data-skin="board"] .privacy-visual__mobile-card > span { color: #657087; }
+  :root[data-skin="board"] .privacy-visual__mobile-card code { color: #30394a; }
+  :root[data-skin="board"] .privacy-visual__mobile-card code b { color: #285f87; }
+  :root[data-skin="board"] .privacy-visual__mobile-arrow { color: #9edfff; }
   :root[data-skin="board"] .privacy-visual__footer { gap: 8px 12px; padding-top: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
+  :root[data-skin="board"] .privacy-visual::before,
+  :root[data-skin="board"] .privacy-visual::after,
+  :root[data-skin="board"] .privacy-visual__status i,
+  :root[data-skin="board"] .privacy-visual__ribbon,
+  :root[data-skin="board"] .privacy-visual__stream,
+  :root[data-skin="board"] .privacy-visual__contour,
+  :root[data-skin="board"] .privacy-visual__particle,
+  :root[data-skin="board"] .privacy-visual__source,
+  :root[data-skin="board"] .privacy-visual__safe,
+  :root[data-skin="board"] .privacy-visual__mobile-arrow {
+    animation: none !important;
+  }
   :root[data-skin="board"] .privacy-visual__motion-field {
     transition: none !important;
     will-change: auto;
