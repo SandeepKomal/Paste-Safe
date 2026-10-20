@@ -162,10 +162,32 @@ test("Board styling stays monochrome and responsive", async ({ page, viewport })
   expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.viewportWidth);
   if ((viewport?.width ?? 1280) > 960) {
     expect(metrics.gridTracks).toBe(12);
-    expect(metrics.workspaceWidth).toBeGreaterThan(metrics.introWidth);
+    expect(metrics.introWidth).toBeGreaterThan(0);
+    expect(metrics.workspaceWidth).toBeGreaterThan(metrics.viewportWidth * 0.8);
   } else {
     expect(metrics.gridTracks).toBe(1);
   }
+});
+
+test("Board hero illustrates the local masking flow", async ({ page }) => {
+  await page.goto("/#board");
+  const visual = page.locator(".privacy-visual");
+  await expect(visual).toBeVisible();
+  await expect(visual).toContainText("LOCAL PRIVACY FLOW");
+  await expect(visual.locator("svg")).toHaveAttribute("viewBox", "0 0 880 300");
+  await expect(visual).toContainText("Detect locally");
+  await expect(page.locator(".privacy-visual__source")).toBeAttached();
+  await expect(page.locator(".privacy-visual__safe")).toBeAttached();
+  await expect(visual).toContainText("ops@example.com");
+  await expect(visual).toContainText("192.0.2.10");
+});
+
+test("Board hero animations are disabled for reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/#board");
+  await expect(page.locator(".privacy-visual")).toBeVisible();
+  const animation = await page.locator(".privacy-visual__stream").first().evaluate(element => getComputedStyle(element).animationName);
+  expect(animation).toBe("none");
 });
 
 test("the request counter shows zero", async ({ page }) => {
