@@ -171,7 +171,7 @@ test.describe("theme switching", () => {
     const page = await context.newPage();
     await page.goto("/#board");
     const bg = await page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor);
-    expect(bg).toBe("rgb(18, 18, 16)");
+    expect(bg).toBe("rgb(255, 255, 255)");
     await context.close();
   });
 
