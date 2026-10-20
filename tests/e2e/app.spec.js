@@ -125,7 +125,7 @@ test("the page never scrolls sideways", async ({ page }) => {
 });
 
 test("capture Board screenshots for the visual audit", async ({ page, browserName, viewport }, testInfo) => {
-  test.skip(browserName !== "chromium", "Capture documentation previews once using Chromium.");
+  test.skip(skin !== "board" || browserName !== "chromium", "Capture Board screenshots once using Chromium.");
   const mobile = (viewport?.width ?? 1280) <= 960;
   await page.goto("/#board");
   await expect(page.locator("#statHidden")).toHaveText("11");
