@@ -1,7 +1,7 @@
 // Lets Paste-Safe open offline and be installed as an app. Only this site's own
 // files are cached. Network first, so online visits always get the latest version.
 
-const CACHE = "paste-safe-v2-editorial-hero-scroll";
+const CACHE = "paste-safe-v2-no-privacy-flow-panel";
 const FILES = [
   "./",
   "index.html",
@@ -27,7 +27,6 @@ const FILES = [
   "src/ui/skin-boot.js",
   "src/ui/skin.js",
   "src/ui/scroll-story.js",
-  "src/ui/ribbon-hero.js",
 ];
 
 self.addEventListener("install", e => {
