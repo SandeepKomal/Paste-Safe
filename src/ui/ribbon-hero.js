@@ -16,7 +16,7 @@ export function wireRibbonHero() {
   let pointerY = 0;
   let frame = 0;
 
-  const clamp = (/** @type {number} */ value, min, max) => Math.max(min, Math.min(max, value));
+  const clamp = (/** @type {number} */ value, /** @type {number} */ min, /** @type {number} */ max) => Math.max(min, Math.min(max, value));
   const render = () => {
     frame = 0;
     const rect = hero.getBoundingClientRect();
