@@ -18,6 +18,7 @@ export function wireScrollStory() {
   const chapters = Array.from(story.querySelectorAll("[data-story-step]")).map(node => /** @type {HTMLElement} */ (node));
   const count = story.querySelector("[data-stage-count]");
   const caption = story.querySelector("[data-stage-caption]");
+  const progressBar = story.querySelector("[data-story-progress]");
   if (!(stage instanceof HTMLElement) || chapters.length === 0) return;
 
   const activate = (/** @type {string} */ step) => {
@@ -33,6 +34,37 @@ export function wireScrollStory() {
       else chapter.removeAttribute("aria-current");
     }
   };
+
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let progressFrame = 0;
+  const updateScrollProgress = () => {
+    progressFrame = 0;
+    const rect = story.getBoundingClientRect();
+    const travel = rect.height + window.innerHeight;
+    const progress = travel > 0
+      ? Math.max(0, Math.min(1, (window.innerHeight - rect.top) / travel))
+      : 0;
+    stage.style.setProperty("--story-progress", progress.toFixed(4));
+    if (progressBar instanceof HTMLElement) {
+      progressBar.style.transform = `scaleX(${progress.toFixed(4)})`;
+    }
+
+    // Parallax tracks the scroll position; reduced-motion users get a stable stage.
+    const driftX = prefersReducedMotion.matches ? 0 : (progress - 0.5) * 64;
+    const driftY = prefersReducedMotion.matches ? 0 : Math.sin(progress * Math.PI * 2) * 14;
+    const scale = prefersReducedMotion.matches ? 1 : 1 + Math.sin(progress * Math.PI) * 0.06;
+    stage.style.setProperty("--story-aurora-x", `${driftX.toFixed(2)}px`);
+    stage.style.setProperty("--story-aurora-y", `${driftY.toFixed(2)}px`);
+    stage.style.setProperty("--story-aurora-scale", scale.toFixed(3));
+  };
+  const scheduleProgressUpdate = () => {
+    if (progressFrame) return;
+    progressFrame = window.requestAnimationFrame(updateScrollProgress);
+  };
+  window.addEventListener("scroll", scheduleProgressUpdate, { passive: true });
+  window.addEventListener("resize", scheduleProgressUpdate);
+  prefersReducedMotion.addEventListener("change", scheduleProgressUpdate);
+  updateScrollProgress();
 
   const firstStep = chapters[0].dataset.storyStep ?? "detect";
   activate(firstStep);
