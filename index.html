@@ -60,7 +60,84 @@
       </div>
       <div class="intro__side">
         <div class="gate" id="gate" aria-hidden="true"></div>
-        <p class="lede">Passwords, keys, tokens, IPs and emails become labels before you share. When the AI answers, your real values go back in. Everything happens in this tab.</p>
+        <div class="privacy-visual" role="img" aria-label="Illustration: example sensitive values flow into safe labels locally">
+          <div class="privacy-visual__header">
+            <span class="privacy-visual__status"><i aria-hidden="true"></i> LOCAL PRIVACY FLOW</span>
+            <span class="privacy-visual__local">NO UPLOADS</span>
+          </div>
+          <svg class="privacy-visual__art" viewBox="0 0 880 300" aria-hidden="true" focusable="false">
+            <defs>
+              <linearGradient id="privacy-ribbon" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#48b99a" stop-opacity=".2"/>
+                <stop offset=".45" stop-color="#168b78" stop-opacity=".68"/>
+                <stop offset=".72" stop-color="#80cf79" stop-opacity=".72"/>
+                <stop offset="1" stop-color="#c2e76c" stop-opacity=".28"/>
+              </linearGradient>
+              <linearGradient id="privacy-stream" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#1c8d7c" stop-opacity=".25"/>
+                <stop offset=".5" stop-color="#159a85"/>
+                <stop offset="1" stop-color="#75bd51" stop-opacity=".8"/>
+              </linearGradient>
+              <linearGradient id="privacy-card-sheen" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#ffffff" stop-opacity=".96"/>
+                <stop offset="1" stop-color="#f5fbf7" stop-opacity=".86"/>
+              </linearGradient>
+            </defs>
+            <path class="privacy-visual__ribbon" d="M326 82 C385 30 422 75 450 116 C478 157 504 199 548 168 L548 210 C497 242 465 198 431 157 C398 117 370 112 326 164 Z" fill="url(#privacy-ribbon)"/>
+            <path class="privacy-visual__stream" d="M337 125 C384 91 415 96 446 143 S502 191 542 157" fill="none" stroke="url(#privacy-stream)" stroke-width="4" stroke-linecap="round"/>
+            <path class="privacy-visual__stream privacy-visual__stream--soft" d="M338 153 C382 177 413 126 443 131 S493 168 543 133" fill="none" stroke="url(#privacy-stream)" stroke-width="2" stroke-linecap="round"/>
+            <circle class="privacy-visual__particle privacy-visual__particle--one" cx="368" cy="125" r="4" fill="#0e927e"/>
+            <circle class="privacy-visual__particle privacy-visual__particle--two" cx="405" cy="144" r="3" fill="#56b98b"/>
+            <circle class="privacy-visual__particle privacy-visual__particle--three" cx="438" cy="121" r="5" fill="#9ccc5b"/>
+            <g class="privacy-visual__source">
+              <rect x="18" y="34" width="330" height="220" rx="18" fill="url(#privacy-card-sheen)" stroke="#dbe8e0"/>
+              <circle cx="42" cy="59" r="4" fill="#d0a36a"/>
+              <text x="55" y="63" class="privacy-visual__panel-label">EXAMPLE INPUT</text>
+              <text x="40" y="105" class="privacy-visual__code">api_key</text>
+              <rect x="127" y="86" width="186" height="26" rx="6" fill="#edf1ee"/>
+              <text x="138" y="104" class="privacy-visual__code privacy-visual__secret">sk_example_••••</text>
+              <text x="40" y="151" class="privacy-visual__code">server</text>
+              <text x="127" y="151" class="privacy-visual__code">192.0.2.10</text>
+              <text x="40" y="197" class="privacy-visual__code">email</text>
+              <text x="127" y="197" class="privacy-visual__code">ops@example.com</text>
+              <path d="M40 220 H324" stroke="#e5ece7" stroke-width="1"/>
+              <text x="40" y="239" class="privacy-visual__small">SAMPLE VALUES ONLY</text>
+            </g>
+            <g class="privacy-visual__safe">
+              <rect x="532" y="34" width="330" height="220" rx="18" fill="url(#privacy-card-sheen)" stroke="#cfe5d7"/>
+              <circle cx="556" cy="59" r="4" fill="#26977b"/>
+              <text x="569" y="63" class="privacy-visual__panel-label">SAFE TO SHARE</text>
+              <text x="554" y="105" class="privacy-visual__code">api_key</text>
+              <rect x="641" y="86" width="194" height="26" rx="6" fill="#e3f4e9"/>
+              <text x="651" y="104" class="privacy-visual__label">[SECRET_1]</text>
+              <text x="554" y="151" class="privacy-visual__code">server</text>
+              <rect x="641" y="132" width="124" height="26" rx="6" fill="#e3f4e9"/>
+              <text x="651" y="150" class="privacy-visual__label">[IP_1]</text>
+              <text x="554" y="197" class="privacy-visual__code">email</text>
+              <rect x="641" y="178" width="147" height="26" rx="6" fill="#e3f4e9"/>
+              <text x="651" y="196" class="privacy-visual__label">[EMAIL_1]</text>
+              <path d="M554 220 H838" stroke="#d8ebe0" stroke-width="1"/>
+              <text x="554" y="239" class="privacy-visual__small">ORIGINAL VALUES STAY LOCAL</text>
+            </g>
+          </svg>
+          <div class="privacy-visual__mobile-flow" aria-hidden="true">
+            <div class="privacy-visual__mobile-card">
+              <span>EXAMPLE INPUT</span>
+              <code>api_key = <i>sk_example_••••</i></code>
+            </div>
+            <span class="privacy-visual__mobile-arrow">↓</span>
+            <div class="privacy-visual__mobile-card privacy-visual__mobile-card--safe">
+              <span>SAFE TO SHARE</span>
+              <code>api_key = <b>[SECRET_1]</b></code>
+            </div>
+          </div>
+          <div class="privacy-visual__footer">
+            <span><i aria-hidden="true"></i> Detect locally</span>
+            <span><i aria-hidden="true"></i> Replace with labels</span>
+            <span><i aria-hidden="true"></i> Restore when ready</span>
+          </div>
+        </div>
+        <p class="lede">Passwords, keys, tokens, IPs and emails become labels before you share. When the AI answers, your real values go back in. Everything happens in this tab.</p>Passwords, keys, tokens, IPs and emails become labels before you share. When the AI answers, your real values go back in. Everything happens in this tab.</p>
         <div class="badges"><span class="badge">Runs in your browser</span><span class="badge">30+ detectors</span><span class="badge">Free and open source</span></div>
       </div>
     </section>
