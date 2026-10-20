@@ -2247,3 +2247,9 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
     height: 145px;
   }
 }
+
+
+/* The stage's only in-flow footer belongs in the final grid row, never beside the scene. */
+.scroll-story__stage-foot {
+  grid-row: 3;
+}
