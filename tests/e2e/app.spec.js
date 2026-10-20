@@ -124,6 +124,50 @@ test("the page never scrolls sideways", async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
+test("capture Board screenshots for the visual audit", async ({ page, browserName, viewport }, testInfo) => {
+  test.skip(skin !== "board" || browserName !== "chromium", "Capture Board screenshots once using Chromium.");
+  const mobile = (viewport?.width ?? 1280) <= 960;
+  await page.goto("/#board");
+  await expect(page.locator("#statHidden")).toHaveText("11");
+  await expect(page.locator("#workbench")).toHaveAttribute("data-side", "safe");
+  await page.screenshot({
+    path: testInfo.outputPath(mobile ? "board-mobile.png" : "board-desktop.png"),
+    fullPage: true,
+    animations: "disabled",
+  });
+});
+
+test("Board styling stays monochrome and responsive", async ({ page, viewport }) => {
+  await page.goto("/#board");
+  const metrics = await page.evaluate(() => {
+    const main = document.querySelector("main");
+    const intro = document.querySelector(".intro");
+    const workspace = document.querySelector(".bench--main");
+    const gate = document.querySelector(".gate");
+    if (!main || !intro || !workspace || !gate) throw new Error("Expected layout elements are missing");
+    return {
+      background: getComputedStyle(document.documentElement).backgroundColor,
+      colorScheme: getComputedStyle(document.documentElement).colorScheme,
+      gateDisplay: getComputedStyle(gate).display,
+      gridTracks: getComputedStyle(main).gridTemplateColumns.split(" ").length,
+      introWidth: intro.getBoundingClientRect().width,
+      workspaceWidth: workspace.getBoundingClientRect().width,
+      viewportWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    };
+  });
+  expect(metrics.background).toBe("rgb(255, 255, 255)");
+  expect(metrics.colorScheme).toBe("light");
+  expect(metrics.gateDisplay).toBe("none");
+  expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.viewportWidth);
+  if ((viewport?.width ?? 1280) > 960) {
+    expect(metrics.gridTracks).toBe(12);
+    expect(metrics.workspaceWidth).toBeGreaterThan(metrics.introWidth);
+  } else {
+    expect(metrics.gridTracks).toBe(1);
+  }
+});
+
 test("the request counter shows zero", async ({ page }) => {
   await expect(page.locator("#netcount")).toHaveText("0");
 });
@@ -171,7 +215,7 @@ test.describe("theme switching", () => {
     const page = await context.newPage();
     await page.goto("/#board");
     const bg = await page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor);
-    expect(bg).toBe("rgb(18, 18, 16)");
+    expect(bg).toBe("rgb(255, 255, 255)");
     await context.close();
   });
 
