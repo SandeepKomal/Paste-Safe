@@ -242,7 +242,8 @@ test("scroll story scenes fit their stage without colliding with its footer", as
       await page.locator(`[data-story-step="${step}"]`).scrollIntoViewIfNeeded();
       await expect(stage).toHaveAttribute("data-active-step", step, { timeout: 5000 });
       const layout = await stage.evaluate(element => {
-        const active = element.querySelector("[data-story-scene]:not([style*='visibility: hidden'])");
+        const step = element.getAttribute("data-active-step") ?? "detect";
+        const active = element.querySelector(`[data-story-scene="${step}"]`);
         const footer = element.querySelector(".scroll-story__stage-foot");
         if (!(active instanceof HTMLElement) || !(footer instanceof HTMLElement)) {
           throw new Error("Active scene or stage footer is missing");
