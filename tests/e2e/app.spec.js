@@ -174,7 +174,6 @@ test("Board hero illustrates the local masking flow", async ({ page }) => {
   const visual = page.locator(".privacy-visual");
   await expect(visual).toBeVisible();
   await expect(visual).toContainText("LOCAL PRIVACY FLOW");
-  await expect(visual.locator("svg")).toHaveAttribute("viewBox", "0 0 880 300");
   await expect(visual).toContainText("Detect locally");
   await expect(page.locator(".privacy-visual__source")).toBeAttached();
   await expect(page.locator(".privacy-visual__safe")).toBeAttached();
@@ -183,6 +182,24 @@ test("Board hero illustrates the local masking flow", async ({ page }) => {
   await expect(visual.locator(".privacy-visual__aurora--one")).toBeAttached();
   await expect(visual.locator(".privacy-visual__aurora--two")).toBeAttached();
   await expect(visual.locator(".privacy-visual__aurora-glow")).toBeAttached();
+  await expect(visual.locator(".privacy-visual__motion-field")).toBeAttached();
+  await expect(visual.locator("svg")).toHaveAttribute("viewBox", "0 0 880 360");
+  const heroBox = await visual.boundingBox();
+  if (!heroBox) throw new Error("Privacy hero has no layout box");
+  const viewportWidth = await page.evaluate(() => window.innerWidth);
+  expect(heroBox.height).toBeGreaterThan(viewportWidth > 960 ? 380 : viewportWidth > 560 ? 330 : 160);
+});
+
+test("privacy ribbon responds to pointer and scroll input", async ({ page }) => {
+  await page.goto("/#board");
+  const visual = page.locator(".privacy-visual");
+  const initial = await visual.evaluate(element => getComputedStyle(element).getPropertyValue("--ribbon-shift-x"));
+  const box = await visual.boundingBox();
+  if (!box) throw new Error("Privacy hero has no layout box");
+  await page.mouse.move(box.x + box.width * 0.82, box.y + box.height * 0.24);
+  await expect.poll(async () => visual.evaluate(element => getComputedStyle(element).getPropertyValue("--ribbon-shift-x"))).not.toBe(initial);
+  await page.locator('[data-story-step="restore"]').scrollIntoViewIfNeeded();
+  await expect.poll(async () => visual.evaluate(element => getComputedStyle(element).getPropertyValue("--ribbon-scroll-progress"))).not.toBe("0.0000");
 });
 
 test("Board hero animations are disabled for reduced motion", async ({ page }) => {
