@@ -169,55 +169,18 @@ test("Board styling stays monochrome and responsive", async ({ page, viewport })
   }
 });
 
-test("Board hero illustrates the local masking flow", async ({ page }) => {
+test("Board intro keeps the copy without the decorative privacy flow panel", async ({ page }) => {
   await page.goto("/#board");
-  const visual = page.locator(".privacy-visual");
-  await expect(visual).toBeVisible();
-  await expect(visual).toContainText("LOCAL PRIVACY FLOW");
-  await expect(visual).toContainText("Detect locally");
-  await expect(page.locator(".privacy-visual__source")).toHaveCount(0);
-  await expect(page.locator(".privacy-visual__safe")).toHaveCount(0);
-  await expect(page.locator(".privacy-visual__mobile-flow")).toHaveCount(0);
-  await expect(visual).not.toContainText("EXAMPLE INPUT");
-  await expect(visual).not.toContainText("SAFE TO SHARE");
-  await expect(visual).not.toContainText("ops@example.com");
-  await expect(visual).not.toContainText("192.0.2.10");
-  await expect(visual.locator(".privacy-visual__ribbon")).toBeAttached();
-  await expect(visual.locator(".privacy-visual__aurora-glow")).toBeAttached();
-  await expect(visual.locator(".privacy-visual__motion-field")).toBeAttached();
-  await expect(visual.locator(".privacy-visual__contour")).toBeAttached();
-  await expect(visual.locator("[data-ribbon-step]")).toHaveText("01 / 03");
-  await expect(visual.locator(".privacy-visual__aurora--one")).toHaveCount(0);
-  await expect(visual.locator(".privacy-visual__aurora--two")).toHaveCount(0);
-  const stageBackground = await visual.evaluate(element => getComputedStyle(element).backgroundImage);
-  expect(stageBackground).toContain("rgb(247, 248, 250)");
-  expect(stageBackground).toContain("rgb(236, 238, 242)");
-  await expect(visual.locator("#privacy-card-sheen")).toHaveCount(0);
-  await expect(visual.locator("svg")).toHaveAttribute("viewBox", "0 70 880 220");
-  const heroBox = await visual.boundingBox();
-  if (!heroBox) throw new Error("Privacy hero has no layout box");
-  const viewportWidth = await page.evaluate(() => window.innerWidth);
-  expect(heroBox.height).toBeGreaterThan(viewportWidth > 960 ? 220 : viewportWidth > 560 ? 200 : 140);
-});
-
-test("privacy ribbon responds to pointer and scroll input", async ({ page }) => {
-  await page.goto("/#board");
-  const visual = page.locator(".privacy-visual");
-  const initial = await visual.evaluate(element => getComputedStyle(element).getPropertyValue("--ribbon-shift-x"));
-  const box = await visual.boundingBox();
-  if (!box) throw new Error("Privacy hero has no layout box");
-  await page.mouse.move(box.x + box.width * 0.82, box.y + box.height * 0.24);
-  await expect.poll(async () => visual.evaluate(element => getComputedStyle(element).getPropertyValue("--ribbon-shift-x"))).not.toBe(initial);
-  await page.locator('[data-story-step="restore"]').scrollIntoViewIfNeeded();
-  await expect.poll(async () => visual.evaluate(element => getComputedStyle(element).getPropertyValue("--ribbon-scroll-progress"))).not.toBe("0.0000");
-});
-
-test("Board hero animations are disabled for reduced motion", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/#board");
-  await expect(page.locator(".privacy-visual")).toBeVisible();
-  const animation = await page.locator(".privacy-visual__stream").first().evaluate(element => getComputedStyle(element).animationName);
-  expect(animation).toBe("none");
+  await expect(page.locator(".privacy-visual")).toHaveCount(0);
+  await expect(page.locator(".intro__head h1")).toBeVisible();
+  await expect(page.locator(".intro .lede")).toBeVisible();
+  await expect(page.locator(".intro .badges")).toBeVisible();
+  const spacing = await page.locator(".intro__side").evaluate(element => {
+    const rect = element.getBoundingClientRect();
+    return { width: rect.width, height: rect.height };
+  });
+  expect(spacing.width).toBeGreaterThan(0);
+  expect(spacing.height).toBeLessThan(360);
 });
 
 test("scrollytelling stage follows the Find, Mask and Restore chapters", async ({ page }) => {
