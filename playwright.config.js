@@ -14,7 +14,7 @@ export default defineConfig({
     { name: "webkit-desktop", use: { ...devices["Desktop Safari"], browserName: "webkit" } },
     // Mobile viewport/device emulation across the three browser engines.
     { name: "chromium-phone", use: { ...devices["Pixel 7"], browserName: "chromium" } },
-    { name: "firefox-phone", use: { ...devices["Pixel 7"], browserName: "firefox", viewport: { width: 412, height: 915 }, deviceScaleFactor: 1, isMobile: false, hasTouch: true } },
+    { name: "firefox-phone", use: { browserName: "firefox", viewport: { width: 412, height: 915 }, deviceScaleFactor: 1, isMobile: false, hasTouch: true } },
     { name: "webkit-phone", use: { ...devices["iPhone 13"], browserName: "webkit" } },
   ],
   webServer: {
