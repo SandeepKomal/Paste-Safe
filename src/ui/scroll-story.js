@@ -27,6 +27,16 @@ export function wireScrollStory() {
     stage.dataset.activeStep = step;
     if (count) count.textContent = detail.count;
     if (caption) caption.textContent = detail.caption;
+
+    // Keep the hero's tiny progress cue synced to the chapter being read.
+    const hero = document.querySelector(".privacy-visual");
+    const heroCount = hero?.querySelector("[data-ribbon-step]");
+    const chapterIndex = Object.keys(STEP_DETAILS).indexOf(step) + 1;
+    if (hero instanceof HTMLElement && chapterIndex > 0) {
+      hero.style.setProperty("--story-step-progress", (chapterIndex / Object.keys(STEP_DETAILS).length).toFixed(4));
+    }
+    if (heroCount) heroCount.textContent = detail.count;
+
     for (const chapter of chapters) {
       const active = chapter.dataset.storyStep === step;
       chapter.classList.toggle("is-active", active);
