@@ -60,12 +60,12 @@
       </div>
       <div class="intro__side">
         <div class="gate" id="gate" aria-hidden="true"></div>
-        <div class="privacy-visual" role="img" aria-label="Illustration: example sensitive values flow into safe labels locally">
+        <div class="privacy-visual" role="img" aria-label="Illustration: an animated privacy ribbon carries sample secrets into safe labels locally">
           <div class="privacy-visual__header">
             <span class="privacy-visual__status"><i aria-hidden="true"></i> LOCAL PRIVACY FLOW</span>
             <span class="privacy-visual__local">NO UPLOADS</span>
           </div>
-          <svg class="privacy-visual__art" viewBox="0 0 880 300" aria-hidden="true" focusable="false">
+          <svg class="privacy-visual__art" viewBox="0 0 880 360" aria-hidden="true" focusable="false">
             <defs>
               <linearGradient id="privacy-ribbon" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stop-color="#1fb69c" stop-opacity=".56"/>
@@ -83,6 +83,9 @@
                 <stop offset="1" stop-color="#f5fbf7" stop-opacity=".72"/>
               </linearGradient>
             </defs>
+            <g class="privacy-visual__motion-field">
+              <g class="privacy-visual__ribbon-field" transform="translate(0 0) scale(1 1.08)">
+
             <path class="privacy-visual__aurora privacy-visual__aurora--one" d="M-30 72 C90 -12 189 25 285 98 S428 217 548 144 S755 23 910 91 L910 -20 L-30 -20 Z" fill="url(#privacy-ribbon)"/>
             <path class="privacy-visual__aurora privacy-visual__aurora--two" d="M-30 222 C102 120 205 275 326 203 S532 91 672 190 S824 259 910 188 L910 330 L-30 330 Z" fill="url(#privacy-ribbon)"/>
             <path class="privacy-visual__aurora-glow" d="M-30 150 C90 70 205 85 306 157 S438 232 550 152 S755 73 910 147" fill="none" stroke="url(#privacy-stream)" stroke-width="34" stroke-linecap="round"/>
@@ -92,6 +95,8 @@
             <circle class="privacy-visual__particle privacy-visual__particle--one" cx="368" cy="125" r="4" fill="#0e927e"/>
             <circle class="privacy-visual__particle privacy-visual__particle--two" cx="405" cy="144" r="3" fill="#56b98b"/>
             <circle class="privacy-visual__particle privacy-visual__particle--three" cx="438" cy="121" r="5" fill="#9ccc5b"/>
+              </g>
+            </g>
             <g class="privacy-visual__source">
               <rect x="18" y="34" width="330" height="220" rx="18" fill="url(#privacy-card-sheen)" stroke="#dbe8e0"/>
               <circle cx="42" cy="59" r="4" fill="#d0a36a"/>
