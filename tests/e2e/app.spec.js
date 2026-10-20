@@ -193,6 +193,29 @@ test("Board hero animations are disabled for reduced motion", async ({ page }) =
   expect(animation).toBe("none");
 });
 
+test("scrollytelling stage follows the Find, Mask and Restore chapters", async ({ page }) => {
+  await page.goto("/#how");
+  const stage = page.locator("[data-story-stage]");
+  await expect(page.locator('[data-story-step="detect"]')).toBeAttached();
+  await expect(page.locator('[data-story-scene="detect"]')).toBeAttached();
+  for (const step of ["detect", "mask", "restore"]) {
+    const chapter = page.locator(`[data-story-step="${step}"]`);
+    await chapter.scrollIntoViewIfNeeded();
+    await expect(stage).toHaveAttribute("data-active-step", step, { timeout: 4000 });
+    await expect(chapter).toHaveAttribute("aria-current", "step");
+    await expect(page.locator(`[data-story-scene="${step}"]`)).toHaveCSS("visibility", "visible");
+  }
+});
+
+test("scrollytelling motion respects reduced-motion preferences", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/#how");
+  const stage = page.locator("[data-story-stage]");
+  await expect(stage).toBeVisible();
+  const animation = await stage.evaluate(element => getComputedStyle(element, "::before").animationName);
+  expect(animation).toBe("none");
+});
+
 test("the request counter shows zero", async ({ page }) => {
   await expect(page.locator("#netcount")).toHaveText("0");
 });
