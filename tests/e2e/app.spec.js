@@ -180,6 +180,9 @@ test("Board hero illustrates the local masking flow", async ({ page }) => {
   await expect(page.locator(".privacy-visual__safe")).toBeAttached();
   await expect(visual).toContainText("ops@example.com");
   await expect(visual).toContainText("192.0.2.10");
+  await expect(visual.locator(".privacy-visual__aurora--one")).toBeAttached();
+  await expect(visual.locator(".privacy-visual__aurora--two")).toBeAttached();
+  await expect(visual.locator(".privacy-visual__aurora-glow")).toBeAttached();
 });
 
 test("Board hero animations are disabled for reduced motion", async ({ page }) => {
