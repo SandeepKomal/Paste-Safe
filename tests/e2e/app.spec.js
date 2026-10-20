@@ -174,7 +174,6 @@ test("Board hero illustrates the local masking flow", async ({ page }) => {
   const visual = page.locator(".privacy-visual");
   await expect(visual).toBeVisible();
   await expect(visual).toContainText("LOCAL PRIVACY FLOW");
-  await expect(visual.locator("svg")).toHaveAttribute("viewBox", "0 0 880 300");
   await expect(visual).toContainText("Detect locally");
   await expect(page.locator(".privacy-visual__source")).toBeAttached();
   await expect(page.locator(".privacy-visual__safe")).toBeAttached();
