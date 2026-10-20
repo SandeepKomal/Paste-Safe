@@ -88,7 +88,7 @@ export function wireScrollStory() {
     if (chapter instanceof HTMLElement) activate(chapter.dataset.storyStep ?? "");
   }, {
     root: null,
-    rootMargin: "-42% 0px -42% 0px",
+    rootMargin: "-20% 0px -20% 0px",
     threshold: [0, 0.1, 0.35, 0.7],
   });
 
