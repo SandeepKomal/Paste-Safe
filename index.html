@@ -70,7 +70,7 @@
             <span data-ribbon-step>01 / 03</span>
             <div class="privacy-visual__progress" aria-hidden="true"><span></span></div>
           </div>
-          <svg class="privacy-visual__art" viewBox="0 0 880 360" aria-hidden="true" focusable="false">
+          <svg class="privacy-visual__art" viewBox="0 70 880 220" aria-hidden="true" focusable="false">
             <defs>
               <linearGradient id="privacy-ribbon" x1="0" y1="0.15" x2="1" y2="0.8">
                 <stop offset="0" stop-color="#7c3aed" stop-opacity=".97"/>
@@ -96,10 +96,6 @@
                 <stop offset=".82" stop-color="#e3a8ff" stop-opacity=".72"/>
                 <stop offset="1" stop-color="#ffffff" stop-opacity=".12"/>
               </linearGradient>
-              <linearGradient id="privacy-card-sheen" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#f0f1f4" stop-opacity=".99"/>
-                <stop offset="1" stop-color="#e3e5e9" stop-opacity=".98"/>
-              </linearGradient>
               <filter id="privacy-ribbon-glow" x="-25%" y="-80%" width="150%" height="260%">
                 <feGaussianBlur stdDeviation="8"/>
               </filter>
@@ -118,49 +114,10 @@
             <circle class="privacy-visual__particle privacy-visual__particle--three" cx="438" cy="184" r="4" fill="#d87bdc" style="color:#d87bdc"/>
               </g>
             </g>
-            <g class="privacy-visual__source">
-              <rect x="18" y="34" width="330" height="220" rx="18" fill="url(#privacy-card-sheen)" stroke="#d0d4dc"/>
-              <circle cx="42" cy="59" r="4" fill="#858b95"/>
-              <text x="55" y="63" class="privacy-visual__panel-label">EXAMPLE INPUT</text>
-              <text x="40" y="105" class="privacy-visual__code">api_key</text>
-              <rect x="127" y="86" width="186" height="26" rx="6" fill="#dfe2e8"/>
-              <text x="138" y="104" class="privacy-visual__code privacy-visual__secret">sk_example_••••</text>
-              <text x="40" y="151" class="privacy-visual__code">server</text>
-              <text x="127" y="151" class="privacy-visual__code">192.0.2.10</text>
-              <text x="40" y="197" class="privacy-visual__code">email</text>
-              <text x="127" y="197" class="privacy-visual__code">ops@example.com</text>
-              <path d="M40 220 H324" stroke="#d6dae1" stroke-width="1"/>
-              <text x="40" y="239" class="privacy-visual__small">SAMPLE VALUES ONLY</text>
-            </g>
-            <g class="privacy-visual__safe">
-              <rect x="532" y="34" width="330" height="220" rx="18" fill="url(#privacy-card-sheen)" stroke="#d0d4dc"/>
-              <circle cx="556" cy="59" r="4" fill="#858b95"/>
-              <text x="569" y="63" class="privacy-visual__panel-label">SAFE TO SHARE</text>
-              <text x="554" y="105" class="privacy-visual__code">api_key</text>
-              <rect x="641" y="86" width="194" height="26" rx="6" fill="#dfe2e8"/>
-              <text x="651" y="104" class="privacy-visual__label">[SECRET_1]</text>
-              <text x="554" y="151" class="privacy-visual__code">server</text>
-              <rect x="641" y="132" width="124" height="26" rx="6" fill="#dfe2e8"/>
-              <text x="651" y="150" class="privacy-visual__label">[IP_1]</text>
-              <text x="554" y="197" class="privacy-visual__code">email</text>
-              <rect x="641" y="178" width="147" height="26" rx="6" fill="#dfe2e8"/>
-              <text x="651" y="196" class="privacy-visual__label">[EMAIL_1]</text>
-              <path d="M554 220 H838" stroke="#d6dae1" stroke-width="1"/>
-              <text x="554" y="239" class="privacy-visual__small">ORIGINAL VALUES STAY LOCAL</text>
-            </g>
+            
+            
           </svg>
-          <div class="privacy-visual__mobile-flow" aria-hidden="true">
-            <div class="privacy-visual__mobile-card">
-              <span>EXAMPLE INPUT</span>
-              <code>api_key = <i>sk_example_••••</i></code>
-            </div>
-            <span class="privacy-visual__mobile-arrow">↓</span>
-            <div class="privacy-visual__mobile-card privacy-visual__mobile-card--safe">
-              <span>SAFE TO SHARE</span>
-              <code>api_key = <b>[SECRET_1]</b></code>
-            </div>
-          </div>
-          <div class="privacy-visual__footer">
+                    <div class="privacy-visual__footer">
             <span><i aria-hidden="true"></i> Detect locally</span>
             <span><i aria-hidden="true"></i> Replace with labels</span>
             <span><i aria-hidden="true"></i> Restore when ready</span>
