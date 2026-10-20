@@ -31,7 +31,7 @@ You can also open or drop a file (`.log`, `.env`, `.yaml`, `.json` and other tex
 
 By default, copying adds one line on top asking the AI to keep labels like `[IP_1]` as they are. If the AI still changes them a little (`IP_1`, `[ip-1]`), they're put back anyway.
 
-There are three themes (switch in the header, or open `#board`, `#lens` or `#sticker`). Board is the default: labels are drawn as split-flap tiles and the workbench turns over, with your text on the front and the safe text on the back.
+There are three themes (switch in the header, or open `#board`, `#lens` or `#sticker`). Board is the default: a clean monochrome layout with a workbench that turns between your text and the safe text.
 
 ## What gets hidden
 
@@ -80,7 +80,7 @@ Node 22 and Python 3. No build step.
 npm ci
 npm start              # localhost:8080
 npm run check          # eslint + tsc + unit tests
-npx playwright install chromium
+npx playwright install chromium firefox webkit
 npm run test:e2e
 ```
 
