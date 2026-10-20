@@ -175,10 +175,13 @@ test("Board hero illustrates the local masking flow", async ({ page }) => {
   await expect(visual).toBeVisible();
   await expect(visual).toContainText("LOCAL PRIVACY FLOW");
   await expect(visual).toContainText("Detect locally");
-  await expect(page.locator(".privacy-visual__source")).toBeAttached();
-  await expect(page.locator(".privacy-visual__safe")).toBeAttached();
-  await expect(visual).toContainText("ops@example.com");
-  await expect(visual).toContainText("192.0.2.10");
+  await expect(page.locator(".privacy-visual__source")).toHaveCount(0);
+  await expect(page.locator(".privacy-visual__safe")).toHaveCount(0);
+  await expect(page.locator(".privacy-visual__mobile-flow")).toHaveCount(0);
+  await expect(visual).not.toContainText("EXAMPLE INPUT");
+  await expect(visual).not.toContainText("SAFE TO SHARE");
+  await expect(visual).not.toContainText("ops@example.com");
+  await expect(visual).not.toContainText("192.0.2.10");
   await expect(visual.locator(".privacy-visual__ribbon")).toBeAttached();
   await expect(visual.locator(".privacy-visual__aurora-glow")).toBeAttached();
   await expect(visual.locator(".privacy-visual__motion-field")).toBeAttached();
@@ -189,13 +192,12 @@ test("Board hero illustrates the local masking flow", async ({ page }) => {
   const stageBackground = await visual.evaluate(element => getComputedStyle(element).backgroundImage);
   expect(stageBackground).toContain("rgb(247, 248, 250)");
   expect(stageBackground).toContain("rgb(236, 238, 242)");
-  const cardStops = await visual.locator("#privacy-card-sheen stop").evaluateAll(stops => stops.map(stop => stop.getAttribute("stop-color")));
-  expect(cardStops).toEqual(["#f0f1f4", "#e3e5e9"]);
-  await expect(visual.locator("svg")).toHaveAttribute("viewBox", "0 0 880 360");
+  await expect(visual.locator("#privacy-card-sheen")).toHaveCount(0);
+  await expect(visual.locator("svg")).toHaveAttribute("viewBox", "0 70 880 220");
   const heroBox = await visual.boundingBox();
   if (!heroBox) throw new Error("Privacy hero has no layout box");
   const viewportWidth = await page.evaluate(() => window.innerWidth);
-  expect(heroBox.height).toBeGreaterThan(viewportWidth > 960 ? 380 : viewportWidth > 560 ? 330 : 160);
+  expect(heroBox.height).toBeGreaterThan(viewportWidth > 960 ? 220 : viewportWidth > 560 ? 200 : 140);
 });
 
 test("privacy ribbon responds to pointer and scroll input", async ({ page }) => {
