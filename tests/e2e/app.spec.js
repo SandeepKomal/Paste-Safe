@@ -179,14 +179,18 @@ test("Board hero illustrates the local masking flow", async ({ page }) => {
   await expect(page.locator(".privacy-visual__safe")).toBeAttached();
   await expect(visual).toContainText("ops@example.com");
   await expect(visual).toContainText("192.0.2.10");
-  await expect(visual.locator(".privacy-visual__aurora--one")).toBeAttached();
-  await expect(visual.locator(".privacy-visual__aurora--two")).toBeAttached();
+  await expect(visual.locator(".privacy-visual__ribbon")).toBeAttached();
   await expect(visual.locator(".privacy-visual__aurora-glow")).toBeAttached();
   await expect(visual.locator(".privacy-visual__motion-field")).toBeAttached();
   await expect(visual.locator(".privacy-visual__contour")).toBeAttached();
+  await expect(visual.locator("[data-ribbon-step]")).toHaveText("01 / 03");
+  await expect(visual.locator(".privacy-visual__aurora--one")).toHaveCount(0);
+  await expect(visual.locator(".privacy-visual__aurora--two")).toHaveCount(0);
   const stageBackground = await visual.evaluate(element => getComputedStyle(element).backgroundImage);
-  expect(stageBackground).toContain("rgb(8, 9, 14)");
-  expect(stageBackground).toContain("rgb(12, 9, 18)");
+  expect(stageBackground).toContain("rgb(247, 248, 250)");
+  expect(stageBackground).toContain("rgb(236, 238, 242)");
+  const cardStops = await visual.locator("#privacy-card-sheen stop").evaluateAll(stops => stops.map(stop => stop.getAttribute("stop-color")));
+  expect(cardStops).toEqual(["#f0f1f4", "#e3e5e9"]);
   await expect(visual.locator("svg")).toHaveAttribute("viewBox", "0 0 880 360");
   const heroBox = await visual.boundingBox();
   if (!heroBox) throw new Error("Privacy hero has no layout box");
@@ -225,6 +229,40 @@ test("scrollytelling stage follows the Find, Mask and Restore chapters", async (
     await expect(stage).toHaveAttribute("data-active-step", step, { timeout: 4000 });
     await expect(chapter).toHaveAttribute("aria-current", "step");
     await expect(page.locator(`[data-story-scene="${step}"]`)).toHaveCSS("visibility", "visible");
+    await expect(stage.locator("[data-story-scene]:visible")).toHaveCount(1);
+  }
+});
+
+test("scroll story scenes fit their stage without colliding with its footer", async ({ page }) => {
+  for (const viewport of [{ width: 767, height: 290 }, { width: 390, height: 844 }, { width: 820, height: 727 }]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/#how");
+    const stage = page.locator("[data-story-stage]");
+    for (const step of ["detect", "mask", "restore"]) {
+      await page.locator(`[data-story-step="${step}"]`).scrollIntoViewIfNeeded();
+      await expect(stage).toHaveAttribute("data-active-step", step, { timeout: 5000 });
+      const layout = await stage.evaluate(element => {
+        const step = element.getAttribute("data-active-step") ?? "detect";
+        const active = element.querySelector(`[data-story-scene="${step}"]`);
+        const footer = element.querySelector(".scroll-story__stage-foot");
+        if (!(active instanceof HTMLElement) || !(footer instanceof HTMLElement)) {
+          throw new Error("Active scene or stage footer is missing");
+        }
+        const sceneRect = active.getBoundingClientRect();
+        const footerRect = footer.getBoundingClientRect();
+        return {
+          activeCount: Array.from(element.querySelectorAll("[data-story-scene]"))
+            .filter(scene => getComputedStyle(scene).visibility === "visible").length,
+          sceneClientHeight: active.clientHeight,
+          sceneScrollHeight: active.scrollHeight,
+          sceneBottom: sceneRect.bottom,
+          footerTop: footerRect.top,
+        };
+      });
+      expect(layout.activeCount).toBe(1);
+      expect(layout.sceneScrollHeight).toBeLessThanOrEqual(layout.sceneClientHeight + 2);
+      expect(layout.sceneBottom).toBeLessThanOrEqual(layout.footerTop + 1);
+    }
   }
 });
 
