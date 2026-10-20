@@ -10,6 +10,7 @@ import { wireGate } from "./ui/gate.js";
 import { watchExternalRequests } from "./ui/netwatch.js";
 import { wirePeek } from "./ui/peek.js";
 import { currentSkin, wireSkinSwitch } from "./ui/skin.js";
+import { wireScrollStory } from "./ui/scroll-story.js";
 import { CATEGORY_NAMES, renderLedger, renderMirror, renderSegments } from "./ui/render.js";
 
 // Above this size, detection is debounced instead of running on every keystroke.
@@ -364,6 +365,7 @@ watchExternalRequests(n => {
   el.netcheck.classList.toggle("is-warn", n > 0);
 });
 
+wireScrollStory();
 loadExample();
 
 // Offline support and "install as an app". Only works over https or localhost.
