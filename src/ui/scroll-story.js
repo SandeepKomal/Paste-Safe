@@ -15,7 +15,7 @@ export function wireScrollStory() {
   if (!(story instanceof HTMLElement)) return;
 
   const stage = story.querySelector("[data-story-stage]");
-  const chapters = Array.from(story.querySelectorAll("[data-story-step]"));
+  const chapters = Array.from(story.querySelectorAll("[data-story-step]")).map(node => /** @type {HTMLElement} */ (node));
   const count = story.querySelector("[data-stage-count]");
   const caption = story.querySelector("[data-stage-caption]");
   if (!(stage instanceof HTMLElement) || chapters.length === 0) return;
