@@ -250,22 +250,111 @@
 
     <p class="visually-hidden" id="status" role="status" aria-live="polite"></p>
 
-    <section class="how" id="how" aria-labelledby="howTitle">
-      <h2 id="howTitle">How it works</h2>
-      <ol class="how__steps">
-        <li>
-          <h3>Find</h3>
-          <p>Patterns for well-known formats such as AWS, GitHub, Stripe and JWTs catch keys and tokens. Settings like <code>DB_PASSWORD=</code>, passwords inside URLs, emails, IPs and internal hostnames are caught too. Long random-looking strings are flagged even when no pattern names them.</p>
-        </li>
-        <li>
-          <h3>Swap</h3>
-          <p>Each distinct value gets one label, like <code>[AWS_KEY_1]</code>, everywhere it appears. The AI can still tell that two lines mention the same host or key.</p>
-        </li>
-        <li>
-          <h3>Restore</h3>
-          <p>Labels in the AI's reply are swapped back for your real values, so you can run its commands or apply its fix straight away.</p>
-        </li>
-      </ol>
+    <section class="scroll-story" id="how" aria-labelledby="storyTitle" data-scroll-story>
+      <header class="scroll-story__intro">
+        <p class="eyebrow">A safer round trip</p>
+        <h2 id="storyTitle">From raw log to useful answer. <span>Without handing over the secrets.</span></h2>
+        <p>Scroll through the journey. Paste-Safe keeps the original values in this tab while the AI works with consistent labels.</p>
+      </header>
+
+      <div class="scroll-story__layout">
+        <div class="scroll-story__stage-shell">
+          <div class="scroll-story__stage" data-story-stage data-active-step="detect" aria-hidden="true">
+            <div class="scroll-story__stage-top">
+              <span class="scroll-story__brand"><i></i> PASTE-SAFE / LOCAL MODE</span>
+              <span data-stage-count>01 / 03</span>
+            </div>
+
+            <div class="scroll-story__scene" data-story-scene="detect">
+              <div class="scroll-story__scene-heading">
+                <span>STEP 01 · FIND</span>
+                <h3>Spot what should stay private.</h3>
+                <p>Patterns scan the text on your device.</p>
+              </div>
+              <div class="scroll-story__window">
+                <div class="scroll-story__window-top"><span>deploy-error.log</span><i><b></b><b></b><b></b></i></div>
+                <div class="scroll-story__code">
+                  <p><span>01</span><code>Authorization: Bearer <b class="scroll-story__risk">sk_example_••••••</b></code></p>
+                  <p><span>02</span><code>remote_ip = <b class="scroll-story__risk">192.0.2.10</b></code></p>
+                  <p><span>03</span><code>contact = <b class="scroll-story__risk">demo@example.com</b></code></p>
+                </div>
+                <div class="scroll-story__scan"><i></i> 3 sensitive values found in this example</div>
+              </div>
+            </div>
+
+            <div class="scroll-story__scene" data-story-scene="mask">
+              <div class="scroll-story__scene-heading">
+                <span>STEP 02 · MASK</span>
+                <h3>Keep the meaning. Remove the exposure.</h3>
+                <p>Each value gets a stable label.</p>
+              </div>
+              <div class="scroll-story__transform">
+                <div class="scroll-story__transform-row">
+                  <span class="scroll-story__value scroll-story__value--raw">sk_example_••••</span>
+                  <span class="scroll-story__transform-arrow">→</span>
+                  <span class="scroll-story__value scroll-story__value--safe">[SECRET_1]</span>
+                </div>
+                <div class="scroll-story__transform-row">
+                  <span class="scroll-story__value scroll-story__value--raw">192.0.2.10</span>
+                  <span class="scroll-story__transform-arrow">→</span>
+                  <span class="scroll-story__value scroll-story__value--safe">[IP_1]</span>
+                </div>
+                <div class="scroll-story__transform-row">
+                  <span class="scroll-story__value scroll-story__value--raw">demo@example.com</span>
+                  <span class="scroll-story__transform-arrow">→</span>
+                  <span class="scroll-story__value scroll-story__value--safe">[EMAIL_1]</span>
+                </div>
+                <div class="scroll-story__privacy-note"><i></i> The originals never leave this tab.</div>
+              </div>
+            </div>
+
+            <div class="scroll-story__scene" data-story-scene="restore">
+              <div class="scroll-story__scene-heading">
+                <span>STEP 03 · RESTORE</span>
+                <h3>Bring the context back when you need it.</h3>
+                <p>Paste the AI's reply. Resolve known labels locally.</p>
+              </div>
+              <div class="scroll-story__answer-window">
+                <div class="scroll-story__window-top"><span>assistant-reply.txt</span><i><b></b><b></b><b></b></i></div>
+                <p>Rotate <b class="scroll-story__answer-label">[SECRET_1]</b> and inspect traffic from <b class="scroll-story__answer-label">[IP_1]</b>.</p>
+                <div class="scroll-story__answer-result">
+                  <span>RESTORED ON YOUR DEVICE</span>
+                  <code>sk_example_••••</code>
+                  <code>192.0.2.10</code>
+                </div>
+              </div>
+            </div>
+
+            <div class="scroll-story__stage-foot">
+              <span class="scroll-story__live-dot"></span>
+              <span data-stage-caption>Find sensitive values in the text.</span>
+              <span class="scroll-story__stage-lock">LOCAL ONLY</span>
+            </div>
+          </div>
+          <p class="scroll-story__scroll-hint"><span>Scroll to follow the flow</span><span aria-hidden="true">↓</span></p>
+        </div>
+
+        <div class="scroll-story__chapters">
+          <article class="scroll-story__chapter is-active" data-story-step="detect" aria-current="step">
+            <p class="scroll-story__index">01 <span>/ FIND</span></p>
+            <h3>Find the details that shouldn't travel.</h3>
+            <p>Paste-Safe looks for common key and token formats, passwords, IP addresses, emails and other sensitive patterns entirely in your browser. Detection is not perfect, so always review the safe text before sharing.</p>
+            <p class="scroll-story__micro"><span></span> Your text stays in this tab.</p>
+          </article>
+          <article class="scroll-story__chapter" data-story-step="mask">
+            <p class="scroll-story__index">02 <span>/ MASK</span></p>
+            <h3>Give the AI context, not credentials.</h3>
+            <p>Each distinct value gets a consistent placeholder. The AI can reason about the same key or host across multiple lines without seeing the original value.</p>
+            <p class="scroll-story__micro"><span></span> Read the masked output before you copy it.</p>
+          </article>
+          <article class="scroll-story__chapter" data-story-step="restore">
+            <p class="scroll-story__index">03 <span>/ RESTORE</span></p>
+            <h3>Make the answer useful again.</h3>
+            <p>Bring the AI's response back into Paste-Safe. Known labels are resolved to their original values locally, so you can review the result before using it.</p>
+            <p class="scroll-story__micro"><span></span> Labels are kept in memory for this tab.</p>
+          </article>
+        </div>
+      </div>
     </section>
 
     <section class="limits" id="limits" aria-labelledby="limitsTitle">

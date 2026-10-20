@@ -1,7 +1,7 @@
 // Lets Paste-Safe open offline and be installed as an app. Only this site's own
 // files are cached. Network first, so online visits always get the latest version.
 
-const CACHE = "paste-safe-v2-motion-hero2";
+const CACHE = "paste-safe-v2-scrollytelling";
 const FILES = [
   "./",
   "index.html",
@@ -26,6 +26,7 @@ const FILES = [
   "src/ui/render.js",
   "src/ui/skin-boot.js",
   "src/ui/skin.js",
+  "src/ui/scroll-story.js",
 ];
 
 self.addEventListener("install", e => {
