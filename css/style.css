@@ -2247,3 +2247,9 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
     height: 145px;
   }
 }
+
+
+/* Keep the pinned story footer in the final grid row below its scene. */
+.scroll-story__stage-foot {
+  grid-row: 3;
+}
