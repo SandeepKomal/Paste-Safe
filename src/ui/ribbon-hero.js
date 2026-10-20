@@ -29,7 +29,6 @@ export function wireRibbonHero() {
     hero.style.setProperty("--ribbon-shift-x", `${moveX.toFixed(2)}px`);
     hero.style.setProperty("--ribbon-shift-y", `${moveY.toFixed(2)}px`);
     hero.style.setProperty("--ribbon-scale", scale.toFixed(3));
-    hero.style.setProperty("--ribbon-scroll-progress", progress.toFixed(4));
   };
 
   const schedule = () => {
