@@ -207,6 +207,16 @@ test("scrollytelling stage follows the Find, Mask and Restore chapters", async (
   }
 });
 
+test("scroll position continuously moves the privacy aurora", async ({ page }) => {
+  await page.goto("/#how");
+  const stage = page.locator("[data-story-stage]");
+  const initial = Number(await stage.evaluate(element => getComputedStyle(element).getPropertyValue("--story-progress")));
+  await page.locator('[data-story-step="restore"]').scrollIntoViewIfNeeded();
+  await expect.poll(async () => Number(await stage.evaluate(element => getComputedStyle(element).getPropertyValue("--story-progress")))).toBeGreaterThan(initial + 0.01);
+  const drift = await stage.evaluate(element => getComputedStyle(element).getPropertyValue("--story-aurora-x"));
+  expect(drift.endsWith("px")).toBe(true);
+});
+
 test("scrollytelling motion respects reduced-motion preferences", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/#how");
@@ -214,6 +224,7 @@ test("scrollytelling motion respects reduced-motion preferences", async ({ page 
   await expect(stage).toBeVisible();
   const animation = await stage.evaluate(element => getComputedStyle(element, "::before").animationName);
   expect(animation).toBe("none");
+  await expect.poll(async () => stage.evaluate(element => getComputedStyle(element).getPropertyValue("--story-aurora-x"))).toBe("0.00px");
 });
 
 test("the request counter shows zero", async ({ page }) => {
