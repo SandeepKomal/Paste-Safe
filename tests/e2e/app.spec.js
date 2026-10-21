@@ -169,18 +169,39 @@ test("Board styling stays monochrome and responsive", async ({ page, viewport })
   }
 });
 
-test("Board intro keeps the copy without the decorative privacy flow panel", async ({ page }) => {
+test("Board intro pairs the copy with the local masking animation", async ({ page }) => {
   await page.goto("/#board");
   await expect(page.locator(".privacy-visual")).toHaveCount(0);
   await expect(page.locator(".intro__head h1")).toBeVisible();
   await expect(page.locator(".intro .lede")).toBeVisible();
   await expect(page.locator(".intro .badges")).toBeVisible();
-  const spacing = await page.locator(".intro__side").evaluate(element => {
-    const rect = element.getBoundingClientRect();
-    return { width: rect.width, height: rect.height };
-  });
-  expect(spacing.width).toBeGreaterThan(0);
-  expect(spacing.height).toBeLessThan(360);
+
+  const animation = page.locator(".hero-animation");
+  await expect(animation).toBeVisible();
+  await expect(animation.locator("svg")).toHaveAttribute("viewBox", "0 0 620 420");
+  await expect(animation.locator(".hero-animation__token")).toHaveCount(4);
+  await expect(animation).toContainText("[SECRET_1]");
+  await expect(animation).toContainText("[IP_1]");
+  await expect(animation).toContainText("[EMAIL_1]");
+  await expect(animation).toContainText("LOCAL ONLY");
+
+  const dimensions = await animation.boundingBox();
+  if (!dimensions) throw new Error("Hero animation has no layout box");
+  expect(dimensions.width).toBeGreaterThan(260);
+  expect(dimensions.height).toBeGreaterThan(160);
+
+  const heroGrid = await page.locator("main > .intro").evaluate(element => getComputedStyle(element).gridTemplateColumns);
+  expect(heroGrid.split(" ").length).toBeGreaterThanOrEqual(2);
+});
+
+test("hero masking animation respects reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/#board");
+  const art = page.locator(".hero-animation");
+  await expect(art).toBeVisible();
+  await expect.poll(async () => art.locator(".hero-animation__orbit").first().evaluate(element => getComputedStyle(element).animationName)).toBe("none");
+  await expect.poll(async () => art.locator(".hero-animation__value--raw").first().evaluate(element => getComputedStyle(element).opacity)).toBe("0");
+  await expect.poll(async () => art.locator(".hero-animation__value--safe").first().evaluate(element => getComputedStyle(element).opacity)).toBe("1");
 });
 
 test("scrollytelling stage follows the Find, Mask and Restore chapters", async ({ page }) => {
