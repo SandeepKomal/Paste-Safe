@@ -3,10 +3,12 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "tests/e2e",
   fullyParallel: true,
+  workers: process.env.CI ? 4 : undefined,
+  maxFailures: process.env.CI ? 30 : 0,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "list",
-  use: { baseURL: "http://127.0.0.1:4173", trace: "retain-on-failure" },
+  use: { baseURL: "http://127.0.0.1:4173", trace: "retain-on-failure", screenshot: "only-on-failure", video: "off" },
   projects: [
     // Desktop browser engines
     { name: "chromium-desktop", use: { ...devices["Desktop Chrome"], browserName: "chromium" } },
