@@ -197,14 +197,15 @@ test("Board intro pairs the copy with the local masking animation", async ({ pag
   expect(heroLayout.columns).toBe(heroLayout.viewportWidth > 960 ? 2 : 1);
 });
 
-test("hero masking animation respects reduced motion", async ({ page }) => {
+test("privacy ring animation respects reduced motion", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/#board");
-  const art = page.locator(".hero-animation");
+  const art = page.locator(".privacy-visual");
   await expect(art).toBeVisible();
-  await expect.poll(async () => art.locator(".hero-animation__orbit").first().evaluate(element => getComputedStyle(element).animationName)).toBe("none");
-  await expect.poll(async () => art.locator(".hero-animation__value--raw").first().evaluate(element => getComputedStyle(element).opacity)).toBe("0");
-  await expect.poll(async () => art.locator(".hero-animation__value--safe").first().evaluate(element => getComputedStyle(element).opacity)).toBe("1");
+  await expect(art.locator(".privacy-visual__card")).toHaveCount(10);
+  await expect(art.locator(".privacy-visual__core")).toContainText("LOCAL ONLY");
+  await expect.poll(async () => art.locator(".privacy-visual__track").evaluate(element => getComputedStyle(element).animationName)).toBe("none");
+  await expect.poll(async () => art.locator(".privacy-visual__orbit").first().evaluate(element => getComputedStyle(element).animationName)).toBe("none");
 });
 
 test("scrollytelling stage follows the Find, Mask and Restore chapters", async ({ page }) => {
@@ -214,7 +215,7 @@ test("scrollytelling stage follows the Find, Mask and Restore chapters", async (
   await expect(page.locator('[data-story-scene="detect"]')).toBeAttached();
   for (const step of ["detect", "mask", "restore"]) {
     const chapter = page.locator(`[data-story-step="${step}"]`);
-    await chapter.scrollIntoViewIfNeeded();
+    await chapter.evaluate(element => element.scrollIntoView({ block: "center", behavior: "instant" }));
     await expect(stage).toHaveAttribute("data-active-step", step, { timeout: 4000 });
     await expect(chapter).toHaveAttribute("aria-current", "step");
     await expect(page.locator(`[data-story-scene="${step}"]`)).toHaveCSS("visibility", "visible");

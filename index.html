@@ -60,78 +60,70 @@
       </div>
       <div class="intro__side">
         <div class="gate" id="gate" aria-hidden="true"></div>
-        <div class="hero-animation" role="img" aria-label="Animated illustration of Paste-Safe scanning sample credentials locally, then replacing them with safe labels.">
-          <svg class="hero-animation__art" viewBox="0 0 620 420" aria-hidden="true" focusable="false">
-            <defs>
-              <radialGradient id="hero-safe-halo" cx="50%" cy="48%" r="55%">
-                <stop offset="0" stop-color="#dfe8e1" stop-opacity=".66"/>
-                <stop offset=".68" stop-color="#eef2ef" stop-opacity=".24"/>
-                <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
-              </radialGradient>
-              <linearGradient id="hero-safe-core" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#ffffff"/>
-                <stop offset="1" stop-color="#f0f3f1"/>
-              </linearGradient>
-              <filter id="hero-safe-shadow" x="-25%" y="-25%" width="150%" height="170%">
-                <feDropShadow dx="0" dy="7" stdDeviation="8" flood-color="#232d27" flood-opacity=".10"/>
-              </filter>
-            </defs>
-
-            <ellipse cx="310" cy="210" rx="252" ry="174" fill="url(#hero-safe-halo)"/>
-            <ellipse class="hero-animation__orbit hero-animation__orbit--outer" cx="310" cy="210" rx="235" ry="126" transform="rotate(-19 310 210)" fill="none" stroke="#dfe5e1" stroke-width="1.25" stroke-dasharray="3 8"/>
-            <ellipse class="hero-animation__orbit hero-animation__orbit--inner" cx="310" cy="210" rx="190" ry="94" transform="rotate(27 310 210)" fill="none" stroke="#e4e8e5" stroke-width="1.15" stroke-dasharray="2 9"/>
-
-            <path class="hero-animation__flow" d="M205 117 C229 122 230 147 244 160"/>
-            <path class="hero-animation__flow hero-animation__flow--two" d="M409 122 C389 127 390 145 378 159"/>
-            <path class="hero-animation__flow hero-animation__flow--three" d="M199 313 C222 303 229 281 244 266"/>
-            <path class="hero-animation__flow hero-animation__flow--four" d="M414 315 C393 303 389 282 377 266"/>
-            <circle class="hero-animation__signal" cx="226" cy="140" r="3.5"/>
-            <circle class="hero-animation__signal hero-animation__signal--two" cx="393" cy="139" r="3.5"/>
-            <circle class="hero-animation__signal hero-animation__signal--three" cx="224" cy="292" r="3.5"/>
-            <circle class="hero-animation__signal hero-animation__signal--four" cx="393" cy="291" r="3.5"/>
-
-            <g class="hero-animation__core">
-              <rect x="245" y="133" width="140" height="153" rx="27" fill="#e1e7e2" opacity=".78" transform="translate(0 5)"/>
-              <rect x="238" y="126" width="144" height="153" rx="27" fill="url(#hero-safe-core)" stroke="#dce4de" stroke-width="1.3" filter="url(#hero-safe-shadow)"/>
-              <path class="hero-animation__shield" d="M310 148 L342 160 V185 C342 207 328 224 310 235 C292 224 278 207 278 185 V160 Z" fill="#edf3ee" stroke="#75917f" stroke-width="2"/>
-              <path d="M296 187 L306 197 L325 176" fill="none" stroke="#537660" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <text class="hero-animation__core-brand" x="310" y="250" text-anchor="middle">PASTE-SAFE</text>
-              <rect x="265" y="259" width="90" height="19" rx="9.5" fill="#edf3ee" stroke="#d8e4da"/>
-              <text class="hero-animation__core-tag" x="310" y="272" text-anchor="middle">LOCAL ONLY</text>
-            </g>
-
-            <g class="hero-animation__token hero-animation__token--one" transform="translate(42 73)">
-              <rect class="hero-animation__token-bg" width="166" height="70" rx="13" fill="#ffffff" stroke="#dfe4e0" filter="url(#hero-safe-shadow)"/>
-              <circle cx="15" cy="17" r="3.2" fill="#8fa596"/>
-              <text class="hero-animation__token-label" x="25" y="20">API KEY</text>
-              <text class="hero-animation__value hero-animation__value--raw" x="14" y="47">sk_demo_••••</text>
-              <text class="hero-animation__value hero-animation__value--safe" x="14" y="47">[SECRET_1]</text>
-            </g>
-
-            <g class="hero-animation__token hero-animation__token--two" transform="translate(412 79)">
-              <rect class="hero-animation__token-bg" width="166" height="70" rx="13" fill="#ffffff" stroke="#dfe4e0" filter="url(#hero-safe-shadow)"/>
-              <circle cx="15" cy="17" r="3.2" fill="#8fa596"/>
-              <text class="hero-animation__token-label" x="25" y="20">REMOTE IP</text>
-              <text class="hero-animation__value hero-animation__value--raw" x="14" y="47">192.0.2.10</text>
-              <text class="hero-animation__value hero-animation__value--safe" x="14" y="47">[IP_1]</text>
-            </g>
-
-            <g class="hero-animation__token hero-animation__token--three" transform="translate(34 278)">
-              <rect class="hero-animation__token-bg" width="166" height="70" rx="13" fill="#ffffff" stroke="#dfe4e0" filter="url(#hero-safe-shadow)"/>
-              <circle cx="15" cy="17" r="3.2" fill="#8fa596"/>
-              <text class="hero-animation__token-label" x="25" y="20">EMAIL</text>
-              <text class="hero-animation__value hero-animation__value--raw" x="14" y="47">ops@example.test</text>
-              <text class="hero-animation__value hero-animation__value--safe" x="14" y="47">[EMAIL_1]</text>
-            </g>
-
-            <g class="hero-animation__token hero-animation__token--four" transform="translate(418 282)">
-              <rect class="hero-animation__token-bg" width="166" height="70" rx="13" fill="#ffffff" stroke="#dfe4e0" filter="url(#hero-safe-shadow)"/>
-              <circle cx="15" cy="17" r="3.2" fill="#8fa596"/>
-              <text class="hero-animation__token-label" x="25" y="20">PASSWORD</text>
-              <text class="hero-animation__value hero-animation__value--raw" x="14" y="47">••••••••••</text>
-              <text class="hero-animation__value hero-animation__value--safe" x="14" y="47">[PASS_1]</text>
-            </g>
-          </svg>
+        <div class="hero-animation privacy-visual" role="img" aria-label="A rotating 3D ring of sample log, masked secret, safe output and local restore cards. All changes happen in this browser tab.">
+          <div class="privacy-visual__stage" aria-hidden="true">
+            <div class="privacy-visual__orbit privacy-visual__orbit--outer"></div>
+            <div class="privacy-visual__orbit privacy-visual__orbit--inner"></div>
+            <div class="privacy-visual__track">
+              <article class="privacy-visual__card privacy-visual__card--raw">
+                <span class="privacy-visual__card-label"><i></i> RAW LOG</span>
+                <strong>Authorization</strong>
+                <code>Bearer sk_••••••</code>
+              </article>
+              <article class="privacy-visual__card privacy-visual__card--detect">
+                <span class="privacy-visual__card-label"><i></i> DETECTED</span>
+                <strong>API key</strong>
+                <code>matched locally</code>
+              </article>
+              <article class="privacy-visual__card privacy-visual__card--mask">
+                <span class="privacy-visual__card-label"><i></i> MASKED</span>
+                <strong>[SECRET_1]</strong>
+                <code>stable placeholder</code>
+              </article>
+              <article class="privacy-visual__card privacy-visual__card--safe">
+                <span class="privacy-visual__card-label"><i></i> SAFE OUTPUT</span>
+                <strong>password=[PASS_1]</strong>
+                <code>context preserved</code>
+              </article>
+              <article class="privacy-visual__card privacy-visual__card--raw">
+                <span class="privacy-visual__card-label"><i></i> REMOTE IP</span>
+                <strong>192.0.2.10</strong>
+                <code>private value</code>
+              </article>
+              <article class="privacy-visual__card privacy-visual__card--mask">
+                <span class="privacy-visual__card-label"><i></i> SAFE LABEL</span>
+                <strong>[IP_1]</strong>
+                <code>same host, safe label</code>
+              </article>
+              <article class="privacy-visual__card privacy-visual__card--raw">
+                <span class="privacy-visual__card-label"><i></i> EMAIL FOUND</span>
+                <strong>ops@example.test</strong>
+                <code>matched locally</code>
+              </article>
+              <article class="privacy-visual__card privacy-visual__card--mask">
+                <span class="privacy-visual__card-label"><i></i> PLACEHOLDER</span>
+                <strong>[EMAIL_1]</strong>
+                <code>nothing disclosed</code>
+              </article>
+              <article class="privacy-visual__card privacy-visual__card--map">
+                <span class="privacy-visual__card-label"><i></i> LOCAL MAP</span>
+                <strong>[SECRET_1] ↔ original</strong>
+                <code>kept in this tab</code>
+              </article>
+              <article class="privacy-visual__card privacy-visual__card--restore">
+                <span class="privacy-visual__card-label"><i></i> RESTORE</span>
+                <strong>label → real value</strong>
+                <code>resolved on device</code>
+              </article>
+            </div>
+            <div class="privacy-visual__core">
+              <span class="privacy-visual__core-brand">PASTE-SAFE</span>
+              <strong>LOCAL ONLY</strong>
+              <span class="privacy-visual__core-status"><i></i> NOTHING LEAVES THIS TAB</span>
+              <span class="privacy-visual__core-progress"><span></span></span>
+            </div>
+            <span class="privacy-visual__step-chip"><i></i><span data-ribbon-step>01 / 03</span></span>
+          </div>
           <div class="hero-animation__caption" aria-hidden="true">
             <span><i></i> Detect locally</span>
             <span class="hero-animation__arrow">→</span>
