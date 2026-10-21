@@ -169,24 +169,24 @@ test("Board styling stays monochrome and responsive", async ({ page, viewport })
   }
 });
 
-test("Board intro pairs the copy with the local masking animation", async ({ page }) => {
+test("Board intro pairs the copy with the local privacy ring", async ({ page }) => {
   await page.goto("/#board");
-  await expect(page.locator(".privacy-visual")).toHaveCount(0);
+  await expect(page.locator(".privacy-visual")).toHaveCount(1);
   await expect(page.locator(".intro__head h1")).toBeVisible();
   await expect(page.locator(".intro .lede")).toBeVisible();
   await expect(page.locator(".intro .badges")).toBeVisible();
 
-  const animation = page.locator(".hero-animation");
+  const animation = page.locator(".privacy-visual");
   await expect(animation).toBeVisible();
-  await expect(animation.locator("svg")).toHaveAttribute("viewBox", "0 0 620 420");
-  await expect(animation.locator(".hero-animation__token")).toHaveCount(4);
+  await expect(animation.locator(".privacy-visual__card")).toHaveCount(10);
   await expect(animation).toContainText("[SECRET_1]");
   await expect(animation).toContainText("[IP_1]");
   await expect(animation).toContainText("[EMAIL_1]");
-  await expect(animation).toContainText("LOCAL ONLY");
+  await expect(animation.locator(".privacy-visual__core")).toContainText("LOCAL ONLY");
+  await expect(animation.locator(".privacy-visual__core")).toContainText("NOTHING LEAVES THIS TAB");
 
   const dimensions = await animation.boundingBox();
-  if (!dimensions) throw new Error("Hero animation has no layout box");
+  if (!dimensions) throw new Error("Privacy ring has no layout box");
   expect(dimensions.width).toBeGreaterThan(260);
   expect(dimensions.height).toBeGreaterThan(160);
 
