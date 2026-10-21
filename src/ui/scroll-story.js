@@ -47,6 +47,30 @@ export function wireScrollStory() {
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   let progressFrame = 0;
+
+  // Choose the chapter nearest the viewport's reading line, rather than relying
+  // on whichever IntersectionObserver entries happened to cross a threshold.
+  const syncActiveChapter = () => {
+    const readingLine = window.innerHeight * 0.48;
+    let nearest = chapters[0];
+    let nearestDistance = Number.POSITIVE_INFINITY;
+
+    for (const chapter of chapters) {
+      const rect = chapter.getBoundingClientRect();
+      if (rect.top <= readingLine && rect.bottom >= readingLine) {
+        nearest = chapter;
+        break;
+      }
+      const distance = Math.abs((rect.top + rect.bottom) / 2 - readingLine);
+      if (distance < nearestDistance) {
+        nearest = chapter;
+        nearestDistance = distance;
+      }
+    }
+
+    activate(nearest.dataset.storyStep ?? "detect");
+  };
+
   const updateScrollProgress = () => {
     progressFrame = 0;
     const rect = story.getBoundingClientRect();
@@ -66,6 +90,7 @@ export function wireScrollStory() {
     stage.style.setProperty("--story-aurora-x", `${driftX.toFixed(2)}px`);
     stage.style.setProperty("--story-aurora-y", `${driftY.toFixed(2)}px`);
     stage.style.setProperty("--story-aurora-scale", scale.toFixed(3));
+    syncActiveChapter();
   };
   const scheduleProgressUpdate = () => {
     if (progressFrame) return;
@@ -80,15 +105,11 @@ export function wireScrollStory() {
   activate(firstStep);
   if (!("IntersectionObserver" in window)) return;
 
-  const observer = new IntersectionObserver(entries => {
-    const visible = entries
-      .filter(entry => entry.isIntersecting)
-      .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-    const chapter = visible[0]?.target;
-    if (chapter instanceof HTMLElement) activate(chapter.dataset.storyStep ?? "");
+  const observer = new IntersectionObserver(() => {
+    syncActiveChapter();
   }, {
     root: null,
-    rootMargin: "-20% 0px -20% 0px",
+    rootMargin: "-10% 0px -10% 0px",
     threshold: [0, 0.1, 0.35, 0.7],
   });
 
