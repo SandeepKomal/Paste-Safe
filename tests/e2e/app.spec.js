@@ -190,8 +190,11 @@ test("Board intro pairs the copy with the local masking animation", async ({ pag
   expect(dimensions.width).toBeGreaterThan(260);
   expect(dimensions.height).toBeGreaterThan(160);
 
-  const heroGrid = await page.locator("main > .intro").evaluate(element => getComputedStyle(element).gridTemplateColumns);
-  expect(heroGrid.split(" ").length).toBeGreaterThanOrEqual(2);
+  const heroLayout = await page.locator("main > .intro").evaluate(element => ({
+    columns: getComputedStyle(element).gridTemplateColumns.split(" ").length,
+    viewportWidth: window.innerWidth,
+  }));
+  expect(heroLayout.columns).toBe(heroLayout.viewportWidth > 960 ? 2 : 1);
 });
 
 test("hero masking animation respects reduced motion", async ({ page }) => {
