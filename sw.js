@@ -1,7 +1,7 @@
 // Lets Paste-Safe open offline and be installed as an app. Only this site's own
 // files are cached. Network first, so online visits always get the latest version.
 
-const CACHE = "paste-safe-v2-no-privacy-flow-panel";
+const CACHE = "paste-safe-v3-local-mask-hero";
 const FILES = [
   "./",
   "index.html",
