@@ -2586,3 +2586,12 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
 :root[data-skin="board"] .privacy-visual__meter-fill--78 { --fill: 78%; }
 :root[data-skin="board"] .privacy-visual__meter-fill--69 { --fill: 69%; }
 :root[data-skin="board"] .privacy-visual__card { border-color: #dfe2e6; box-shadow: 0 15px 30px rgba(28,32,39,.10), inset 0 1px 0 #fff; }
+
+
+/* Blend the outer privacy-reel frame into the white page.
+   Keep the inner cards, spacing, and rotation unchanged. */
+:root[data-skin="board"] .privacy-visual {
+  border-color: #fff;
+  background: #fff;
+  box-shadow: none;
+}
