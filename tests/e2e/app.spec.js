@@ -229,7 +229,7 @@ test("scroll story scenes fit their stage without colliding with its footer", as
     await page.goto("/#how");
     const stage = page.locator("[data-story-stage]");
     for (const step of ["detect", "mask", "restore"]) {
-      await page.locator(`[data-story-step="${step}"]`).scrollIntoViewIfNeeded();
+      await page.locator(`[data-story-step="${step}"]`).evaluate(element => element.scrollIntoView({ block: "center", behavior: "instant" }));
       await expect(stage).toHaveAttribute("data-active-step", step, { timeout: 5000 });
       const layout = await stage.evaluate(element => {
         const step = element.getAttribute("data-active-step") ?? "detect";
