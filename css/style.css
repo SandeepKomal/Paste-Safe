@@ -2469,3 +2469,20 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
   .hero-animation__value--raw { opacity: 0; }
   .hero-animation__value--safe { opacity: 1; }
 }
+
+
+/* Keep long story scenes inside their stage on compact and mobile viewports. */
+@media (max-width: 960px) {
+  .scroll-story__stage {
+    height: clamp(480px, 76svh, 620px);
+    min-height: 480px;
+  }
+  .scroll-story__scene { inset: 58px 15px 56px; }
+}
+@media (max-width: 560px) {
+  .scroll-story__stage {
+    height: clamp(480px, 76svh, 620px);
+    min-height: 480px;
+  }
+  .scroll-story__scene { inset: 50px 12px 49px; }
+}
