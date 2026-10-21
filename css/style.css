@@ -2626,3 +2626,78 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
   .intro { row-gap: 16px; }
   .intro__side { gap: 12px; }
 }
+
+
+/* Mobile hero: use one intentional vertical flow instead of squeezing the
+   headline and supporting copy into competing columns beside the reel. */
+@media (max-width: 600px) {
+  :root[data-skin="board"] main > .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 20px;
+    padding: 24px 0 28px;
+  }
+  :root[data-skin="board"] .intro__head {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    width: 100%;
+  }
+  :root[data-skin="board"] .intro .eyebrow {
+    max-width: 32ch;
+    margin: 0;
+    font-size: .72rem;
+    line-height: 1.5;
+    letter-spacing: .14em;
+  }
+  :root[data-skin="board"] .intro h1 {
+    max-width: 13ch;
+    margin: 0;
+    font-size: clamp(2.55rem, 10.5vw, 3.35rem);
+    line-height: .99;
+    letter-spacing: -.06em;
+    overflow-wrap: normal;
+    text-wrap: balance;
+  }
+  :root[data-skin="board"] .intro__side {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    align-content: start;
+    width: 100%;
+    padding: 0;
+  }
+  :root[data-skin="board"] .intro__side .gate { display: none; }
+  :root[data-skin="board"] .intro__side .privacy-visual {
+    grid-row: 1;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    overflow: hidden;
+  }
+  :root[data-skin="board"] .intro__side .lede {
+    grid-row: 2;
+    max-width: 38ch;
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+  :root[data-skin="board"] .intro__side .badges {
+    grid-row: 3;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  :root[data-skin="board"] .intro__side .badge {
+    font-size: .68rem;
+    padding: 8px 10px;
+  }
+  :root[data-skin="board"] .privacy-visual__stage {
+    height: clamp(210px, 58vw, 270px);
+    min-height: 210px;
+  }
+  :root[data-skin="board"] .privacy-visual__tilt { top: 50%; }
+}
