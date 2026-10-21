@@ -2595,3 +2595,34 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
   background: #fff;
   box-shadow: none;
 }
+
+
+/* Tighten the first-screen hero rhythm without changing the reel itself.
+   The visual canvas was taller than the visible animation, making the copy feel detached. */
+@media (min-width: 961px) {
+  .intro {
+    column-gap: clamp(32px, 4vw, 56px);
+    row-gap: 20px;
+    align-items: start;
+    padding-block: 36px 8px;
+  }
+  .intro__side {
+    gap: 14px;
+    padding-bottom: 0;
+  }
+  .privacy-visual__stage {
+    height: clamp(260px, 24vw, 320px);
+    min-height: 260px;
+  }
+  .privacy-visual__tilt { top: 50%; }
+  .lede { max-width: 52ch; line-height: 1.55; }
+  .badges { gap: 8px; }
+}
+@media (max-width: 960px) {
+  .intro { row-gap: 18px; }
+  .intro__side { gap: 14px; }
+}
+@media (max-width: 560px) {
+  .intro { row-gap: 16px; }
+  .intro__side { gap: 12px; }
+}
