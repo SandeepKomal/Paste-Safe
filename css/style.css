@@ -2294,364 +2294,198 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
   color: #202521;
 }
 .privacy-visual {
-  --story-step-progress: .3333;
+  --privacy-reel-radius: 190px;
+  --privacy-card-width: 125px;
+  --privacy-card-height: 154px;
 }
-@property --privacy-spin-angle {
+@property --privacy-reel-angle {
   syntax: "<angle>";
-  inherits: true;
+  inherits: false;
   initial-value: 0deg;
 }
 .privacy-visual__stage {
   position: relative;
   width: 100%;
-  height: clamp(304px, 64vw, 390px);
+  height: clamp(320px, 46vw, 390px);
+  min-height: 300px;
   overflow: hidden;
   isolation: isolate;
-  perspective: 1050px;
-  perspective-origin: 50% 44%;
+  background: #fff;
+  perspective: 1450px;
+  perspective-origin: 50% 46%;
 }
 .privacy-visual__stage::before {
   content: "";
   position: absolute;
-  inset: 7% 8%;
-  z-index: -1;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at 50% 45%, rgba(134, 173, 145, .30), rgba(230, 239, 232, .15) 48%, transparent 76%);
-  filter: blur(16px);
-}
-.privacy-visual__orbit {
-  position: absolute;
-  top: 49%;
-  left: 50%;
-  width: min(75%, 440px);
-  aspect-ratio: 1;
-  border: 1px dashed rgba(126, 157, 136, .30);
+  inset: 5% 4%;
+  z-index: 0;
   border-radius: 50%;
   pointer-events: none;
-  transform: translate(-50%, -50%) scaleY(.48) rotate(-12deg);
-  animation: privacy-orbit-drift 36s linear infinite;
+  background: radial-gradient(ellipse 48% 45% at 50% 51%, rgba(232,239,233,.26), rgba(255,255,255,0) 74%);
 }
-.privacy-visual__orbit--inner {
-  width: min(59%, 345px);
-  border-color: rgba(126, 157, 136, .20);
-  transform: translate(-50%, -50%) scaleY(.55) rotate(24deg);
-  animation-duration: 28s;
-  animation-direction: reverse;
-}
-.privacy-visual__track {
-  --privacy-spin-angle: 0deg;
+.privacy-visual__halo {
   position: absolute;
-  top: 50%;
   left: 50%;
+  top: 50%;
+  width: min(89%, 1000px);
+  height: min(72%, 520px);
+  border: 1px solid rgba(222,230,223,.28);
+  border-radius: 50%;
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+  z-index: 0;
+}
+.privacy-visual__tilt {
+  position: absolute;
+  left: 50%;
+  top: 49%;
   width: 0;
   height: 0;
   transform-style: preserve-3d;
-  transform: translateY(26px) rotateX(34deg) rotateZ(-12deg);
-  animation: privacy-ring-spin 24s linear infinite;
+  transform: rotateX(13deg) rotateZ(-3deg);
+  z-index: 1;
+}
+.privacy-visual__track {
+  --privacy-reel-angle: 0deg;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transform: rotateY(var(--privacy-reel-angle));
+  animation: privacy-ring-spin 20s linear infinite;
+  will-change: transform;
 }
 .privacy-visual__card {
-  --card-width: clamp(90px, 20.5vw, 128px);
-  --ring-radius: clamp(145px, 31vw, 205px);
   position: absolute;
-  top: 0;
   left: 0;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  align-content: center;
-  gap: 7px;
-  width: var(--card-width);
-  height: 94px;
-  padding: 11px 12px 10px;
+  top: 0;
+  display: block;
+  width: var(--privacy-card-width);
+  height: var(--privacy-card-height);
+  padding: 0;
   overflow: hidden;
   border: 1px solid #dce5de;
   border-radius: 15px;
-  background: linear-gradient(145deg, rgba(255,255,255,.99), rgba(243,247,244,.97));
+  background: #fff;
   color: #303a33;
-  box-shadow: 0 15px 30px rgba(22, 40, 28, .14), inset 0 1px 0 rgba(255,255,255,.95);
-  backface-visibility: visible;
-  transform: translate(-50%, -50%) rotateY(calc(var(--angle) + var(--privacy-spin-angle, 0deg))) translateZ(var(--ring-radius)) rotateY(calc(0deg - var(--angle) - var(--privacy-spin-angle, 0deg))) rotateZ(12deg) rotateX(-34deg);
+  box-shadow: 0 15px 30px rgba(22,40,28,.12), inset 0 1px 0 rgba(255,255,255,.99);
   transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transform: translate(-50%,-50%) rotateY(var(--privacy-card-angle)) translateZ(var(--privacy-reel-radius));
 }
-.privacy-visual__card:nth-child(1) { --angle: 0deg; }
-.privacy-visual__card:nth-child(2) { --angle: 36deg; }
-.privacy-visual__card:nth-child(3) { --angle: 72deg; }
-.privacy-visual__card:nth-child(4) { --angle: 108deg; }
-.privacy-visual__card:nth-child(5) { --angle: 144deg; }
-.privacy-visual__card:nth-child(6) { --angle: 180deg; }
-.privacy-visual__card:nth-child(7) { --angle: 216deg; }
-.privacy-visual__card:nth-child(8) { --angle: 252deg; }
-.privacy-visual__card:nth-child(9) { --angle: 288deg; }
-.privacy-visual__card:nth-child(10) { --angle: 324deg; }
+.privacy-visual__card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(125deg, rgba(255,255,255,.62), transparent 44%, rgba(221,233,224,.12));
+}
+.privacy-visual__card-content {
+  position: absolute;
+  inset: 13px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  z-index: 1;
+  backface-visibility: visible;
+}
 .privacy-visual__card-label {
   display: flex;
   align-items: center;
-  gap: 6px;
-  min-width: 0;
-  color: #758278;
-  font: 700 7px/1.2 var(--font-mono);
-  letter-spacing: .095em;
+  gap: 7px;
+  color: #818b83;
+  font: 750 8px/1.15 var(--font-mono);
+  letter-spacing: .12em;
   white-space: nowrap;
 }
-.privacy-visual__card-label i,
-.privacy-visual__core-status i,
-.privacy-visual__step-chip i {
+.privacy-visual__card-label i {
   display: inline-block;
-  width: 5px;
-  height: 5px;
   flex: none;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: #8aa692;
-  box-shadow: 0 0 0 3px rgba(138, 166, 146, .12);
+  background: #8fa596;
+  box-shadow: 0 0 0 3px rgba(143,165,150,.12);
 }
-.privacy-visual__card strong {
-  align-self: center;
+.privacy-visual__value {
+  display: block;
   min-width: 0;
-  color: #29372d;
-  font: 650 clamp(10px, 1.25vw, 13px)/1.15 var(--font-mono);
+  color: #303a33;
+  font: 700 13px/1.18 var(--font-mono);
   letter-spacing: -.035em;
   overflow-wrap: anywhere;
 }
-.privacy-visual__card code {
-  min-width: 0;
-  color: #6d7e71;
-  font: 550 8px/1.2 var(--font-mono);
+.privacy-visual__sub {
+  color: #738176;
+  font: 550 9px/1.25 var(--font-mono);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.privacy-visual__card--detect {
-  border-color: #d0e0d4;
-  background: linear-gradient(145deg, #f4faf5, #eaf2ec);
-}
-.privacy-visual__card--mask {
-  border-color: #c4dfcd;
-  background: linear-gradient(145deg, #edf8f0, #dcefe1);
-}
-.privacy-visual__card--mask .privacy-visual__card-label,
-.privacy-visual__card--mask strong {
-  color: #426e51;
-}
-.privacy-visual__card--safe {
-  border-color: #34594a;
-  background: linear-gradient(145deg, #173c2e, #0e2b20);
-}
-.privacy-visual__card--safe .privacy-visual__card-label,
-.privacy-visual__card--safe code {
-  color: #a7c7b2;
-}
-.privacy-visual__card--safe .privacy-visual__card-label i {
-  background: #79d5a2;
-}
-.privacy-visual__card--safe strong {
-  color: #f0fff4;
-  font-size: clamp(9px, 1.1vw, 12px);
-}
-.privacy-visual__card--map {
-  border-color: #d8dfd9;
-  background: linear-gradient(145deg, #f8f8f3, #eaeee8);
-}
-.privacy-visual__card--restore {
-  border-color: #d3e5b6;
-  background: linear-gradient(145deg, #f8fbe9, #edf5d9);
-}
-.privacy-visual__card--restore .privacy-visual__card-label,
-.privacy-visual__card--restore strong {
-  color: #587443;
-}
-.privacy-visual__core {
-  position: absolute;
-  z-index: 3;
-  top: calc(50% - 28px);
-  left: 50%;
-  display: grid;
-  justify-items: center;
-  align-content: center;
-  gap: 5px;
-  width: 122px;
-  min-height: 54px;
-  padding: 9px 8px 8px;
-  border: 1px solid rgba(210, 224, 214, .94);
-  border-radius: 17px;
-  background: linear-gradient(145deg, rgba(255,255,255,.97), rgba(241,246,242,.95));
-  box-shadow: 0 10px 24px rgba(35, 60, 43, .13), inset 0 1px 0 rgba(255,255,255,.98);
-  text-align: center;
-  transform: translate(-50%, -50%);
-}
-.privacy-visual__core-brand {
-  color: #68756b;
-  font: 750 7px/1 var(--font-mono);
-  letter-spacing: .17em;
-}
-.privacy-visual__core strong {
-  color: #426a4f;
-  font: 800 11px/1.1 var(--font-mono);
-  letter-spacing: .07em;
-}
-.privacy-visual__core-status {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: #7c8c7e;
-  font: 650 5.5px/1.2 var(--font-mono);
-  letter-spacing: .05em;
-  white-space: nowrap;
-}
-.privacy-visual__core-status i {
-  width: 4px;
-  height: 4px;
-  background: #60a87a;
-  animation: privacy-status-pulse 2.2s ease-in-out infinite;
-}
-.privacy-visual__core-progress {
-  display: block;
-  width: 62px;
-  height: 2px;
-  overflow: hidden;
-  border-radius: 99px;
-  background: #dfe9e1;
-}
-.privacy-visual__core-progress span {
+.privacy-visual__meter {
   display: block;
   width: 100%;
+  height: 3px;
+  flex: none;
+  border-radius: 99px;
+  overflow: hidden;
+  background: #e9efe9;
+}
+.privacy-visual__meter span {
+  display: block;
   height: 100%;
+  width: var(--fill,64%);
   border-radius: inherit;
-  background: linear-gradient(90deg, #6ca982, #badc9a);
-  transform: scaleX(var(--story-step-progress, .3333));
-  transform-origin: left center;
-  transition: transform .6s ease;
+  background: #a7bda9;
 }
-.privacy-visual__step-chip {
+.privacy-visual__card--raw,
+.privacy-visual__card--detect,
+.privacy-visual__card--mask,
+.privacy-visual__card--safe,
+.privacy-visual__card--map,
+.privacy-visual__card--restore {
+  border-color: #dce5de;
+  background: #fff;
+  color: #303a33;
+}
+.privacy-visual__card:nth-child(3n) .privacy-visual__value { letter-spacing: -.045em; }
+.privacy-visual__card:nth-child(5n) .privacy-visual__value { font-size: 11.5px; }
+.privacy-visual__card:nth-child(7n) .privacy-visual__card-label i { background: #6f9a79; }
+.privacy-visual__fade {
   position: absolute;
-  right: 4%;
-  bottom: 7%;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 10px;
-  border: 1px solid rgba(212, 225, 215, .85);
-  border-radius: 999px;
-  background: rgba(255,255,255,.82);
-  box-shadow: 0 6px 16px rgba(38, 59, 44, .07);
-  color: #67796b;
-  font: 650 8px/1 var(--font-mono);
-  letter-spacing: .08em;
+  z-index: 5;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg,#fff 0%,rgba(255,255,255,.96) 3%,rgba(255,255,255,.65) 11%,rgba(255,255,255,0) 29%,rgba(255,255,255,0) 71%,rgba(255,255,255,.65) 89%,rgba(255,255,255,.96) 97%,#fff 100%),
+    linear-gradient(0deg,#fff 0%,rgba(255,255,255,.76) 4%,rgba(255,255,255,0) 22%,rgba(255,255,255,0) 78%,rgba(255,255,255,.76) 96%,#fff 100%);
 }
-.privacy-visual__step-chip i {
-  width: 5px;
-  height: 5px;
-}
-.hero-animation__caption {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px 12px;
-  margin-top: -6px;
-  color: #747c75;
-  font: 550 .63rem/1.4 var(--font-mono);
-}
-.hero-animation__caption span:not(.hero-animation__arrow) {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.hero-animation__caption i {
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #819b87;
-}
-.hero-animation__arrow { color: #afb8b0; }
-
 @keyframes privacy-ring-spin {
-  from { --privacy-spin-angle: 0deg; }
-  to { --privacy-spin-angle: 360deg; }
-}
-@keyframes privacy-orbit-drift {
-  from { rotate: 0deg; }
-  to { rotate: 360deg; }
-}
-@keyframes privacy-status-pulse {
-  0%, 100% { opacity: .45; box-shadow: 0 0 0 2px rgba(96, 168, 122, .08); }
-  50% { opacity: 1; box-shadow: 0 0 0 4px rgba(96, 168, 122, .20); }
+  from { --privacy-reel-angle: 0deg; }
+  to { --privacy-reel-angle: 360deg; }
 }
 @media (max-width: 960px) {
-  :root[data-skin="board"] main > .intro {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 20px;
-    padding: 26px 0 32px;
-  }
-  :root[data-skin="board"] .intro h1 {
-    max-width: 14ch;
-    font-size: clamp(2.5rem, 5.4vw, 3.8rem);
-  }
-  :root[data-skin="board"] .intro__side {
-    width: 100%;
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .hero-animation {
-    width: min(100%, 610px);
-  }
+  .privacy-visual__stage { perspective: 1150px; height: clamp(300px, 58vw, 370px); }
+  .privacy-visual__card-content { inset: 11px 12px 10px; }
+  .privacy-visual__value { font-size: 11px; }
+  .privacy-visual__sub { font-size: 8px; }
 }
-@media (max-width: 560px) {
-  :root[data-skin="board"] main > .intro {
-    gap: 17px;
-    padding: 22px 0 28px;
-  }
-  :root[data-skin="board"] .intro h1 {
-    max-width: 13.5ch;
-    font-size: clamp(2.25rem, 9.2vw, 2.9rem);
-  }
-  .hero-animation {
-    width: 100%;
-    max-width: 440px;
-    margin-block: -8px 0;
-  }
-  .privacy-visual__card {
-    --card-width: clamp(88px, 22.5vw, 106px);
-    --ring-radius: clamp(145px, 37vw, 166px);
-    padding: 9px 9px 8px;
-    height: 88px;
-    gap: 6px;
-    border-radius: 12px;
-  }
-  .privacy-visual__card strong {
-    font-size: 10px;
-  }
-  .privacy-visual__card code {
-    font-size: 7px;
-  }
-  .privacy-visual__card--safe strong {
-    font-size: 9px;
-  }
-  .privacy-visual__core {
-    width: 112px;
-    top: calc(50% - 30px);
-  }
-  .privacy-visual__step-chip {
-    right: 1%;
-    bottom: 5%;
-    font-size: 7px;
-  }
-  .hero-animation__caption {
-    gap: 6px 8px;
-    font-size: .56rem;
-  }
+@media (max-width: 600px) {
+  .privacy-visual__stage { perspective: 900px; height: 320px; min-height: 300px; }
+  .privacy-visual__tilt { top: 48%; transform: rotateX(14deg) rotateZ(-3deg) scale(.95); }
+  .privacy-visual__card { border-radius: 9px; }
+  .privacy-visual__card-content { inset: 9px 9px 9px; gap: 6px; }
+  .privacy-visual__card-label { font-size: 6px; gap: 5px; }
+  .privacy-visual__card-label i { width: 5px; height: 5px; }
+  .privacy-visual__value { font-size: 9px; }
+  .privacy-visual__sub { font-size: 7px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero-animation *,
-  .hero-animation *::before,
-  .hero-animation *::after {
-    animation: none !important;
-    transition: none !important;
-  }
-  .privacy-visual__track {
-    transform: translateY(26px) rotateX(34deg) rotateZ(-12deg);
-  }
-  .privacy-visual__orbit {
-    rotate: 0deg;
-  }
+  .privacy-visual__track { animation: none !important; }
 }
 
 

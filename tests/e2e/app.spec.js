@@ -169,26 +169,46 @@ test("Board styling stays monochrome and responsive", async ({ page, viewport })
   }
 });
 
-test("Board intro pairs the copy with the local privacy ring", async ({ page }) => {
+test("Board intro shows ten connected white 3D privacy cards", async ({ page }) => {
   await page.goto("/#board");
   await expect(page.locator(".privacy-visual")).toHaveCount(1);
   await expect(page.locator(".intro__head h1")).toBeVisible();
   await expect(page.locator(".intro .lede")).toBeVisible();
   await expect(page.locator(".intro .badges")).toBeVisible();
 
-  const animation = page.locator(".privacy-visual");
-  await expect(animation).toBeVisible();
-  await expect(animation.locator(".privacy-visual__card")).toHaveCount(10);
-  await expect(animation).toContainText("[SECRET_1]");
-  await expect(animation).toContainText("[IP_1]");
-  await expect(animation).toContainText("[EMAIL_1]");
-  await expect(animation.locator(".privacy-visual__core")).toContainText("LOCAL ONLY");
-  await expect(animation.locator(".privacy-visual__core")).toContainText("NOTHING LEAVES THIS TAB");
+  const art = page.locator(".privacy-visual");
+  const stage = art.locator("[data-privacy-reel-stage]");
+  const reel = art.locator("[data-privacy-reel]");
+  const cards = art.locator("[data-privacy-card]");
+  await expect(art).toBeVisible();
+  await expect(cards).toHaveCount(10);
+  await expect(art).toContainText("[SECRET_1]");
+  await expect(art).toContainText("[IP_1]");
+  await expect(art).toContainText("[EMAIL_1]");
+  const geometry = await stage.evaluate(element => {
+    const styles = getComputedStyle(element);
+    const radius = Number.parseFloat(styles.getPropertyValue("--privacy-reel-radius"));
+    const width = Number.parseFloat(styles.getPropertyValue("--privacy-card-width"));
+    const cardCount = element.querySelectorAll("[data-privacy-card]").length;
+    return {
+      radius,
+      width,
+      expectedWidth: 2 * radius * Math.tan(Math.PI / cardCount) + 1.5,
+      background: styles.backgroundColor,
+      has3D: getComputedStyle(element.querySelector("[data-privacy-reel]")).transformStyle,
+    };
+  });
+  expect(geometry.radius).toBeGreaterThan(0);
+  expect(Math.abs(geometry.width - geometry.expectedWidth)).toBeLessThan(1);
+  expect(geometry.background).toBe("rgb(255, 255, 255)");
+  expect(geometry.has3D).toBe("preserve-3d");
+  await expect.poll(async () => cards.first().evaluate(element => getComputedStyle(element).backgroundColor)).toBe("rgb(255, 255, 255)");
 
-  const dimensions = await animation.boundingBox();
-  if (!dimensions) throw new Error("Privacy ring has no layout box");
+  const dimensions = await art.boundingBox();
+  if (!dimensions) throw new Error("Privacy reel has no layout box");
   expect(dimensions.width).toBeGreaterThan(260);
   expect(dimensions.height).toBeGreaterThan(160);
+  await expect(reel).toBeVisible();
 
   const heroLayout = await page.locator("main > .intro").evaluate(element => ({
     columns: getComputedStyle(element).gridTemplateColumns.split(" ").length,
@@ -197,24 +217,24 @@ test("Board intro pairs the copy with the local privacy ring", async ({ page }) 
   expect(heroLayout.columns).toBe(heroLayout.viewportWidth > 960 ? 2 : 1);
 });
 
-test("privacy ring animation respects reduced motion", async ({ page }) => {
+test("connected white privacy reel respects reduced motion", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/#board");
   const art = page.locator(".privacy-visual");
+  const reel = art.locator("[data-privacy-reel]");
   await expect(art).toBeVisible();
-  await expect(art.locator(".privacy-visual__card")).toHaveCount(10);
-  await expect(art.locator(".privacy-visual__core")).toContainText("LOCAL ONLY");
-  await expect.poll(async () => art.locator(".privacy-visual__track").evaluate(element => getComputedStyle(element).animationName)).toBe("none");
-  await expect.poll(async () => art.locator(".privacy-visual__orbit").first().evaluate(element => getComputedStyle(element).animationName)).toBe("none");
+  await expect(art.locator("[data-privacy-card]")).toHaveCount(10);
+  await expect.poll(async () => reel.evaluate(element => getComputedStyle(element).animationName)).toBe("none");
 });
 
-test("privacy ring rotates every card while keeping its face readable", async ({ page }) => {
+test("privacy reel rotates with upright 3D cards", async ({ page }) => {
   await page.goto("/#board");
   const art = page.locator(".privacy-visual");
-  const cards = art.locator(".privacy-visual__card");
+  const reel = art.locator("[data-privacy-reel]");
+  const cards = art.locator("[data-privacy-card]");
   await expect(cards).toHaveCount(10);
-  await expect.poll(async () => art.locator(".privacy-visual__track").evaluate(element => getComputedStyle(element).animationName)).toBe("privacy-ring-spin");
-  await expect.poll(async () => cards.first().evaluate(element => getComputedStyle(element).backfaceVisibility)).toBe("visible");
+  await expect.poll(async () => reel.evaluate(element => getComputedStyle(element).animationName)).toBe("privacy-ring-spin");
+  await expect.poll(async () => cards.first().evaluate(element => getComputedStyle(element).backfaceVisibility)).toBe("hidden");
 
   const before = await cards.first().boundingBox();
   if (!before) throw new Error("First privacy card has no layout box");

@@ -1,7 +1,7 @@
 // Lets Paste-Safe open offline and be installed as an app. Only this site's own
 // files are cached. Network first, so online visits always get the latest version.
 
-const CACHE = "paste-safe-v5-privacy-ring-animation";
+const CACHE = "paste-safe-v6-connected-white-3d-reel";
 const FILES = [
   "./",
   "index.html",
@@ -27,6 +27,7 @@ const FILES = [
   "src/ui/skin-boot.js",
   "src/ui/skin.js",
   "src/ui/scroll-story.js",
+  "src/ui/privacy-reel.js",
 ];
 
 self.addEventListener("install", e => {

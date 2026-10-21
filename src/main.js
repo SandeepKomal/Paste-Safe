@@ -10,6 +10,7 @@ import { wireGate } from "./ui/gate.js";
 import { watchExternalRequests } from "./ui/netwatch.js";
 import { wirePeek } from "./ui/peek.js";
 import { currentSkin, wireSkinSwitch } from "./ui/skin.js";
+import { wirePrivacyReel } from "./ui/privacy-reel.js";
 import { wireScrollStory } from "./ui/scroll-story.js";
 import { CATEGORY_NAMES, renderLedger, renderMirror, renderSegments } from "./ui/render.js";
 
@@ -365,6 +366,7 @@ watchExternalRequests(n => {
   el.netcheck.classList.toggle("is-warn", n > 0);
 });
 
+wirePrivacyReel();
 wireScrollStory();
 loadExample();
 
