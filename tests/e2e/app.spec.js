@@ -208,6 +208,22 @@ test("privacy ring animation respects reduced motion", async ({ page }) => {
   await expect.poll(async () => art.locator(".privacy-visual__orbit").first().evaluate(element => getComputedStyle(element).animationName)).toBe("none");
 });
 
+test("privacy ring rotates every card while keeping its face readable", async ({ page }) => {
+  await page.goto("/#board");
+  const art = page.locator(".privacy-visual");
+  const cards = art.locator(".privacy-visual__card");
+  await expect(cards).toHaveCount(10);
+  await expect.poll(async () => art.locator(".privacy-visual__track").evaluate(element => getComputedStyle(element).animationName)).toBe("privacy-ring-spin");
+  await expect.poll(async () => cards.first().evaluate(element => getComputedStyle(element).backfaceVisibility)).toBe("visible");
+
+  const before = await cards.first().boundingBox();
+  if (!before) throw new Error("First privacy card has no layout box");
+  await page.waitForTimeout(250);
+  const after = await cards.first().boundingBox();
+  if (!after) throw new Error("First privacy card lost its layout box");
+  expect(Math.abs(after.x - before.x) + Math.abs(after.y - before.y)).toBeGreaterThan(0.5);
+});
+
 test("scrollytelling stage follows the Find, Mask and Restore chapters", async ({ page }) => {
   await page.goto("/#how");
   const stage = page.locator("[data-story-stage]");

@@ -2296,6 +2296,11 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
 .privacy-visual {
   --story-step-progress: .3333;
 }
+@property --privacy-spin-angle {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
 .privacy-visual__stage {
   position: relative;
   width: 100%;
@@ -2334,19 +2339,19 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
   animation-direction: reverse;
 }
 .privacy-visual__track {
+  --privacy-spin-angle: 0deg;
   position: absolute;
   top: 50%;
   left: 50%;
   width: 0;
   height: 0;
   transform-style: preserve-3d;
-  transform: translateY(26px) rotateY(0deg) rotateX(58deg) rotateZ(-12deg);
-  animation: privacy-ring-spin 29s linear infinite;
-  will-change: transform;
+  transform: translateY(26px) rotateX(34deg) rotateZ(-12deg);
+  animation: privacy-ring-spin 24s linear infinite;
 }
 .privacy-visual__card {
-  --card-width: clamp(104px, 24vw, 142px);
-  --ring-radius: clamp(136px, 34vw, 202px);
+  --card-width: clamp(90px, 20.5vw, 128px);
+  --ring-radius: clamp(145px, 31vw, 205px);
   position: absolute;
   top: 0;
   left: 0;
@@ -2363,8 +2368,8 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
   background: linear-gradient(145deg, rgba(255,255,255,.99), rgba(243,247,244,.97));
   color: #303a33;
   box-shadow: 0 15px 30px rgba(22, 40, 28, .14), inset 0 1px 0 rgba(255,255,255,.95);
-  backface-visibility: hidden;
-  transform: translate(-50%, -50%) rotateY(var(--angle)) translateZ(var(--ring-radius));
+  backface-visibility: visible;
+  transform: translate(-50%, -50%) rotateY(calc(var(--angle) + var(--privacy-spin-angle, 0deg))) translateZ(var(--ring-radius)) rotateY(calc(0deg - var(--angle) - var(--privacy-spin-angle, 0deg))) rotateZ(12deg) rotateX(-34deg);
   transform-style: preserve-3d;
 }
 .privacy-visual__card:nth-child(1) { --angle: 0deg; }
@@ -2560,8 +2565,8 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
 .hero-animation__arrow { color: #afb8b0; }
 
 @keyframes privacy-ring-spin {
-  from { transform: translateY(26px) rotateY(0deg) rotateX(58deg) rotateZ(-12deg); }
-  to { transform: translateY(26px) rotateY(360deg) rotateX(58deg) rotateZ(-12deg); }
+  from { --privacy-spin-angle: 0deg; }
+  to { --privacy-spin-angle: 360deg; }
 }
 @keyframes privacy-orbit-drift {
   from { rotate: 0deg; }
@@ -2604,7 +2609,8 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
     margin-block: -8px 0;
   }
   .privacy-visual__card {
-    --card-width: clamp(102px, 22vw, 124px);
+    --card-width: clamp(88px, 22.5vw, 106px);
+    --ring-radius: clamp(145px, 37vw, 166px);
     padding: 9px 9px 8px;
     height: 88px;
     gap: 6px;
@@ -2641,7 +2647,7 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
     transition: none !important;
   }
   .privacy-visual__track {
-    transform: translateY(26px) rotateY(0deg) rotateX(58deg) rotateZ(-12deg);
+    transform: translateY(26px) rotateX(34deg) rotateZ(-12deg);
   }
   .privacy-visual__orbit {
     rotate: 0deg;
