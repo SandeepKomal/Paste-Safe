@@ -2284,7 +2284,7 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
 :root[data-skin="board"] main > .bench--main {
   grid-column: 1 / -1;
 }
-:root[data-skin="board"] .hero-animation {
+.hero-animation {
   position: relative;
   width: 100%;
   max-width: 680px;
@@ -2293,22 +2293,22 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
   overflow: visible;
   color: #202521;
 }
-:root[data-skin="board"] .hero-animation__art {
+.hero-animation__art {
   display: block;
   width: 100%;
   height: auto;
   overflow: visible;
 }
-:root[data-skin="board"] .hero-animation__orbit {
+.hero-animation__orbit {
   stroke-dasharray: 3 8;
   stroke-dashoffset: 0;
   animation: hero-orbit-flow 28s linear infinite;
 }
-:root[data-skin="board"] .hero-animation__orbit--inner {
+.hero-animation__orbit--inner {
   animation-duration: 22s;
   animation-direction: reverse;
 }
-:root[data-skin="board"] .hero-animation__flow {
+.hero-animation__flow {
   fill: none;
   stroke: #bbc7bd;
   stroke-width: 1.5;
@@ -2316,65 +2316,65 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
   stroke-linecap: round;
   animation: hero-data-flow 4.8s linear infinite;
 }
-:root[data-skin="board"] .hero-animation__flow--two { animation-delay: -1.2s; }
-:root[data-skin="board"] .hero-animation__flow--three { animation-delay: -2.4s; }
-:root[data-skin="board"] .hero-animation__flow--four { animation-delay: -3.6s; }
-:root[data-skin="board"] .hero-animation__signal {
+.hero-animation__flow--two { animation-delay: -1.2s; }
+.hero-animation__flow--three { animation-delay: -2.4s; }
+.hero-animation__flow--four { animation-delay: -3.6s; }
+.hero-animation__signal {
   fill: #7e9b86;
   animation: hero-signal 3.8s ease-in-out infinite;
 }
-:root[data-skin="board"] .hero-animation__signal--two { animation-delay: -.9s; }
-:root[data-skin="board"] .hero-animation__signal--three { animation-delay: -1.8s; }
-:root[data-skin="board"] .hero-animation__signal--four { animation-delay: -2.7s; }
-:root[data-skin="board"] .hero-animation__core {
+.hero-animation__signal--two { animation-delay: -.9s; }
+.hero-animation__signal--three { animation-delay: -1.8s; }
+.hero-animation__signal--four { animation-delay: -2.7s; }
+.hero-animation__core {
   transform-box: fill-box;
   transform-origin: center;
   animation: hero-core-breathe 6s ease-in-out infinite;
 }
-:root[data-skin="board"] .hero-animation__shield {
+.hero-animation__shield {
   transform-box: fill-box;
   transform-origin: center;
   animation: hero-shield-glow 6s ease-in-out infinite;
 }
-:root[data-skin="board"] .hero-animation__core-brand {
+.hero-animation__core-brand {
   fill: #616b64;
   font: 700 9px/1 var(--font-mono);
   letter-spacing: 1.3px;
 }
-:root[data-skin="board"] .hero-animation__core-tag {
+.hero-animation__core-tag {
   fill: #536e5a;
   font: 700 7px/1 var(--font-mono);
   letter-spacing: .8px;
 }
-:root[data-skin="board"] .hero-animation__token {
+.hero-animation__token {
   transform-box: fill-box;
   transform-origin: center;
 }
-:root[data-skin="board"] .hero-animation__token-bg {
+.hero-animation__token-bg {
   fill: #fff;
   stroke: #dfe4e0;
 }
-:root[data-skin="board"] .hero-animation__token-label {
+.hero-animation__token-label {
   fill: #818982;
   font: 650 8px/1 var(--font-mono);
   letter-spacing: 1.15px;
 }
-:root[data-skin="board"] .hero-animation__value {
+.hero-animation__value {
   fill: #454d47;
   font: 600 10px/1 var(--font-mono);
 }
-:root[data-skin="board"] .hero-animation__value--raw {
+.hero-animation__value--raw {
   animation: hero-raw-to-safe 7s ease-in-out infinite;
 }
-:root[data-skin="board"] .hero-animation__value--safe {
+.hero-animation__value--safe {
   fill: #547660;
   opacity: 0;
   animation: hero-safe-to-raw 7s ease-in-out infinite;
 }
-:root[data-skin="board"] .hero-animation__token--two .hero-animation__value { animation-delay: -1.1s; }
-:root[data-skin="board"] .hero-animation__token--three .hero-animation__value { animation-delay: -2.4s; }
-:root[data-skin="board"] .hero-animation__token--four .hero-animation__value { animation-delay: -3.5s; }
-:root[data-skin="board"] .hero-animation__caption {
+.hero-animation__token--two .hero-animation__value { animation-delay: -1.1s; }
+.hero-animation__token--three .hero-animation__value { animation-delay: -2.4s; }
+.hero-animation__token--four .hero-animation__value { animation-delay: -3.5s; }
+.hero-animation__caption {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2384,19 +2384,19 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
   color: #747c75;
   font: 550 .63rem/1.4 var(--font-mono);
 }
-:root[data-skin="board"] .hero-animation__caption span:not(.hero-animation__arrow) {
+.hero-animation__caption span:not(.hero-animation__arrow) {
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
-:root[data-skin="board"] .hero-animation__caption i {
+.hero-animation__caption i {
   width: 5px;
   height: 5px;
   display: inline-block;
   border-radius: 50%;
   background: #819b87;
 }
-:root[data-skin="board"] .hero-animation__arrow { color: #afb8b0; }
+.hero-animation__arrow { color: #afb8b0; }
 
 @keyframes hero-orbit-flow { to { stroke-dashoffset: -176; } }
 @keyframes hero-data-flow { to { stroke-dashoffset: -36; } }
@@ -2436,7 +2436,7 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
     width: 100%;
     grid-template-columns: minmax(0, 1fr);
   }
-  :root[data-skin="board"] .hero-animation {
+  .hero-animation {
     width: min(100%, 610px);
   }
 }
@@ -2449,23 +2449,23 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--muted); }
     max-width: 13.5ch;
     font-size: clamp(2.25rem, 9.2vw, 2.9rem);
   }
-  :root[data-skin="board"] .hero-animation {
+  .hero-animation {
     width: 100%;
     max-width: 440px;
     margin-block: -8px 0;
   }
-  :root[data-skin="board"] .hero-animation__caption {
+  .hero-animation__caption {
     gap: 6px 8px;
     font-size: .56rem;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  :root[data-skin="board"] .hero-animation *,
-  :root[data-skin="board"] .hero-animation *::before,
-  :root[data-skin="board"] .hero-animation *::after {
+  .hero-animation *,
+  .hero-animation *::before,
+  .hero-animation *::after {
     animation: none !important;
     transition: none !important;
   }
-  :root[data-skin="board"] .hero-animation__value--raw { opacity: 0; }
-  :root[data-skin="board"] .hero-animation__value--safe { opacity: 1; }
+  .hero-animation__value--raw { opacity: 0; }
+  .hero-animation__value--safe { opacity: 1; }
 }
