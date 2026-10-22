@@ -92,6 +92,29 @@ const detected = {
   "Windows username": ["C:\\Users\\jdoe\\AppData\\Local\\app.log", "USERNAME"],
   "IPv6 address": ["peer 2001:db8:85a3::8a2e:370:7334 refused", "IPV6"],
   "MAC address": ["eth0 link 3c:22:fb:7a:10:9e up", "MAC"],
+  "PGP private key block": [fake("-----BEGIN PGP PRIVATE KEY ", "BLOCK-----\nlQOYBF\n-----END PGP PRIVATE KEY BLOCK-----"), "PRIVATE_KEY"],
+  "Vault token": [fake("VAULT_TOKEN_VALUE hv", "s.CAESIJ1oD3x9vZ2k8pQwErTyUiOp"), "VAULT_TOKEN"],
+  "DigitalOcean token": [fake("do", "p_v1_" + "a1b2c3d4e5f6".repeat(5) + "a1b2"), "DO_TOKEN"],
+  "PyPI token": [fake("pypi-AgEIcHlwaS5vcmc", "CJDk1NjI3ZmQtMWZhNi00ZjU2LWE0ZWYtZGQ2YjQ5YjlkZjA1AAIqWzMsIjg"), "PYPI_TOKEN"],
+  "Postman API key": [fake("PMA", "K-0123456789abcdef01234567-0123456789abcdef0123456789abcdef01"), "POSTMAN_KEY"],
+  "Grafana service account token": [fake("gls", "a_AbCdEfGhIjKlMnOpQrStUvWxYz012345_0a1b2c3d"), "GRAFANA_TOKEN"],
+  "New Relic key": [fake("NR", "AK-ABCDEFGHIJKLMNOPQRSTUVWXYZ0"), "NEWRELIC_KEY"],
+  "Sentry DSN": [fake("dsn https://", "0123456789abcdef0123456789abcdef@o12345.ingest.sentry.io/678"), "SENTRY_DSN"],
+  "Atlassian token": [fake("ATAT", "T3xFfGF0" + "AbCdEfGhIjKl".repeat(5)), "ATLASSIAN_TOKEN"],
+  "Linear API key": [fake("lin_", "api_" + "AbCdEfGhIj".repeat(4)), "LINEAR_KEY"],
+  "Supabase token": [fake("sb", "p_" + "0123456789abcdef0123".repeat(2)), "SUPABASE_TOKEN"],
+  "Doppler token": [fake("dp", ".pt.AbCdEfGhIjKlMnOpQrStUvWxYz0123456789AbCdE"), "DOPPLER_TOKEN"],
+  "Mailgun key": [fake("ke", "y-0123456789abcdef0123456789abcdef"), "MAILGUN_KEY"],
+  "SonarQube token": [fake("sq", "p_" + "0123456789abcdef0123".repeat(2)), "SONAR_TOKEN"],
+  "Databricks token": [fake("dap", "i0123456789abcdef0123456789abcdef"), "DATABRICKS_TOKEN"],
+  "kubeconfig client key": ["    client-key-data: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQo=", "KUBE_KEY"],
+  "Azure shared access key": [fake("Endpoint=sb://x.servicebus.windows.net/;SharedAccessKeyName=root;SharedAccessKey=", "Zm9vYmFyYmF6cXV4Zm9vYmFyYmF6cXV4MTIzNDU2Nzg="), "AZURE_SAS"],
+  "bcrypt hash": ["admin:$2b$12$KIXQ8z3f9jR1mVq0aYp7.eG5nH2oL4wT6uS8bD0cF1gJ3kM5pQ7rS", "PASSWORD_HASH"],
+  "SHA-512 crypt hash": ["root:$6$rounds$Zx9y8W7v6U5t4S3r2Q1p0OnMlKjIhGfEdCbA:19000:0", "PASSWORD_HASH"],
+  "NTLM hash": ["Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::", "NTLM_HASH"],
+  "password flag": ["docker login -u ci --password Hunter2Pass registry.example.com", "CLI_SECRET"],
+  "token flag": ["vault login --token=s3cr3tT0ken99", "CLI_SECRET"],
+  "AWS account ID": ["arn:aws:iam::123456789012:role/deploy", "AWS_ACCOUNT"],
 };
 for (const [name, [text, type]] of Object.entries(detected)) {
   test(`detects: ${name}`, () => {
@@ -123,6 +146,11 @@ const ignored = {
   "CI runner path": "/home/runner/work/app/app/src/index.ts",
   "short port list": "ports 8080-8090, 9000",
   "URL with a harmless query": "https://example.com/search?q=timeout&page=2",
+  "flag with a variable": "deploy --token $DEPLOY_TOKEN --password=${PASS}",
+  "flag with a masked value": "login --password=****",
+  "shell positional arguments": "echo $1 $2 and $10",
+  "single MD5 checksum": "md5 d41d8cd98f00b204e9800998ecf8427e",
+  "ARN without an account": "arn:aws:s3:::my-bucket/logs",
 };
 for (const [name, text] of Object.entries(ignored)) {
   test(`leaves alone: ${name}`, () => {

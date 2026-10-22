@@ -156,6 +156,23 @@ test("the main layout is two columns on desktop and one on phones", async ({ pag
 });
 
 test.describe("hero", () => {
+test("the reel shows ten use cases and stops for reduced motion", async ({ page }) => {
+  await page.goto("/");
+  const stage = page.locator("[data-privacy-reel-stage]");
+  await expect(page.locator("[data-privacy-card]")).toHaveCount(10);
+  const geometry = await stage.evaluate(e => {
+    const st = getComputedStyle(e);
+    const radius = Number.parseFloat(st.getPropertyValue("--privacy-reel-radius"));
+    return { radius, width: Number.parseFloat(st.getPropertyValue("--privacy-card-width")), expected: 2 * radius * Math.tan(Math.PI / 10) + 1.5 };
+  });
+  expect(geometry.radius).toBeGreaterThan(0);
+  expect(Math.abs(geometry.width - geometry.expected)).toBeLessThan(1);
+  const reel = page.locator("[data-privacy-reel]");
+  await expect.poll(() => reel.evaluate(e => getComputedStyle(e).animationName)).toBe("reel-spin");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect.poll(() => reel.evaluate(e => getComputedStyle(e).animationName)).toBe("none");
+});
+
 test("the figures show live counts", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#figRequests")).toHaveText("0");

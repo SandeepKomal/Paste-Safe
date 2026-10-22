@@ -34,7 +34,9 @@ By default, copying adds one line on top asking the AI to keep labels like `[IP_
 
 ## What gets hidden
 
-- Keys and tokens: AWS, Azure, Google Cloud, GitHub, GitLab, npm, Slack, Stripe, SendGrid, Twilio, Shopify, Hugging Face, Discord, Google, OpenAI/Anthropic, JWTs, private key blocks
+- Keys and tokens: AWS, Azure (account and shared access keys), Google Cloud, GitHub, GitLab, npm, PyPI, Slack, Stripe, SendGrid, Mailgun, Twilio, Shopify, Hugging Face, Discord, Google, OpenAI/Anthropic, JWTs, private key blocks (including PGP)
+- DevOps and platform: HashiCorp Vault, DigitalOcean, Doppler, Grafana, New Relic, Sentry DSNs, SonarQube, Databricks, Supabase, Postman, Atlassian, Linear, kubeconfig client keys, AWS account IDs in ARNs, secrets passed as `--password` / `--token` flags
+- Security: password hashes (bcrypt, argon2, SHA-crypt) and NTLM hashes
 - Auth headers and logins: bearer tokens, `Authorization: Basic`, Docker registry logins, session cookies, tokens in URLs (`?access_token=`, signed S3/GCS links)
 - Passwords in connection URLs and in settings like `DB_PASSWORD=`, `client_secret:`, `api_key=`
 - Personal details: emails, phone numbers, payment card numbers (Luhn-checked), usernames in paths like `/home/jane` or `C:\Users\jane`

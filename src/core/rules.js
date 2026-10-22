@@ -39,7 +39,7 @@ const SYSTEM_USERS = new Set(["runner", "root", "ubuntu", "ec2-user", "admin", "
 export const RULES = Object.freeze([
   {
     type: "PRIVATE_KEY", label: "Private key", category: "credential",
-    re: /-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g,
+    re: /-----BEGIN [A-Z ]*PRIVATE KEY(?: BLOCK)?-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY(?: BLOCK)?-----/g,
   },
   { type: "AWS_KEY", label: "AWS access key ID", category: "credential", re: /\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/g },
   {
@@ -67,6 +67,45 @@ export const RULES = Object.freeze([
   },
   { type: "GITLAB_TOKEN", label: "GitLab token", category: "credential", re: /\bglpat-[A-Za-z0-9_-]{20,}/g },
   { type: "NPM_TOKEN", label: "npm token", category: "credential", re: /\bnpm_[A-Za-z0-9]{36}\b/g },
+  { type: "VAULT_TOKEN", label: "HashiCorp Vault token", category: "credential", re: /\bhv[sbr]\.[A-Za-z0-9_-]{24,}/g },
+  { type: "DO_TOKEN", label: "DigitalOcean token", category: "credential", re: /\bdo[opr]_v1_[a-f0-9]{64}\b/g },
+  { type: "PYPI_TOKEN", label: "PyPI token", category: "credential", re: /\bpypi-AgEIcHlwaS5vcmc[A-Za-z0-9_-]{50,}/g },
+  { type: "POSTMAN_KEY", label: "Postman API key", category: "credential", re: /\bPMAK-[a-f0-9]{24}-[a-f0-9]{34}\b/g },
+  { type: "GRAFANA_TOKEN", label: "Grafana token", category: "credential", re: /\bgl(?:sa_[A-Za-z0-9]{32}_[a-f0-9]{8}\b|c_[A-Za-z0-9+/]{32,}={0,2})/g },
+  { type: "NEWRELIC_KEY", label: "New Relic key", category: "credential", re: /\bNR(?:AK|II|JS)-[A-Za-z0-9]{19,32}\b/g },
+  {
+    type: "SENTRY_DSN", label: "Sentry DSN key", category: "credential",
+    re: /https:\/\/([a-f0-9]{32})@[a-z0-9.-]*sentry\.io/gd, group: 1,
+  },
+  { type: "ATLASSIAN_TOKEN", label: "Atlassian API token", category: "credential", re: /\bATATT3[A-Za-z0-9_=-]{50,}/g },
+  { type: "LINEAR_KEY", label: "Linear API key", category: "credential", re: /\blin_api_[A-Za-z0-9]{40}\b/g },
+  { type: "SUPABASE_TOKEN", label: "Supabase token", category: "credential", re: /\bsbp_[a-f0-9]{40}\b/g },
+  { type: "DOPPLER_TOKEN", label: "Doppler token", category: "credential", re: /\bdp\.(?:pt|st|sa|ct)\.[A-Za-z0-9]{40,44}\b/g },
+  { type: "MAILGUN_KEY", label: "Mailgun key", category: "credential", re: /\bkey-[a-f0-9]{32}\b/g },
+  { type: "SONAR_TOKEN", label: "SonarQube token", category: "credential", re: /\bsq[apu]_[a-f0-9]{40}\b/g },
+  { type: "DATABRICKS_TOKEN", label: "Databricks token", category: "credential", re: /\bdapi[a-f0-9]{32}(?:-\d)?\b/g },
+  {
+    type: "KUBE_KEY", label: "Kubernetes client key", category: "credential",
+    re: /\bclient-key-data:\s*([A-Za-z0-9+/=]{20,})/gd, group: 1,
+  },
+  {
+    type: "AZURE_SAS", label: "Azure shared access key", category: "credential",
+    re: /SharedAccessKey=([A-Za-z0-9+/=]{20,})/gd, group: 1,
+  },
+  {
+    type: "PASSWORD_HASH", label: "Password hash", category: "credential",
+    re: /\$(?:2[abxy]\$\d{2}\$[./A-Za-z0-9]{53}|argon2(?:id|i|d)\$[^\s"']{20,}|[156]\$[./A-Za-z0-9]{1,16}\$[./A-Za-z0-9]{22,86})/g,
+  },
+  {
+    type: "NTLM_HASH", label: "NTLM hash", category: "credential",
+    re: /(?<![a-fA-F0-9])[a-fA-F0-9]{32}:[a-fA-F0-9]{32}(?![a-fA-F0-9])/g,
+  },
+  {
+    type: "CLI_SECRET", label: "Secret passed on the command line", category: "credential",
+    re: /(?<![\w-])--(?:password|passwd|token|secret|api-key|client-secret|access-key|secret-key|auth-token)[= ]+["']?([^\s"']{4,})/gid,
+    group: 1,
+    skip: v => /^[$<{%]/.test(v) || /^\*+$/.test(v),
+  },
   { type: "SLACK_TOKEN", label: "Slack token", category: "credential", re: /\bxox[abprs]-[A-Za-z0-9-]{10,}/g },
   { type: "STRIPE_KEY", label: "Stripe key", category: "credential", re: /\b(?:sk|rk)_(?:live|test)_[A-Za-z0-9]{16,}\b/g },
   {
@@ -152,6 +191,10 @@ export const RULES = Object.freeze([
     type: "MAC", label: "MAC address", category: "network",
     re: /(?<![\w:-])[0-9A-Fa-f]{2}([:-])[0-9A-Fa-f]{2}(?:\1[0-9A-Fa-f]{2}){4}(?![\w:-])/g,
     skip: v => /^(?:00[:-]){5}00$|^(?:ff[:-]){5}ff$/i.test(v),
+  },
+  {
+    type: "AWS_ACCOUNT", label: "AWS account ID in an ARN", category: "network",
+    re: /\barn:aws[a-z-]*:[a-z0-9-]+:[a-z0-9-]*:(\d{12}):/gd, group: 1,
   },
   {
     type: "HOST", label: "Internal or cloud hostname", category: "network",

@@ -28,6 +28,7 @@ const FILES = [
   "src/ui/netwatch.js",
   "src/ui/peek.js",
   "src/ui/render.js",
+  "src/ui/privacy-reel.js",
   "src/ui/scroll-story.js",
   "src/ui/store.js",
 ];

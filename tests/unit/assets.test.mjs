@@ -117,3 +117,11 @@ test("the hero example shows what the detector really produces", async () => {
   assert.match(html, new RegExp(`>${findings.length} hidden<`));
   assert.match(html, new RegExp(`<dt id="figRules">${RULES.length}</dt>`));
 });
+
+test("every reel card shows a label the detector really uses", async () => {
+  const { RULES } = await import("../../src/core/rules.js");
+  const types = new Set(RULES.map(r => r.type));
+  const labels = [...read("index.html").matchAll(/<code class="reel__label">\[([A-Z_]+)_\d+\]<\/code>/g)].map(m => m[1]);
+  assert.equal(labels.length, 10);
+  for (const type of labels) assert.ok(types.has(type), `${type} is not a detector type`);
+});
