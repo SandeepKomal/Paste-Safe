@@ -11,6 +11,7 @@ import { watchExternalRequests } from "./ui/netwatch.js";
 import { wirePeek } from "./ui/peek.js";
 import { wireCloser } from "./ui/closer.js";
 import { wireFilm } from "./ui/film.js";
+import { wireMenu } from "./ui/menu.js";
 import { wireMotion } from "./ui/motion.js";
 import { wirePrivacyReel } from "./ui/privacy-reel.js";
 import { wireScrollStory } from "./ui/scroll-story.js";
@@ -456,6 +457,7 @@ wirePrivacyReel();
 wireScrollStory();
 wireCloser();
 wireFilm();
+wireMenu();
 wireMotion();
 loadExample();
 

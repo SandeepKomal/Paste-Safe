@@ -189,6 +189,28 @@ test("every reel card keeps its text inside its edges", async ({ page }) => {
   expect(problems).toEqual([]);
 });
 
+test("the page links are in the header, behind a menu button on narrow screens", async ({ page, viewport }) => {
+  await page.goto("/");
+  const links = page.locator("#pageNav a");
+  const button = page.locator("[data-menu-toggle]");
+  if ((viewport?.width ?? 1280) > 1000) {
+    await expect(button).toBeHidden();
+    await expect(links.first()).toBeVisible();
+    return;
+  }
+  await expect(links.first()).toBeHidden();
+  await button.click();
+  await expect(button).toHaveAttribute("aria-expanded", "true");
+  await expect(links).toHaveText(["How it works", "Coverage", "Verify", "GitHub"]);
+  await expect(page.getByRole("link", { name: "Coverage" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(links.first()).toBeHidden();
+  await button.click();
+  await page.getByRole("link", { name: "Coverage" }).click();
+  await expect(button).toHaveAttribute("aria-expanded", "false");
+  await expect(page).toHaveURL(/#coverage$/);
+});
+
 test("the logo is in the header and the footer", async ({ page }) => {
   await page.goto("/");
   for (const img of [page.locator(".wordmark img"), page.locator(".footer__brand img")]) {
