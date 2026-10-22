@@ -7,7 +7,7 @@ import { join, extname } from "node:path";
 
 const ROOT = new URL("../../", import.meta.url).pathname;
 /** Everything the Pages workflow publishes. */
-const SHIPPED = ["index.html", "sw.js", "manifest.webmanifest", "css", "src", "assets"];
+const SHIPPED = ["index.html", "privacy.html", "terms.html", "sw.js", "manifest.webmanifest", "css", "src", "assets"];
 
 const walk = p => (statSync(join(ROOT, p)).isDirectory() ? readdirSync(join(ROOT, p)).flatMap(f => walk(join(p, f))) : [p]);
 const files = SHIPPED.flatMap(walk);
@@ -32,13 +32,24 @@ test("styles declare no web fonts and import nothing", () => {
   }
 });
 
-test("the page loads scripts and styles only from this site", () => {
-  const html = read("index.html");
-  for (const [, url] of html.matchAll(/<(?:script|link)\b[^>]*\b(?:src|href)="([^"]+)"/gi)) {
-    assert.ok(!/^(?:https?:)?\/\//i.test(url), `index.html loads ${url}`);
+test("every page loads scripts and styles only from this site", () => {
+  for (const page of files.filter(f => f.endsWith(".html"))) {
+    const html = read(page);
+    for (const [, url] of html.matchAll(/<(?:script|link)\b[^>]*\b(?:src|href)="([^"]+)"/gi)) {
+      assert.ok(!/^(?:https?:)?\/\//i.test(url), `${page} loads ${url}`);
+    }
+    assert.match(html, /font-src 'none'/, `${page}: security policy should block fonts`);
+    assert.match(html, /connect-src 'none'/, `${page}: security policy should block network requests`);
   }
-  assert.match(html, /font-src 'none'/, "security policy should block fonts");
-  assert.match(html, /connect-src 'none'/, "security policy should block network requests");
+});
+
+test("the privacy notice lists every key the site stores", async () => {
+  const { KEYS } = await import("../../src/ui/store.js");
+  const notice = read("privacy.html");
+  for (const key of Object.values(KEYS)) assert.ok(notice.includes(`<code>${key}</code>`), `privacy.html does not mention ${key}`);
+  for (const f of files.filter(f => f.endsWith(".js") && f !== "src/ui/store.js")) {
+    assert.doesNotMatch(read(f), /localStorage|sessionStorage|indexedDB|document\.cookie/, `${f} stores data outside src/ui/store.js`);
+  }
 });
 
 test("scripts never fetch or import from other sites", () => {
@@ -76,4 +87,13 @@ test("the offline cache lists every file the site needs", () => {
 test("the app manifest points at icons that exist", () => {
   const manifest = JSON.parse(read("manifest.webmanifest"));
   for (const icon of manifest.icons) assert.ok(files.includes(icon.src), icon.src);
+});
+
+test("the version shown on the page matches package.json and the changelog", async () => {
+  const { VERSION, COMMIT } = await import("../../src/version.js");
+  assert.equal(VERSION, JSON.parse(read("package.json")).version);
+  assert.equal(COMMIT, "dev", "the deploy workflow fills in the commit; the source keeps 'dev'");
+  assert.ok(read("CHANGELOG.md").split("\n").includes(`## ${VERSION}`), "CHANGELOG.md has no entry for this version");
+  assert.ok(read("index.html").includes(`>v${VERSION}<`), "index.html shows another version");
+  assert.ok(read("sw.js").includes(`"paste-safe-${VERSION}"`), "sw.js cache name has another version");
 });

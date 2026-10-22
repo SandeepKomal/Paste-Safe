@@ -13,25 +13,24 @@ Strip secrets out of logs and configs before pasting them into ChatGPT, Claude o
 
 **Use it now: https://sandeepkomal.github.io/paste-safe/** (free, no sign-up, nothing to install)
 
-![Paste-Safe turning secrets in a log into labels](docs/demo.gif)
+![Paste-Safe on desktop: your text on the left, the safe text with labels on the right](docs/screenshot-desktop.png)
 
-| Board | Lens | Sticker |
-| --- | --- | --- |
-| ![Board theme](docs/screenshot-board.png) | ![Lens theme](docs/screenshot-lens.png) | ![Sticker theme](docs/screenshot-sticker.png) |
+<img src="docs/screenshot-mobile.png" alt="Paste-Safe on a phone" width="300">
 
 ## Usage
 
 1. Paste a log, config or stack trace. Anything that looks secret gets underlined.
 2. Copy the safe version. Secrets become labels like `[AWS_KEY_1]`; the same value always gets the same label.
-3. Paste the AI's reply into the bottom box and the labels turn back into your values.
+3. Paste the AI's reply into the bottom box and the labels turn back into your values. If the AI changed a label beyond recognition, Paste-Safe says so ("5 labels put back. 1 still looks like a label.") and highlights it, so you don't use a half-restored answer.
 
-You can switch individual findings off if they're fine to share. Hovering a label shows the value behind it.
+You can switch individual findings off if they're fine to share. Hovering a label shows the value behind it. **Plain mode** (in the toolbar) hides every real value on the page for when you share your screen; copying the restored answer then asks first.
+
+The links under the safe text open an empty ChatGPT, Claude or Gemini chat. They don't carry your text.
 
 You can also open or drop a file (`.log`, `.env`, `.yaml`, `.json` and other text files up to 50 MB). Large files are checked in a background worker so the page doesn't freeze.
 
 By default, copying adds one line on top asking the AI to keep labels like `[IP_1]` as they are. If the AI still changes them a little (`IP_1`, `[ip-1]`), they're put back anyway.
 
-There are three themes (switch in the header, or open `#board`, `#lens` or `#sticker`). Board is the default: a clean monochrome layout with a workbench that turns between your text and the safe text.
 
 ## What gets hidden
 
@@ -40,12 +39,12 @@ There are three themes (switch in the header, or open `#board`, `#lens` or `#sti
 - Passwords in connection URLs and in settings like `DB_PASSWORD=`, `client_secret:`, `api_key=`
 - Personal details: emails, phone numbers, payment card numbers (Luhn-checked), usernames in paths like `/home/jane` or `C:\Users\jane`
 - Network details: IPv4 and IPv6 addresses, MAC addresses, internal/cloud hostnames
-- Your own words, such as a company or server name (set under Findings, saved in your browser only)
+- Your own words, such as client, company or server names (under Findings → Words, saved in your browser only). Lists can be imported and exported as a text file, so a team can share one without sharing any logs; lines starting with `#` are notes
 - Long random-looking strings that none of the above matched
 
 Things like `localhost`, commit hashes, UUIDs, file paths and `${VAR}` references are left alone.
 
-Detection is pattern-based, so it can miss things. Check the output before you paste it anywhere.
+Detection is pattern-based, so it can miss things. **Names of people and companies are not detected** unless they are on your word list. The page's "What this copy catches" section runs the detector on fake samples in your browser and lists what it misses. Check the output before you paste it anywhere.
 
 ## Privacy
 
@@ -53,8 +52,10 @@ Everything runs in your browser. There's no backend, no analytics and no account
 
 - The page's security policy (`connect-src 'none'`) stops it from sending data anywhere, and the header shows a live count of requests to other sites. It should stay at 0.
 - Your text and the labels are never saved. Close or reload the tab and they're gone.
-- Only your settings are kept in your browser: the theme, your own words list, and whether copy adds the note.
+- Only your settings are kept in your browser: your own words list, plain mode, and whether copy adds the note.
+- The header shows the version, and on the live site the commit, of the code running in your tab. Compare it with the [changelog](CHANGELOG.md).
 - The offline cache holds only the site's own files.
+- Read the [privacy notice](https://sandeepkomal.github.io/paste-safe/privacy.html) and [terms](https://sandeepkomal.github.io/paste-safe/terms.html). The privacy page has a button that erases everything the site saved. For India's DPDP Act, see the [compliance checklist](docs/DPDP-COMPLIANCE.md).
 
 ## Install it or use it offline
 
@@ -68,7 +69,17 @@ Current Chrome, Edge, Firefox and Safari (16.4 or newer), on desktop and mobile.
 
 **Is it safe to paste real secrets into this page?** The page can't send them anywhere, and you can check: the request counter, the CSP in `index.html`, and the source code are all public. Still, treat it like any tool: use it on a device you trust, and check the safe text before you share it.
 
-**Can I run it on my own server?** Yes. It's static files: serve the repository folder with any web server, or fork it and turn on GitHub Pages (see below).
+**Can I run it on my own server?** Yes, and if you want to be sure which code you run, you should. It's static files with no build step and no runtime dependencies:
+
+```bash
+git clone https://github.com/SandeepKomal/paste-safe
+cd paste-safe
+python3 -m http.server 8080   # or any static web server
+```
+
+Review the files, then serve that folder. You can also fork it and turn on GitHub Pages (see below).
+
+**Is there a browser extension?** Not yet. An add-on that masks text as you paste it into an AI chat would use the same detection code and still have no server; the website stays the version anyone can audit.
 
 **It missed a secret, or hid something harmless.** Please [open an issue](https://github.com/SandeepKomal/paste-safe/issues/new/choose) with a made-up example in the same format. Never post a real secret.
 

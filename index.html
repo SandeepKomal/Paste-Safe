@@ -9,251 +9,255 @@
   <title>Paste-Safe</title>
   <meta name="description" content="Hide passwords, keys, tokens and IPs before pasting logs into any AI, then put the real values back into the answer. Free, open source, and runs entirely in your browser.">
   <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light">
   <meta property="og:title" content="Paste-Safe">
   <meta property="og:description" content="Hide secrets in logs before pasting them into any AI. Put the real values back into the answer.">
-  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="assets/icon-192.png">
-  <link rel="manifest" href="manifest.webmanifest">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://sandeepkomal.github.io/paste-safe/">
   <meta property="og:image" content="https://sandeepkomal.github.io/paste-safe/assets/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Paste-Safe: a split-flap board turning secrets into labels like [SECRET_1] and [IP_1]">
+  <meta property="og:image:alt" content="Paste-Safe: ask any AI about your logs and keep every secret to yourself">
   <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="css/style.css">
-  <script src="src/ui/skin-boot.js"></script>
   <script type="module" src="src/main.js"></script>
 </head>
 <body>
   <a class="skip" href="#input">Skip to the tool</a>
 
   <header class="masthead">
-    <div class="masthead__inner">
-      <div class="masthead__bar">
-        <a class="wordmark" href="./" aria-label="Paste-Safe, home">
-          <span class="wordmark__mark" aria-hidden="true"></span><span>paste</span><span class="wordmark__safe">safe</span>
-        </a>
-        <nav class="nav" aria-label="Page">
-          <a href="#how">How it works</a>
-          <a href="#limits">Limits</a>
-          <a href="https://github.com/SandeepKomal/paste-safe">GitHub</a>
-        </nav>
-        <div class="skinswitch" id="skinswitch" role="group" aria-label="Theme">
-          <button type="button" data-skin-option="board" aria-pressed="true">Board</button>
-          <button type="button" data-skin-option="lens" aria-pressed="false">Lens</button>
-          <button type="button" data-skin-option="sticker" aria-pressed="false">Sticker</button>
-        </div>
+    <div class="masthead__bar">
+      <a class="wordmark" href="./" aria-label="Paste-Safe, home"><span class="wordmark__mark" aria-hidden="true"></span>Paste-Safe</a>
+      <nav class="nav" aria-label="Page">
+        <a href="#how">How it works</a>
+        <a href="#coverage">Coverage</a>
+        <a href="#verify">Verify</a>
+        <a href="https://github.com/SandeepKomal/paste-safe">GitHub</a>
+      </nav>
+      <div class="masthead__meta">
+        <a class="build" id="build" href="https://github.com/SandeepKomal/paste-safe/blob/main/CHANGELOG.md" title="Version of the code running in this tab. Opens the changelog.">v2.1.0</a>
         <p class="netcheck" id="netcheck" title="Counted from your browser's own network records">
           <span class="netcheck__dot" aria-hidden="true"></span>
-          <span><b id="netcount">0</b> requests to other sites</span>
+          <span><b id="netcount">0</b> <span class="netcheck__long">requests to other sites</span><span class="netcheck__short" aria-hidden="true">requests</span></span>
         </p>
       </div>
     </div>
   </header>
 
   <main>
-    <section class="intro">
-      <div class="intro__head">
-        <p class="eyebrow">For logs, configs and stack traces</p>
-        <h1>Ask any AI about your logs. <span class="intro__muted">Keep every <span class="h1-word" tabindex="0"><span class="fl">s</span><span class="fl">e</span><span class="fl">c</span><span class="fl">r</span><span class="fl">e</span><span class="fl">t</span></span> to yourself.</span></h1>
+    <section class="hero" aria-labelledby="heroTitle">
+      <p class="eyebrow">For logs, configs and stack traces</p>
+      <h1 id="heroTitle">Ask any AI about your logs. <span>Keep every secret to yourself.</span></h1>
+      <p class="hero__lede">Passwords, keys, tokens, IPs and emails become labels before you share. When the AI answers, your real values go back in. Everything happens in this tab.</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary btn--lg" href="#tool">Start masking</a>
+        <a class="btn btn--quiet btn--lg" href="#coverage">See what it catches <span aria-hidden="true">›</span></a>
       </div>
-      <div class="intro__side">
-        <div class="gate" id="gate" aria-hidden="true"></div>
-        <div class="hero-animation privacy-visual" role="img" aria-label="Ten white upright cards joined edge to edge in a continuous rotating 3D reel, showing how Paste-Safe detects and masks sensitive values locally.">
-          <div class="privacy-visual__stage" data-privacy-reel-stage aria-hidden="true">
-            <div class="privacy-visual__halo"></div>
-            <div class="privacy-visual__tilt">
-              <div class="privacy-visual__track" data-privacy-reel>
-                <article class="privacy-visual__card privacy-visual__card--raw" data-privacy-card>
-                  <div class="privacy-visual__card-content">
-                    <span class="privacy-visual__card-label"><i></i> RAW LOG</span>
-                    <strong class="privacy-visual__value">Authorization</strong>
-                    <span class="privacy-visual__sub">Bearer sk_••••••</span>
-                    <span class="privacy-visual__meter"><span class="privacy-visual__meter-fill privacy-visual__meter-fill--82"></span></span>
-                  </div>
-                </article>
-                <article class="privacy-visual__card privacy-visual__card--detect" data-privacy-card>
-                  <div class="privacy-visual__card-content">
-                    <span class="privacy-visual__card-label"><i></i> DETECTED</span>
-                    <strong class="privacy-visual__value">API key</strong>
-                    <span class="privacy-visual__sub">matched locally</span>
-                    <span class="privacy-visual__meter"><span class="privacy-visual__meter-fill privacy-visual__meter-fill--62"></span></span>
-                  </div>
-                </article>
-                <article class="privacy-visual__card privacy-visual__card--mask" data-privacy-card>
-                  <div class="privacy-visual__card-content">
-                    <span class="privacy-visual__card-label"><i></i> MASKED</span>
-                    <strong class="privacy-visual__value">[SECRET_1]</strong>
-                    <span class="privacy-visual__sub">stable placeholder</span>
-                    <span class="privacy-visual__meter"><span class="privacy-visual__meter-fill privacy-visual__meter-fill--77"></span></span>
-                  </div>
-                </article>
-                <article class="privacy-visual__card privacy-visual__card--safe" data-privacy-card>
-                  <div class="privacy-visual__card-content">
-                    <span class="privacy-visual__card-label"><i></i> SAFE OUTPUT</span>
-                    <strong class="privacy-visual__value">password=[PASS_1]</strong>
-                    <span class="privacy-visual__sub">context preserved</span>
-                    <span class="privacy-visual__meter"><span class="privacy-visual__meter-fill privacy-visual__meter-fill--58"></span></span>
-                  </div>
-                </article>
-                <article class="privacy-visual__card privacy-visual__card--raw" data-privacy-card>
-                  <div class="privacy-visual__card-content">
-                    <span class="privacy-visual__card-label"><i></i> REMOTE IP</span>
-                    <strong class="privacy-visual__value">192.0.2.10</strong>
-                    <span class="privacy-visual__sub">private value</span>
-                    <span class="privacy-visual__meter"><span class="privacy-visual__meter-fill privacy-visual__meter-fill--70"></span></span>
-                  </div>
-                </article>
-                <article class="privacy-visual__card privacy-visual__card--mask" data-privacy-card>
-                  <div class="privacy-visual__card-content">
-                    <span class="privacy-visual__card-label"><i></i> SAFE LABEL</span>
-                    <strong class="privacy-visual__value">[IP_1]</strong>
-                    <span class="privacy-visual__sub">same host, safe label</span>
-                    <span class="privacy-visual__meter"><span class="privacy-visual__meter-fill privacy-visual__meter-fill--66"></span></span>
-                  </div>
-                </article>
-                <article class="privacy-visual__card privacy-visual__card--raw" data-privacy-card>
-                  <div class="privacy-visual__card-content">
-                    <span class="privacy-visual__card-label"><i></i> EMAIL FOUND</span>
-                    <strong class="privacy-visual__value">ops@example.test</strong>
-                    <span class="privacy-visual__sub">matched locally</span>
-                    <span class="privacy-visual__meter"><span class="privacy-visual__meter-fill privacy-visual__meter-fill--73"></span></span>
-                  </div>
-                </article>
-                <article class="privacy-visual__card privacy-visual__card--mask" data-privacy-card>
-                  <div class="privacy-visual__card-content">
-                    <span class="privacy-visual__card-label"><i></i> PLACEHOLDER</span>
-                    <strong class="privacy-visual__value">[EMAIL_1]</strong>
-                    <span class="privacy-visual__sub">nothing disclosed</span>
-                    <span class="privacy-visual__meter"><span class="privacy-visual__meter-fill privacy-visual__meter-fill--57"></span></span>
-                  </div>
-                </article>
-                <article class="privacy-visual__card privacy-visual__card--map" data-privacy-card>
-                  <div class="privacy-visual__card-content">
-                    <span class="privacy-visual__card-label"><i></i> LOCAL MAP</span>
-                    <strong class="privacy-visual__value">[SECRET_1] ↔ value</strong>
-                    <span class="privacy-visual__sub">kept in this tab</span>
-                    <span class="privacy-visual__meter"><span class="privacy-visual__meter-fill privacy-visual__meter-fill--78"></span></span>
-                  </div>
-                </article>
-                <article class="privacy-visual__card privacy-visual__card--restore" data-privacy-card>
-                  <div class="privacy-visual__card-content">
-                    <span class="privacy-visual__card-label"><i></i> RESTORE</span>
-                    <strong class="privacy-visual__value">label → real value</strong>
-                    <span class="privacy-visual__sub">resolved on device</span>
-                    <span class="privacy-visual__meter"><span class="privacy-visual__meter-fill privacy-visual__meter-fill--69"></span></span>
-                  </div>
-                </article>
+      <ul class="hero__facts">
+        <li>Runs in your browser</li>
+        <li>No server, no account</li>
+        <li>Open source, MIT</li>
+      </ul>
+      <div class="reel" role="img" aria-label="A slowly turning ring of cards showing a secret being found, replaced with a label and put back, all on this device.">
+        <div class="reel__stage" data-privacy-reel-stage aria-hidden="true">
+          <div class="reel__tilt">
+            <div class="reel__track" data-privacy-reel>
+              <article class="reel__card" data-privacy-card>
+                <span class="reel__label"><i></i>Raw log</span>
+                <strong class="reel__value">Authorization</strong>
+                <span class="reel__sub">Bearer sk_••••••</span>
+                <span class="reel__meter"><span></span></span>
+              </article>
+              <article class="reel__card" data-privacy-card>
+                <span class="reel__label"><i></i>Detected</span>
+                <strong class="reel__value">API key</strong>
+                <span class="reel__sub">matched locally</span>
+                <span class="reel__meter"><span></span></span>
+              </article>
+              <article class="reel__card" data-privacy-card>
+                <span class="reel__label"><i></i>Masked</span>
+                <strong class="reel__value">[SECRET_1]</strong>
+                <span class="reel__sub">stable placeholder</span>
+                <span class="reel__meter"><span></span></span>
+              </article>
+              <article class="reel__card" data-privacy-card>
+                <span class="reel__label"><i></i>Safe output</span>
+                <strong class="reel__value">password=[PASS_1]</strong>
+                <span class="reel__sub">context preserved</span>
+                <span class="reel__meter"><span></span></span>
+              </article>
+              <article class="reel__card" data-privacy-card>
+                <span class="reel__label"><i></i>Remote IP</span>
+                <strong class="reel__value">192.0.2.10</strong>
+                <span class="reel__sub">private value</span>
+                <span class="reel__meter"><span></span></span>
+              </article>
+              <article class="reel__card" data-privacy-card>
+                <span class="reel__label"><i></i>Safe label</span>
+                <strong class="reel__value">[IP_1]</strong>
+                <span class="reel__sub">same host, safe label</span>
+                <span class="reel__meter"><span></span></span>
+              </article>
+              <article class="reel__card" data-privacy-card>
+                <span class="reel__label"><i></i>Email found</span>
+                <strong class="reel__value">ops@example.test</strong>
+                <span class="reel__sub">matched locally</span>
+                <span class="reel__meter"><span></span></span>
+              </article>
+              <article class="reel__card" data-privacy-card>
+                <span class="reel__label"><i></i>Placeholder</span>
+                <strong class="reel__value">[EMAIL_1]</strong>
+                <span class="reel__sub">nothing disclosed</span>
+                <span class="reel__meter"><span></span></span>
+              </article>
+              <article class="reel__card" data-privacy-card>
+                <span class="reel__label"><i></i>Local map</span>
+                <strong class="reel__value">[SECRET_1] ↔ value</strong>
+                <span class="reel__sub">kept in this tab</span>
+                <span class="reel__meter"><span></span></span>
+              </article>
+              <article class="reel__card" data-privacy-card>
+                <span class="reel__label"><i></i>Restore</span>
+                <strong class="reel__value">label → real value</strong>
+                <span class="reel__sub">resolved on device</span>
+                <span class="reel__meter"><span></span></span>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tool" id="tool" aria-labelledby="toolTitle">
+      <div class="section-head">
+        <h2 id="toolTitle">Mask, ask, restore.</h2>
+        <p>Paste on the left. Copy the safe text on the right into any AI.</p>
+      </div>
+
+      <div class="card bench">
+        <div class="bench__bar">
+          <p class="stats" aria-live="polite">
+            <span><b id="statHidden">0</b> hidden</span>
+            <span class="stats__sep" aria-hidden="true"></span>
+            <span id="statSize">0 B</span>
+            <span id="statPlain" hidden>· highlights off for very large text</span>
+          </p>
+          <label class="toggle" title="Hide real values on this page, for a shared screen">
+            <input class="toggle__input" id="plainMode" type="checkbox" role="switch">
+            <span class="toggle__track" aria-hidden="true"></span>
+            <span>Plain mode</span>
+          </label>
+          <div class="bench__actions">
+            <button class="btn btn--sm" id="openFile" type="button">Open file</button>
+            <input class="visually-hidden" id="fileInput" type="file" tabindex="-1" aria-hidden="true" accept=".log,.txt,.env,.yaml,.yml,.json,.conf,.cfg,.ini,.toml,.xml,.properties,.out,.err,text/*">
+            <button class="btn btn--sm" id="loadExample" type="button">Example</button>
+            <button class="btn btn--sm" id="clear" type="button">Clear</button>
+          </div>
+        </div>
+
+        <div class="bench__grid">
+          <div class="pane">
+            <div class="pane__head">
+              <span class="step">1</span>
+              <div>
+                <h3><label for="input">Your text</label></h3>
+                <p class="hint">Secrets are underlined as you type. You can drop a file here. The example is made up.</p>
               </div>
             </div>
-            <div class="privacy-visual__fade"></div>
-          </div>
-        </div>
-        <p class="lede">Passwords, keys, tokens, IPs and emails become labels before you share. When the AI answers, your real values go back in. Everything happens in this tab.</p>
-        <div class="badges"><span class="badge">Runs in your browser</span><span class="badge">30+ detectors</span><span class="badge">Free and open source</span></div>
-      </div>
-    </section>
-
-    <section class="bench bench--main panel" aria-labelledby="benchTitle">
-      <h2 class="visually-hidden" id="benchTitle">Hide secrets</h2>
-      <div class="bench__bar">
-        <p class="stats" aria-live="polite">
-          <span><b id="statHidden">0</b> hidden</span>
-          <span class="stats__sep" aria-hidden="true"></span>
-          <span id="statSize">0 B</span>
-          <span id="statPlain" hidden>· highlights off for very large text</span>
-        </p>
-        <div class="bench__actions">
-          <button class="btn btn--flip" id="flip" type="button" aria-pressed="false">Show safe side</button>
-          <button class="btn btn--ghost" id="openFile" type="button">Open file</button>
-          <input class="visually-hidden" id="fileInput" type="file" tabindex="-1" aria-hidden="true" accept=".log,.txt,.env,.yaml,.yml,.json,.conf,.cfg,.ini,.toml,.xml,.properties,.out,.err,text/*">
-          <button class="btn btn--ghost" id="loadExample" type="button">Load example</button>
-          <button class="btn btn--ghost" id="clear" type="button">Clear</button>
-        </div>
-      </div>
-
-      <div class="bench__grid" id="workbench">
-        <div class="pane" id="paneText">
-          <div class="pane__head">
-            <span class="step">1</span>
-            <div>
-              <h3><label for="input">Your text</label></h3>
-              <p class="hint">Secrets are underlined as you type. You can also drop a file here. The example is made up.</p>
+            <div class="editor" id="dropZone">
+              <div class="editor__backdrop" id="backdrop" aria-hidden="true"><div class="editor__mirror" id="mirror"></div></div>
+              <textarea class="editor__input" id="input" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Paste a log, config file, error or code"></textarea>
             </div>
           </div>
-          <div class="editor" id="dropZone">
-            <div class="editor__backdrop" id="backdrop" aria-hidden="true"><div class="editor__mirror" id="mirror"></div></div>
-            <textarea class="editor__input" id="input" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Paste a log, config file, error or code"></textarea>
-          </div>
-        </div>
 
-        <div class="pane pane--safe" id="paneSafe">
-          <div class="pane__head">
-            <span class="step">2</span>
-            <div>
-              <h3 id="safeTitle">Safe to share</h3>
-              <p class="hint">Copy this into ChatGPT, Claude or any AI.</p>
+          <div class="pane pane--safe">
+            <div class="pane__head">
+              <span class="step">2</span>
+              <div>
+                <h3 id="safeTitle">Safe to share</h3>
+                <p class="hint">Hover or tap a label to peek at its value.</p>
+              </div>
+              <button class="btn btn--primary" id="copySafe" type="button"><span class="btn__label">Copy safe text</span><span class="btn__done" aria-hidden="true">Copied</span></button>
             </div>
-            <button class="btn btn--primary" id="copySafe" type="button"><span class="btn__label">Copy</span><span class="btn__done" aria-hidden="true">Copied</span></button>
-          </div>
-          <pre class="sheet" id="safe" tabindex="0" aria-labelledby="safeTitle" data-empty="Your safe text appears here."></pre>
-          <label class="check"><input type="checkbox" id="withNote" checked> Copy with a note asking the AI to keep the labels as they are</label>
-        </div>
-      </div>
-    </section>
-
-    <section class="ledger panel" aria-labelledby="ledgerTitle">
-      <div class="ledger__head">
-        <div>
-          <h2 id="ledgerTitle">Findings</h2>
-          <p class="hint">Switch off anything that's fine to share. Hover a row to see where it appears, or hover a label to peek at its value.</p>
-        </div>
-        <div class="categories" id="categories"></div>
-      </div>
-      <div class="table-wrap" id="ledgerWrap">
-        <table id="ledger">
-          <thead>
-            <tr><th scope="col">Hide</th><th scope="col">Label</th><th scope="col">Kind</th><th scope="col" class="num">Seen</th><th scope="col">Value</th></tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <p class="empty" id="ledgerEmpty" hidden></p>
-      <details class="words">
-        <summary>Always hide your own words</summary>
-        <div class="words__body">
-          <label class="hint" for="words">One per line, such as your company, client or server names. They become labels like <code>[PRIVATE_1]</code>. Saved in this browser only.</label>
-          <textarea class="words__input" id="words" rows="4" spellcheck="false" autocomplete="off" placeholder="Acme Payments&#10;prod-eu-cluster"></textarea>
-        </div>
-      </details>
-    </section>
-
-    <section class="bench bench--restore panel" aria-labelledby="restoreTitle">
-      <h2 class="visually-hidden" id="restoreTitle">Restore the answer</h2>
-      <div class="bench__grid">
-        <div class="pane">
-          <div class="pane__head">
-            <span class="step">3</span>
-            <div>
-              <h3><label for="answer">The AI's answer</label></h3>
-              <p class="hint">Paste the reply. Labels are only remembered while this tab is open.</p>
+            <pre class="sheet" id="safe" tabindex="0" aria-labelledby="safeTitle" data-empty="Your safe text appears here."></pre>
+            <p class="copy-note" id="copyNote" aria-live="polite"></p>
+            <div class="pane__foot">
+              <label class="check"><input type="checkbox" id="withNote" checked> Add a note asking the AI to keep the labels</label>
+              <p class="open-chat">Open an empty chat:
+                <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">ChatGPT</a>
+                <a href="https://claude.ai/new" target="_blank" rel="noopener noreferrer">Claude</a>
+                <a href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer">Gemini</a>
+              </p>
             </div>
           </div>
-          <div class="editor editor--plain">
-            <textarea class="editor__input" id="answer" spellcheck="false" placeholder="Paste the AI's answer here"></textarea>
-          </div>
         </div>
-        <div class="pane pane--safe">
-          <div class="pane__head">
-            <span class="step step--done" aria-hidden="true">✓</span>
-            <div>
-              <h3 id="restoredTitle">With your real values</h3>
-              <p class="hint" id="restoreNote">Real values come back highlighted.</p>
-            </div>
-            <button class="btn btn--primary" id="copyRestored" type="button"><span class="btn__label">Copy</span><span class="btn__done" aria-hidden="true">Copied</span></button>
+      </div>
+
+      <div class="card ledger" aria-labelledby="ledgerTitle">
+        <div class="ledger__head">
+          <div>
+            <h3 id="ledgerTitle">Findings</h3>
+            <p class="hint">Switch off anything that's fine to share. Hover a row to see where it appears.</p>
           </div>
-          <pre class="sheet" id="restored" tabindex="0" aria-labelledby="restoredTitle" data-empty="The answer with your real values appears here."></pre>
+          <div class="categories" id="categories"></div>
+        </div>
+        <div class="table-wrap" id="ledgerWrap">
+          <table id="ledger">
+            <thead>
+              <tr><th scope="col">Hide</th><th scope="col">Label</th><th scope="col">Kind</th><th scope="col" class="num">Seen</th><th scope="col">Value</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="empty" id="ledgerEmpty" hidden></p>
+        <details class="words" id="wordsPanel">
+          <summary>Words <span>Always hide your own names and terms</span></summary>
+          <div class="words__body">
+            <p class="hint">Names of people and companies are <strong>not detected</strong> unless they are on this list. One per line; lines starting with # are notes. They become labels like <code>[PRIVATE_1]</code>. Saved in this browser only.</p>
+            <textarea class="words__input" id="words" rows="5" spellcheck="false" autocomplete="off" placeholder="Acme Payments&#10;prod-eu-cluster" aria-label="Words to always hide"></textarea>
+            <div class="words__actions">
+              <button class="btn btn--sm" id="importWords" type="button">Import list</button>
+              <input class="visually-hidden" id="wordsFile" type="file" tabindex="-1" aria-hidden="true" accept=".txt,text/plain">
+              <button class="btn btn--sm" id="exportWords" type="button">Export list</button>
+              <span class="words__sep" aria-hidden="true"></span>
+              <span class="hint">Start from:</span>
+              <button class="btn btn--sm btn--quiet" type="button" data-starter="clients">Clients</button>
+              <button class="btn btn--sm btn--quiet" type="button" data-starter="support">Support mail</button>
+            </div>
+            <p class="hint">The exported file holds only this list, never your text.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="card bench bench--restore" aria-labelledby="restoreTitle">
+        <h3 class="visually-hidden" id="restoreTitle">Restore the answer</h3>
+        <div class="bench__grid">
+          <div class="pane">
+            <div class="pane__head">
+              <span class="step">3</span>
+              <div>
+                <h3><label for="answer">The AI's answer</label></h3>
+                <p class="hint">Paste the reply. Labels are only remembered while this tab is open.</p>
+              </div>
+            </div>
+            <div class="editor editor--plain">
+              <textarea class="editor__input" id="answer" spellcheck="false" placeholder="Paste the AI's answer here"></textarea>
+            </div>
+          </div>
+          <div class="pane pane--safe">
+            <div class="pane__head">
+              <span class="step step--done" aria-hidden="true">✓</span>
+              <div>
+                <h3 id="restoredTitle">With your real values</h3>
+                <p class="hint" id="restoreNote">Real values come back highlighted.</p>
+              </div>
+              <button class="btn btn--primary" id="copyRestored" type="button"><span class="btn__label">Copy answer</span><span class="btn__done" aria-hidden="true">Copied</span></button>
+            </div>
+            <pre class="sheet" id="restored" tabindex="0" aria-labelledby="restoredTitle" data-empty="The answer with your real values appears here."></pre>
+          </div>
         </div>
       </div>
     </section>
@@ -368,19 +372,45 @@
       </div>
     </section>
 
-    <section class="limits" id="limits" aria-labelledby="limitsTitle">
-      <h2 id="limitsTitle">What to know</h2>
-      <dl class="facts">
-        <div><dt>It can miss things.</dt><dd>Detection is pattern-based. Read the safe text before you paste it anywhere.</dd></div>
-        <div><dt>Nothing leaves this tab.</dt><dd>There is no server. The page's security policy blocks it from sending data, and the counter at the top shows requests to other sites.</dd></div>
-        <div><dt>Nothing is saved.</dt><dd>Close or reload the tab and your text and labels are gone.</dd></div>
-        <div><dt>Open source.</dt><dd>MIT licensed. Read every line on <a href="https://github.com/SandeepKomal/paste-safe">GitHub</a>.</dd></div>
-      </dl>
+    <section class="coverage" id="coverage" aria-labelledby="coverageTitle">
+      <div class="section-head">
+        <p class="eyebrow">Coverage</p>
+        <h2 id="coverageTitle">What this copy catches.</h2>
+        <p>Your browser just ran the detector on these fake samples. Misses are listed too: one you can see is safer than one you can't.</p>
+      </div>
+      <div class="card coverage__card">
+        <ul class="coverage__list" id="coverageList"></ul>
+        <p class="coverage__foot" id="coverageFoot"></p>
+      </div>
+    </section>
+
+    <section class="verify" id="verify" aria-labelledby="verifyTitle">
+      <div class="section-head">
+        <p class="eyebrow">Trust, but verify</p>
+        <h2 id="verifyTitle">Check the copy you're running.</h2>
+      </div>
+      <div class="verify__grid">
+        <dl class="facts">
+          <div><dt>Nothing leaves this tab.</dt><dd>There is no server. The page's security policy blocks it from sending data, and the header counts every request to another site.</dd></div>
+          <div><dt>You can see which version runs.</dt><dd>The header shows <b id="verifyVersion">v2.1.0</b><span id="verifyCommit"></span>. Compare it with the <a href="https://github.com/SandeepKomal/paste-safe/blob/main/CHANGELOG.md">changelog</a> and the source.</dd></div>
+          <div><dt>Nothing is saved.</dt><dd>Close or reload the tab and your text and labels are gone. Only your word list and settings stay in this browser, and you can <a href="privacy.html">erase them</a>. Read the <a href="privacy.html">privacy notice</a>.</dd></div>
+          <div><dt>It can miss things.</dt><dd>Detection is pattern-based. Names of people and companies are not detected unless they are on your word list. Read the safe text before you paste it anywhere.</dd></div>
+        </dl>
+        <div class="card selfhost">
+          <h3>Run your own copy</h3>
+          <p class="hint">Serve the exact files you reviewed. No build step, no dependencies at runtime.</p>
+          <pre class="selfhost__code"><code>git clone https://github.com/SandeepKomal/paste-safe
+cd paste-safe
+python3 -m http.server 8080</code></pre>
+          <p class="hint">Then open <code>localhost:8080</code>. Any static web server works.</p>
+        </div>
+      </div>
     </section>
   </main>
 
   <footer class="footer">
-    <p>Paste-Safe · MIT License · Original design and code · Uses your device's own fonts</p>
+    <p>Paste-Safe · MIT License · Uses your device's own fonts</p>
+    <p><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="https://github.com/SandeepKomal/paste-safe">Source</a> · <a href="https://github.com/SandeepKomal/paste-safe/blob/main/CHANGELOG.md">Changelog</a> · <a href="https://github.com/SandeepKomal/paste-safe/blob/main/SECURITY.md">Security</a></p>
   </footer>
 
   <div class="peek" id="peek" aria-hidden="true" hidden><span class="peek__label">Real value</span><span id="peekValue"></span></div>

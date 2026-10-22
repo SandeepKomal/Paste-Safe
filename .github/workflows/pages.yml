@@ -57,7 +57,12 @@ jobs:
         if: steps.pages.outputs.enabled == 'true'
         run: |
           mkdir -p _site
-          cp -r index.html sw.js manifest.webmanifest css src assets _site/
+          cp -r index.html privacy.html terms.html sw.js manifest.webmanifest css src assets _site/
+          # Show the deployed commit in the header, and give each deploy a fresh offline cache.
+          sha="${GITHUB_SHA::7}"
+          sed -i "s/export const COMMIT = \"dev\";/export const COMMIT = \"$sha\";/" _site/src/version.js
+          sed -i "s/const CACHE = \"paste-safe-\([0-9.]*\)\";/const CACHE = \"paste-safe-\1-$sha\";/" _site/sw.js
+          grep -q "COMMIT = \"$sha\"" _site/src/version.js
           touch _site/.nojekyll
 
       - uses: actions/upload-pages-artifact@v4

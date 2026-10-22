@@ -1,17 +1,17 @@
 // @ts-check
 import { detect } from "./core/detect.js";
 import { RULES, wordRules } from "./core/rules.js";
-import { mask, restore, toText, withNote } from "./core/transform.js";
+import { markLeftovers, mask, restore, toText, withNote } from "./core/transform.js";
+import { SAMPLES } from "./coverage.js";
 import { EXAMPLE, exampleAnswer } from "./example.js";
+import { COMMIT, REPO, VERSION } from "./version.js";
 import { copyText } from "./ui/clipboard.js";
-import { debounce, formatBytes, req } from "./ui/dom.js";
-import { wireFlip } from "./ui/flip.js";
-import { wireGate } from "./ui/gate.js";
+import { debounce, formatBytes, h, req } from "./ui/dom.js";
 import { watchExternalRequests } from "./ui/netwatch.js";
 import { wirePeek } from "./ui/peek.js";
-import { currentSkin, wireSkinSwitch } from "./ui/skin.js";
 import { wirePrivacyReel } from "./ui/privacy-reel.js";
 import { wireScrollStory } from "./ui/scroll-story.js";
+import { KEYS, load, save } from "./ui/store.js";
 import { CATEGORY_NAMES, renderLedger, renderMirror, renderSegments } from "./ui/render.js";
 
 // Above this size, detection is debounced instead of running on every keystroke.
@@ -22,7 +22,13 @@ const WORKER_LIMIT = 200_000;
 // laying out tens of thousands of inline elements takes the browser seconds.
 const RICH_LIMIT = 2_000;
 const MAX_FILE_BYTES = 50 * 1024 * 1024;
-const WORDS_KEY = "paste-safe:words";
+const TYPES = [...RULES.map(r => r.type), "PRIVATE", "SECRET_LIKE"];
+
+/** Templates to start a word list from. Lines starting with # are notes. */
+const STARTERS = {
+  clients: "# Clients and projects: replace these examples with your own\nAcme Payments\nNorthwind Traders\nProject Bluebird",
+  support: "# Support mail: customer and staff names that show up in tickets\nPriya Sharma\nJordan Lee\nContoso Ltd",
+};
 
 const el = {
   input: req("#input", HTMLTextAreaElement),
@@ -40,25 +46,30 @@ const el = {
   statPlain: req("#statPlain", HTMLElement),
   restoreNote: req("#restoreNote", HTMLElement),
   copySafe: req("#copySafe", HTMLButtonElement),
+  copyNote: req("#copyNote", HTMLElement),
   copyRestored: req("#copyRestored", HTMLButtonElement),
   loadExample: req("#loadExample", HTMLButtonElement),
   clear: req("#clear", HTMLButtonElement),
   netcount: req("#netcount", HTMLElement),
   netcheck: req("#netcheck", HTMLElement),
   status: req("#status", HTMLElement),
-  skinSwitch: req("#skinswitch", HTMLElement),
   peek: req("#peek", HTMLElement),
   peekValue: req("#peekValue", HTMLElement),
-  workbench: req("#workbench", HTMLElement),
-  paneText: req("#paneText", HTMLElement),
-  paneSafe: req("#paneSafe", HTMLElement),
-  flip: req("#flip", HTMLButtonElement),
-  gate: req("#gate", HTMLElement),
+  plainMode: req("#plainMode", HTMLInputElement),
+  build: req("#build", HTMLAnchorElement),
+  verifyVersion: req("#verifyVersion", HTMLElement),
+  verifyCommit: req("#verifyCommit", HTMLElement),
+  coverageList: req("#coverageList", HTMLElement),
+  coverageFoot: req("#coverageFoot", HTMLElement),
   withNote: req("#withNote", HTMLInputElement),
   words: req("#words", HTMLTextAreaElement),
   openFile: req("#openFile", HTMLButtonElement),
   fileInput: req("#fileInput", HTMLInputElement),
   dropZone: req("#dropZone", HTMLElement),
+  wordsPanel: req("#wordsPanel", HTMLDetailsElement),
+  importWords: req("#importWords", HTMLButtonElement),
+  exportWords: req("#exportWords", HTMLButtonElement),
+  wordsFile: req("#wordsFile", HTMLInputElement),
 };
 
 /** @import { Detection, Category } from "../types/index.js" */
@@ -161,13 +172,15 @@ function paint() {
 
 function paintAnswer() {
   const active = state.detection.findings.filter(f => !state.shown.has(f.value));
-  const segments = restore(el.answer.value, active);
+  const segments = markLeftovers(restore(el.answer.value, active), TYPES);
   state.restoredText = toText(segments);
   renderSegments(el.restored, segments, seenLabels);
   const n = segments.filter(s => s.restored).length;
+  const left = segments.filter(s => s.leftover).length;
   el.restoreNote.textContent = el.answer.value
-    ? `${n} label${n === 1 ? "" : "s"} turned back into your real values.`
+    ? `${n} label${n === 1 ? "" : "s"} put back.${left ? ` ${left} still look${left === 1 ? "s" : ""} like a label.` : ""}`
     : "Real values come back highlighted.";
+  el.restoreNote.classList.toggle("is-warn", left > 0);
 }
 
 function syncScroll() {
@@ -190,9 +203,10 @@ const labelOf = (/** @type {EventTarget | null} */ t) =>
  * @param {HTMLButtonElement} button
  * @param {() => string} getText
  * @param {HTMLElement} fallback
- * @param {string} doneMessage
+ * @param {() => string} doneMessage
+ * @param {() => boolean} [allow]  asked before copying; return false to stop
  */
-function wireCopy(button, getText, fallback, doneMessage) {
+function wireCopy(button, getText, fallback, doneMessage, allow = () => true) {
   /** @type {ReturnType<typeof setTimeout> | undefined} */
   let reset;
   button.addEventListener("click", async () => {
@@ -201,33 +215,13 @@ function wireCopy(button, getText, fallback, doneMessage) {
       el.status.textContent = "There's nothing to copy yet.";
       return;
     }
+    if (!allow()) return;
     const result = await copyText(text, fallback);
     button.dataset.state = result === "copied" ? "done" : "";
-    el.status.textContent = result === "copied" ? doneMessage : "Your browser blocked copying. The text is selected: press Ctrl+C, or Cmd+C on a Mac.";
+    el.status.textContent = result === "copied" ? doneMessage() : "Your browser blocked copying. The text is selected: press Ctrl+C, or Cmd+C on a Mac.";
     clearTimeout(reset);
     reset = setTimeout(() => (button.dataset.state = ""), 2000);
   });
-}
-
-const isBoard = () => currentSkin() === "board";
-const card = wireFlip({
-  card: el.workbench,
-  button: el.flip,
-  front: el.paneText,
-  back: el.paneSafe,
-  isOn: isBoard,
-  // Replay the label flaps each time the safe side comes round.
-  onTurn: safe => {
-    if (!safe) return;
-    seenLabels.clear();
-    paint();
-  },
-});
-/** @type {ReturnType<typeof setTimeout> | undefined} */
-let turnLater;
-function turnToSafe(/** @type {number} */ ms) {
-  clearTimeout(turnLater);
-  if (isBoard()) turnLater = setTimeout(() => card.set(true), ms);
 }
 
 // Labels only live in this tab, so warn before losing them.
@@ -247,19 +241,15 @@ async function openFile(file) {
     el.status.textContent = `${file.name} doesn't look like a text file.`;
     return;
   }
-  card.set(false);
   el.input.value = text;
   edited = true;
   state.shown.clear();
   analyse();
   el.status.textContent = `Opened ${file.name}.`;
-  turnToSafe(450);
 }
 
 function loadExample() {
   edited = false;
-  card.set(false);
-  turnToSafe(1200);
   el.input.value = EXAMPLE;
   state.shown.clear();
   analyse();
@@ -269,7 +259,6 @@ function loadExample() {
 
 el.input.addEventListener("input", () => (el.input.value.length <= SYNC_LIMIT ? analyse() : analyseLater()));
 el.input.addEventListener("scroll", syncScroll, { passive: true });
-el.input.addEventListener("paste", () => turnToSafe(450));
 el.input.addEventListener("input", () => (edited = true));
 el.openFile.addEventListener("click", () => el.fileInput.click());
 el.fileInput.addEventListener("change", () => {
@@ -291,34 +280,56 @@ el.dropZone.addEventListener("drop", e => {
   openFile(file);
 });
 
-try {
-  el.words.value = localStorage.getItem(WORDS_KEY) ?? "";
-} catch {
-  // Storage can be blocked; the list then lasts for this visit only.
-}
+el.words.value = load(KEYS.words) ?? "";
 const readWords = () => (words = el.words.value.split("\n"));
 readWords();
-el.words.addEventListener("input", debounce(() => {
+function wordsChanged() {
   readWords();
-  try {
-    localStorage.setItem(WORDS_KEY, el.words.value);
-  } catch {
-    // See above.
-  }
+  save(KEYS.words, el.words.value);
   analyse();
-}, 250));
-el.withNote.addEventListener("change", () => {
-  try {
-    localStorage.setItem("paste-safe:note", el.withNote.checked ? "1" : "0");
-  } catch {
-    // See above.
-  }
-});
-try {
-  el.withNote.checked = localStorage.getItem("paste-safe:note") !== "0";
-} catch {
-  // See above.
+  paintCoverage();
 }
+el.words.addEventListener("input", debounce(wordsChanged, 250));
+
+/** Adds lines to the list, skipping ones it already has. */
+function addWords(/** @type {string} */ text) {
+  const have = new Set(el.words.value.split("\n").map(w => w.trim().toLowerCase()));
+  const add = text.split(/\r?\n/).map(w => w.trim()).filter(w => w && !have.has(w.toLowerCase()));
+  el.words.value = [el.words.value.trimEnd(), ...add].filter(Boolean).join("\n");
+  wordsChanged();
+  return add.filter(w => !w.startsWith("#")).length;
+}
+el.importWords.addEventListener("click", () => el.wordsFile.click());
+el.wordsFile.addEventListener("change", async () => {
+  const file = el.wordsFile.files?.[0];
+  el.wordsFile.value = "";
+  if (!file) return;
+  if (file.size > 1024 * 1024) {
+    el.status.textContent = `${file.name} is too large for a word list.`;
+    return;
+  }
+  const n = addWords(await file.text());
+  el.status.textContent = `Imported ${n} word${n === 1 ? "" : "s"} from ${file.name}.`;
+});
+el.exportWords.addEventListener("click", () => {
+  // Only the list goes into the file, never the text being checked.
+  const url = URL.createObjectURL(new Blob([el.words.value.trim() + "\n"], { type: "text/plain" }));
+  const link = h("a", { attrs: { href: url, download: "paste-safe-words.txt", hidden: "" } });
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  el.status.textContent = "Exported your word list.";
+});
+for (const b of document.querySelectorAll("[data-starter]")) {
+  b.addEventListener("click", () => {
+    const n = addWords(STARTERS[/** @type {keyof typeof STARTERS} */ (b.getAttribute("data-starter"))] ?? "");
+    el.status.textContent = `Added ${n} example word${n === 1 ? "" : "s"}. Replace them with your own.`;
+    el.words.focus();
+  });
+}
+el.withNote.checked = load(KEYS.note) !== "0";
+el.withNote.addEventListener("change", () => save(KEYS.note, el.withNote.checked ? "1" : "0"));
 el.answer.addEventListener("input", paintAnswer);
 el.ledger.addEventListener("change", e => {
   const t = e.target;
@@ -336,23 +347,37 @@ wirePeek({
   container: el.safe,
   bubble: el.peek,
   valueEl: el.peekValue,
-  lookup: p => state.detection.findings.find(f => f.placeholder === p)?.value,
+  lookup: p => (el.plainMode.checked ? undefined : state.detection.findings.find(f => f.placeholder === p)?.value),
 });
-const gate = wireGate(el.gate, isBoard);
-wireSkinSwitch(el.skinSwitch, skin => {
-  el.status.textContent = `${skin[0].toUpperCase()}${skin.slice(1)} theme on.`;
-  card.sync();
-  gate.refresh();
-  seenLabels.clear();
-  paint();
+
+// Plain mode hides real values on the page, for a shared screen.
+const setPlain = (/** @type {boolean} */ on) => document.documentElement.classList.toggle("is-plain", on);
+el.plainMode.checked = load(KEYS.plain) === "1";
+setPlain(el.plainMode.checked);
+el.plainMode.addEventListener("change", () => {
+  setPlain(el.plainMode.checked);
+  el.status.textContent = el.plainMode.checked ? "Plain mode on: real values are hidden on this page." : "Plain mode off.";
+  save(KEYS.plain, el.plainMode.checked ? "1" : "0");
 });
-wireCopy(el.copySafe, () => (el.withNote.checked ? withNote(state.safeText) : state.safeText), el.safe, "Copied the safe text. Paste it into your AI.");
-wireCopy(el.copyRestored, () => state.restoredText, el.restored, "Copied the answer with your real values.");
+
+/** @type {ReturnType<typeof setTimeout> | undefined} */
+let noteReset;
+wireCopy(el.copySafe, () => (el.withNote.checked ? withNote(state.safeText) : state.safeText), el.safe, () => {
+  const n = state.detection.findings.filter(f => !state.shown.has(f.value)).length;
+  const msg = `Copied. ${n} secret${n === 1 ? "" : "s"} replaced, raw text not copied.`;
+  el.copyNote.textContent = msg;
+  clearTimeout(noteReset);
+  noteReset = setTimeout(() => (el.copyNote.textContent = ""), 6000);
+  return msg;
+});
+wireCopy(
+  el.copyRestored, () => state.restoredText, el.restored,
+  () => "Copied the answer with your real values.",
+  () => !el.plainMode.checked || confirm("This copy contains your real values. Copy it anyway?"),
+);
 el.loadExample.addEventListener("click", loadExample);
 el.clear.addEventListener("click", () => {
   edited = false;
-  clearTimeout(turnLater);
-  card.set(false);
   el.input.value = "";
   el.answer.value = "";
   state.shown.clear();
@@ -366,6 +391,33 @@ watchExternalRequests(n => {
   el.netcheck.classList.toggle("is-warn", n > 0);
 });
 
+/** Runs the real detector on fake samples, so the card shows what this copy catches. */
+function paintCoverage() {
+  let caught = 0;
+  el.coverageList.replaceChildren(...SAMPLES.map(s => {
+    const d = detect(s.text, rules());
+    const safe = toText(mask(s.text, d.spans));
+    const ok = !safe.includes(s.secret);
+    if (ok) caught++;
+    const status = ok ? (s.gap ? "Caught by your words" : "Caught") : s.gap ? "Known gap" : "Missed";
+    return h("li", { className: ok ? "is-caught" : "is-missed" }, [
+      h("span", { className: "coverage__mark", text: ok ? "✓" : "–", attrs: { "aria-hidden": "true" } }),
+      h("span", { className: "coverage__name", text: s.name }),
+      h("code", { className: "coverage__sample", text: safe }),
+      h("span", { className: "coverage__status", text: status }),
+    ]);
+  }));
+  el.coverageFoot.textContent = `${caught} of ${SAMPLES.length} samples caught in this tab. Missed a real secret? Report its format on GitHub, with a fake value.`;
+}
+
+const build = COMMIT === "dev" ? `v${VERSION}` : `v${VERSION} · ${COMMIT}`;
+el.build.textContent = build;
+el.verifyVersion.textContent = `v${VERSION}`;
+if (COMMIT !== "dev") {
+  el.verifyCommit.replaceChildren(" from commit ", h("a", { text: COMMIT, attrs: { href: `${REPO}/commit/${COMMIT}` } }));
+}
+
+paintCoverage();
 wirePrivacyReel();
 wireScrollStory();
 loadExample();

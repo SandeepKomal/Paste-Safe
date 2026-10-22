@@ -166,7 +166,8 @@ export const RULES = Object.freeze([
  * @returns {Rule[]}
  */
 export function wordRules(words) {
-  const clean = [...new Set(words.map(w => w.trim()).filter(w => w.length >= 2))]
+  // Lines starting with # are comments, so a shared list can explain itself.
+  const clean = [...new Set(words.map(w => w.trim()).filter(w => w.length >= 2 && !w.startsWith("#")))]
     .sort((a, b) => b.length - a.length)
     .map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
   if (!clean.length) return [];
