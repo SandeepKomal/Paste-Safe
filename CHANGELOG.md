@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+- Apple-style pinned scenes: the masking scene grows to full width and finds the secrets one by one as you scroll, and the statement lights up word by word
+- "Take a closer look" gallery of feature cards with arrow buttons
+- A Plain mode switch on the answer panel, kept in step with the one in the toolbar
 - New Paste-Safe logo in the header and footer; new favicon and app icons
 - Footer sits on its own light grey band
 - Reel labels wrap inside their card instead of running into the next one, and the reel is smaller on phones

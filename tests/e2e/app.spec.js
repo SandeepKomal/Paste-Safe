@@ -124,6 +124,7 @@ test("hovering a label peeks at its real value", async ({ page }) => {
 test("plain mode hides real values and asks before copying them", async ({ page }) => {
   await page.locator("#plainMode").check({ force: true });
   await expect(page.locator("html")).toHaveClass(/is-plain/);
+  await expect(page.locator("#plainModeAnswer")).toBeChecked();
   await page.locator('#safe .redact[data-ph="[IP_1]"]').hover();
   await expect(page.locator("#peek")).toBeHidden();
   expect(await page.locator("#restored .restored").first().evaluate(e => getComputedStyle(e).filter)).toContain("blur");
@@ -241,12 +242,39 @@ test("sections fade in, headlines light up and the figure counts up", async ({ p
   await expect.poll(async () => Number(await page.locator("#figRules").textContent())).toBeGreaterThan(40);
 });
 
+test("the pinned masking scene finds the secrets as you scroll", async ({ page }) => {
+  await page.goto("/");
+  const scene = page.locator("[data-pin=product]");
+  const pinTop = await scene.evaluate(e => e.getBoundingClientRect().top + scrollY);
+  await page.evaluate(y => scrollTo(0, y), pinTop);
+  await expect(page.locator("#heroCount")).toHaveText("0 hidden");
+  const end = await scene.evaluate(e => e.getBoundingClientRect().top + scrollY + e.offsetHeight - innerHeight);
+  await page.evaluate(y => scrollTo(0, y), end);
+  await expect(page.locator("#heroCount")).toHaveText("5 hidden");
+  const stage = await scene.locator(".pin__stage").boundingBox();
+  expect(Math.abs(stage?.y ?? 99)).toBeLessThan(2);
+});
+
+test("the gallery arrows step through the cards", async ({ page }) => {
+  await page.goto("/");
+  const track = page.locator("#closerTrack");
+  await track.scrollIntoViewIfNeeded();
+  await expect(page.locator('[data-closer="-1"]')).toBeDisabled();
+  await page.locator('[data-closer="1"]').click();
+  await expect.poll(() => track.evaluate(e => e.scrollLeft)).toBeGreaterThan(100);
+  await expect(page.locator('[data-closer="-1"]')).toBeEnabled();
+});
+
 test("reduced motion leaves everything in place", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await expect(page.locator("html")).not.toHaveClass(/has-motion/);
+  await expect(page.locator("#heroCount")).toHaveText("5 hidden");
   expect(await page.locator(".coverage__card").evaluate(e => getComputedStyle(e).opacity)).toBe("1");
-  expect(await page.locator("[data-product]").evaluate(e => getComputedStyle(e).transform)).toBe("none");
+  expect(await page.locator(".pin--product .product").evaluate(e => getComputedStyle(e).transform)).toBe("none");
+  // Without motion the scenes are ordinary sections, not tall pinned ones.
+  expect(await page.locator("[data-pin=product]").evaluate(e => e.offsetHeight < innerHeight * 1.5)).toBe(true);
+  expect(await page.locator(".pin--product .pin__stage").evaluate(e => getComputedStyle(e).position)).toBe("static");
 });
 });
 
