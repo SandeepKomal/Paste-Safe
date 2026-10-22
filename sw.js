@@ -31,6 +31,7 @@ const FILES = [
   "src/ui/clipboard.js",
   "src/ui/closer.js",
   "src/ui/film.js",
+  "src/ui/frame.js",
   "src/ui/menu.js",
   "src/ui/dom.js",
   "src/ui/motion.js",
