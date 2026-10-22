@@ -178,30 +178,35 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); }
 .has-motion .pin--product .product em { opacity: var(--on, 1); transition: opacity .25s; }
 .has-motion .pin--product .product mark { outline-color: rgb(176 176 182 / calc(var(--on, 1))); }
 
-/* The short film under the hero: a wide cut for larger screens, a tall one for phones */
-.pin--film { padding-top: clamp(72px, 10vw, 128px); }
-.film__stage { align-content: center; gap: clamp(28px, 4vw, 44px); }
+/* The short film under the hero: a wide cut for larger screens, a tall one for phones.
+   It plays behind a brush-stroke stencil on the white page. With motion on, the stage pins
+   and film.js stretches the stroke open (--stroke) until the film fills the screen, then
+   raises the headlines over it. */
+.film { display: grid; justify-items: center; gap: clamp(20px, 3vw, 36px); padding-top: clamp(72px, 10vw, 128px); }
 .film__title { max-width: 20ch; text-align: center; font-size: clamp(2rem, 1.2rem + 3vw, 3.75rem); }
 .film__title span { color: var(--faint); }
-.film__frame {
-  position: relative; width: 100%; max-width: 1120px; aspect-ratio: 16 / 9; border-radius: 28px; overflow: hidden;
-  background: #fff; box-shadow: 0 0 0 1px var(--rule), 0 40px 80px -40px rgb(0 0 0 / 20%);
+.film__pin { justify-self: start; width: 100vw; margin-left: calc(50% - 50vw); }
+.film__stage { position: relative; height: min(84svh, 62vw); overflow: hidden; }
+.film__paint {
+  position: absolute; inset: 0;
+  --mask: url("../assets/film/paste-safe-stroke-wide.png");
+  -webkit-mask: var(--mask) center / calc(100% * var(--stroke, 1)) calc(100% * var(--stroke, 1)) no-repeat;
+  mask: var(--mask) center / calc(100% * var(--stroke, 1)) calc(100% * var(--stroke, 1)) no-repeat;
 }
-/* Pinned: the headline steps back and the film grows until it fills the screen. motion.js sets --film-scale and --film-shift. */
-.has-motion .pin--film { height: 260svh; padding-top: 0; }
-/* The stage spans the whole window so the film can reach both edges; the header's height is kept clear. */
-.has-motion .film__stage { width: 100vw; margin-left: calc(50% - 50vw); padding: 52px var(--gutter) 0; }
-.has-motion .film__title { opacity: calc(1 - var(--grow, 0) * 1.6); transform: translateY(calc(var(--grow, 0) * -32px)); }
-.has-motion .film__frame {
-  max-width: min(1120px, calc((100svh - 300px) * 16 / 9));
-  transform: translateY(calc(var(--film-shift, 0px) * var(--grow, 0))) scale(calc(1 + (var(--film-scale, 1) - 1) * var(--grow, 0)));
-  border-radius: calc((1 - var(--grow, 0)) * 28px);
-  box-shadow: 0 0 0 1px rgb(229 229 234 / calc(1 - var(--grow, 0))), 0 40px 80px -40px rgb(0 0 0 / calc((1 - var(--grow, 0)) * 20%));
-}
-.film__video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.film__video { display: block; width: 100%; height: 100%; object-fit: cover; background: #e4e4e9; }
 .film__video--tall { display: none; }
+.film__lines { display: grid; justify-items: center; gap: 8px; padding: 24px var(--gutter) 0; text-align: center; }
+.film__lines p { font: 600 clamp(1.25rem, 1rem + 1vw, 1.75rem)/1.2 var(--font-display); letter-spacing: -.02em; }
+.has-motion .film__pin { height: 300svh; }
+.has-motion .film__stage { position: sticky; top: 0; height: 100svh; }
+.has-motion .film__lines { position: absolute; inset: 0; display: block; padding: 0; pointer-events: none; }
+.has-motion .film__lines p {
+  position: absolute; left: 0; right: 0; top: 89%; padding-inline: var(--gutter); opacity: 0;
+  color: var(--ink); font-size: clamp(2rem, 1.2rem + 3.4vw, 4.5rem); line-height: 1.05; letter-spacing: -.035em;
+  text-shadow: 0 0 24px rgb(255 255 255 / 90%), 0 0 60px rgb(255 255 255 / 70%);
+}
 .film__toggle {
-  position: absolute; right: 16px; bottom: 16px; display: grid; place-items: center; width: 40px; height: 40px;
+  position: absolute; right: var(--gutter); bottom: 20px; z-index: 1; display: grid; place-items: center; width: 40px; height: 40px;
   border: 0; border-radius: 50%; background: rgb(236 236 240 / 88%); color: var(--ink); cursor: pointer;
   -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); transition: background-color .2s;
 }
@@ -791,8 +796,9 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--faint); }
   .product__pane { padding: 14px 16px 16px; }
   .product pre { font-size: 11.5px; line-height: 1.85; }
   .figures dd { font-size: .8125rem; }
-  .film__frame { aspect-ratio: 4 / 5; border-radius: 22px; }
-  .has-motion .film__frame { max-width: calc((100svh - 280px) * 4 / 5); }
+  .film__stage { height: 86svh; }
+  .film__paint { --mask: url("../assets/film/paste-safe-stroke-tall.png"); }
+  .has-motion .film__lines p { top: 80%; }
   .film__video--wide { display: none; }
   .film__video--tall { display: block; }
   .compare__col { padding: 22px; }
