@@ -97,3 +97,20 @@ test("the version shown on the page matches package.json and the changelog", asy
   assert.ok(read("index.html").includes(`>v${VERSION}<`), "index.html shows another version");
   assert.ok(read("sw.js").includes(`"paste-safe-${VERSION}"`), "sw.js cache name has another version");
 });
+
+test("the hero example shows what the detector really produces", async () => {
+  const { detect } = await import("../../src/core/detect.js");
+  const { mask, toText } = await import("../../src/core/transform.js");
+  const { RULES } = await import("../../src/core/rules.js");
+  const html = read("index.html");
+  const text = id => {
+    const pre = html.match(new RegExp(`<pre id="${id}">([\\s\\S]*?)</pre>`))?.[1] ?? "";
+    return pre.replace(/<[^>]+>/g, "").replaceAll("&amp;", "&");
+  };
+  const raw = text("heroRaw");
+  assert.ok(raw.length > 0);
+  const { spans, findings } = detect(raw);
+  assert.equal(toText(mask(raw, spans)), text("heroSafe"));
+  assert.match(html, new RegExp(`>${findings.length} hidden<`));
+  assert.match(html, new RegExp(`<dt id="figRules">${RULES.length}</dt>`));
+});

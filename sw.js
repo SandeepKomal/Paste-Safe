@@ -30,7 +30,6 @@ const FILES = [
   "src/ui/render.js",
   "src/ui/scroll-story.js",
   "src/ui/store.js",
-  "src/ui/privacy-reel.js",
 ];
 
 self.addEventListener("install", e => {

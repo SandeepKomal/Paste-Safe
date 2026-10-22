@@ -31,10 +31,19 @@ export function wireScrollStory() {
     });
   };
 
+  // On narrow screens the stage is pinned above the chapters, so the chapter
+  // being read is the one in the space left below it.
+  const shell = /** @type {HTMLElement} */ (stage.parentElement);
+  const narrow = matchMedia("(max-width: 960px)");
+  const readingLine = () => {
+    if (!narrow.matches || getComputedStyle(shell).position !== "sticky") return innerHeight * 0.48;
+    return Math.min((shell.getBoundingClientRect().bottom + innerHeight) / 2, innerHeight * 0.85);
+  };
+
   let frame = 0;
   const update = () => {
     frame = 0;
-    const line = innerHeight * 0.48;
+    const line = readingLine();
     let best = 0;
     let bestDistance = Infinity;
     chapters.forEach((c, i) => {
