@@ -1,8 +1,7 @@
 // @ts-check
 // Scroll effects in the style of product pages. Pinned scenes stay on screen
 // while their section scrolls past: the masking scene grows to full width and
-// finds the secrets one by one, then the statement rises over it and lights up
-// word by word.
+// finds the secrets one by one, and the statement lights up word by word.
 // Elsewhere sections fade up and the hero recedes. Native scrolling stays in
 // charge; nothing here runs when the visitor prefers reduced motion.
 
@@ -35,26 +34,16 @@ export function wireMotion() {
     if (heroTop) heroTop.style.setProperty("--recede", clamp01(scrollY / (vh * 0.7)).toFixed(3));
     if (scene) {
       const p = pinProgress(scene.section, vh);
-      // Three steps over the first two thirds: Find outlines the secrets one by one, Mask turns
-      // them into labels, Ask points at the side you copy. The last third is left for the
-      // statement, which rises over the scene while it stays pinned.
-      scene.section.style.setProperty("--grow", clamp01(p / 0.06).toFixed(3));
-      const step = p < 0.22 ? 0 : p < 0.44 ? 1 : 2;
-      if (scene.step !== step) {
-        scene.step = step;
-        scene.section.dataset.step = scene.steps[step]?.dataset.step ?? "";
-        scene.steps.forEach((s, i) => s.classList.toggle("is-on", i === step));
-      }
-      const hit = clamp01((p - 0.03) / 0.16) * scene.marks.length;
-      scene.marks.forEach((m, i) => m.style.setProperty("--hit", clamp01(hit - i).toFixed(2)));
-      const found = clamp01((p - 0.24) / 0.17) * scene.labels.length;
+      // First the panel grows to full width, then the secrets are found one by one.
+      scene.section.style.setProperty("--grow", clamp01(p / 0.3).toFixed(3));
+      const found = clamp01((p - 0.32) / 0.5) * scene.labels.length;
       scene.labels.forEach((l, i) => l.style.setProperty("--on", clamp01(found - i).toFixed(2)));
+      scene.marks.forEach((m, i) => m.style.setProperty("--on", clamp01(found - i).toFixed(2)));
       const n = Math.min(scene.labels.length, Math.floor(found + 0.5));
       if (scene.count && scene.shown !== n) scene.count.textContent = `${(scene.shown = n)} hidden`;
     }
     if (statement) {
-      // The words start lighting once the statement has pinned, after the sheet's lip.
-      const lit = clamp01((pinProgress(statement, vh) - 0.2) / 0.65) * statementWords.length;
+      const lit = clamp01((pinProgress(statement, vh) - 0.08) / 0.75) * statementWords.length;
       statementWords.forEach((w, i) => w.style.setProperty("--lit", clamp01(lit - i).toFixed(2)));
     }
     for (const { el, words } of headlines) {
@@ -82,11 +71,10 @@ function pinProgress(/** @type {HTMLElement} */ section, /** @type {number} */ v
 
 function sceneParts(/** @type {Element | null} */ section) {
   if (!(section instanceof HTMLElement)) return null;
+  const product = /** @type {HTMLElement} */ (section.querySelector(".product"));
   return {
-    section,
-    split: /** @type {HTMLElement} */ (section.querySelector(".split")),
-    steps: /** @type {HTMLElement[]} */ ([...section.querySelectorAll(".split__steps li")]),
-    step: -1,
+    section, product,
+    title: /** @type {HTMLElement} */ (section.querySelector(".pin__title")),
     labels: /** @type {HTMLElement[]} */ ([...section.querySelectorAll("#heroSafe em")]),
     marks: /** @type {HTMLElement[]} */ ([...section.querySelectorAll("#heroRaw mark")]),
     count: section.querySelector("#heroCount"),
@@ -94,10 +82,11 @@ function sceneParts(/** @type {Element | null} */ section) {
   };
 }
 
-/** Shrinks the scene when the screen is too short to show the steps and the window whole. */
+/** Shrinks the window when the screen is too short to show it whole under the title. */
 function fitScene(/** @type {NonNullable<ReturnType<typeof sceneParts>>} */ scene) {
   scene.section.style.setProperty("--fit", "1");
-  const fit = Math.min(1, (innerHeight - 96) / Math.max(1, scene.split.offsetHeight));
+  const room = innerHeight - scene.title.offsetHeight - 120;
+  const fit = Math.min(1, room / Math.max(1, scene.product.offsetHeight));
   scene.section.style.setProperty("--fit", Math.max(0.55, fit).toFixed(3));
 }
 

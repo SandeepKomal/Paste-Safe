@@ -255,21 +255,6 @@ test("the pinned masking scene finds the secrets as you scroll", async ({ page }
   expect(Math.abs(stage?.y ?? 99)).toBeLessThan(2);
 });
 
-test("the statement rises over the masking scene while it stays pinned", async ({ page }) => {
-  await page.goto("/");
-  const scene = page.locator("[data-pin=product]");
-  const y = await scene.evaluate(e => e.getBoundingClientRect().top + scrollY + (e.offsetHeight - innerHeight) * 0.85);
-  await page.evaluate(y => scrollTo(0, y), y);
-  await expect(page.locator("#heroCount")).toHaveText("5 hidden");
-  expect(Math.abs((await scene.locator(".pin__stage").boundingBox())?.y ?? 99)).toBeLessThan(2);
-  // The statement's sheet is already partway up the screen, on top of the scene.
-  const sheet = await page.locator("[data-pin=statement]").boundingBox();
-  const vh = page.viewportSize()?.height ?? 0;
-  expect(sheet?.y ?? vh).toBeGreaterThan(0);
-  expect(sheet?.y ?? vh).toBeLessThan(vh * 0.8);
-  expect(await page.evaluate(() => getComputedStyle(document.querySelector("[data-pin=statement]")).zIndex)).toBe("1");
-});
-
 test("the gallery arrows step through the cards", async ({ page }) => {
   await page.goto("/");
   const track = page.locator("#closerTrack");
