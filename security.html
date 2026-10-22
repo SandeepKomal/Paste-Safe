@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'none'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Security · Paste-Safe</title>
+  <meta name="description" content="How Paste-Safe keeps your text in your tab, and how to report a problem.">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" href="assets/favicon.png" type="image/png" sizes="64x64">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="masthead__bar">
+      <a class="wordmark" href="./" aria-label="Paste-Safe, home"><img src="assets/logo.svg" alt="" width="133" height="32"></a>
+      <a class="doc-back" href="./"><span aria-hidden="true">←</span> Back to the tool</a>
+    </div>
+  </header>
+
+  <main class="doc">
+    <nav class="nav--doc" aria-label="About Paste-Safe">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="security.html" aria-current="page">Security</a>
+        <a href="changelog.html">Changelog</a>
+        <a href="source.html">Source</a>
+    </nav>
+    <article class="doc__body">
+      <p class="eyebrow">How your text stays in this tab</p>
+      <h1>Security</h1>
+      <p class="doc__lede">Paste-Safe is built so that your text cannot leave this tab. The browser enforces that, not a promise.</p>
+
+      <h2>What this page cannot do</h2>
+      <p>Every page carries a Content Security Policy. Your browser reads it before running anything and blocks whatever it does not allow.</p>
+      <dl class="guard">
+        <div><dt><code>connect-src 'none'</code></dt><dd>No network requests at all. The page cannot send your text anywhere, even if its own code tried.</dd></div>
+        <div><dt><code>script-src 'self'</code></dt><dd>Only this site's own scripts run. Nothing pasted, and nothing from another site, can run as code.</dd></div>
+        <div><dt><code>style-src 'self'</code> · <code>font-src 'none'</code></dt><dd>No third-party styles or fonts, so nothing is fetched that could tell another site you are here.</dd></div>
+        <div><dt><code>form-action 'none'</code></dt><dd>No form can submit your text to another address.</dd></div>
+        <div><dt><code>base-uri 'none'</code> · <code>object-src 'none'</code></dt><dd>Links cannot be redirected and no plugins can load.</dd></div>
+        <div><dt><code>referrer: no-referrer</code></dt><dd>Links you follow from here do not tell the other site where you came from.</dd></div>
+      </dl>
+
+      <h2>Check it yourself</h2>
+      <ol class="steps">
+        <li>Open your browser's developer tools and go to the <b>Network</b> tab.</li>
+        <li>Paste a log into the tool, copy the safe text and put an answer back.</li>
+        <li>Every request in the list is to this site. The counter in the header shows the same thing: <b>0 requests to other sites</b>.</li>
+      </ol>
+
+      <h2>What it does not protect against</h2>
+      <ul>
+        <li>Formats it has no rule for. It catches the secret formats it knows plus random-looking strings, not customer names or other sensitive text. Add those to your own word list.</li>
+        <li>A compromised browser or a browser extension that can read every page.</li>
+        <li>What you paste after copying. Always read the safe text before you share it.</li>
+      </ul>
+
+      <h2>Report a problem</h2>
+      <p>If the page can be made to leak data (send a request, run pasted content, get around the policy above), please report it privately so it can be fixed before it is public.</p>
+      <p class="doc__actions"><a class="btn btn--primary" href="https://github.com/SandeepKomal/paste-safe/security/advisories/new">Report a vulnerability</a> <a class="btn" href="https://github.com/SandeepKomal/paste-safe/issues/new">Report a missed format</a></p>
+      <p>For a missed secret format a public issue is fine. Include a made-up example, never a real one.</p>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <img src="assets/logo.svg" alt="Paste-Safe" width="134" height="32" loading="lazy">
+        <p>© 2026 Paste-Safe · Sandeep Komal Pothu · MIT License</p>
+      </div>
+      <p class="footer__links"><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="security.html">Security</a> · <a href="changelog.html">Changelog</a> · <a href="source.html">Source</a></p>
+    </div>
+  </footer>
+</body>
+</html>
