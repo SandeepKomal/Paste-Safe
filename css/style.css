@@ -158,10 +158,10 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); }
 .pin__title span { color: var(--faint); }
 .pin--product .product { margin: 0; }
 .statement {
-  max-width: 24ch; margin: 0 auto; padding: clamp(72px, 10vw, 128px) 0; text-align: center;
-  font: 650 clamp(1.75rem, 1rem + 2.6vw, 3.25rem)/1.2 var(--font-display); letter-spacing: -.03em; color: var(--ink);
+  max-width: 30ch; margin: 0 auto; padding: clamp(72px, 10vw, 128px) 0; text-align: center; text-wrap: balance;
+  font: 600 clamp(1.375rem, 1rem + 1.4vw, 2.375rem)/1.3 var(--font-display); letter-spacing: -.022em; color: var(--ink);
 }
-.statement strong { display: block; margin-top: .6em; font-weight: 700; }
+.statement strong { display: block; margin-top: .9em; font-weight: 650; }
 .figures-wrap { display: grid; justify-items: center; }
 
 .has-motion .pin--product { height: 320svh; margin-top: 0; }
