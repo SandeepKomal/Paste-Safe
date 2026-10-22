@@ -555,6 +555,8 @@ test.describe("privacy and terms", () => {
   test("the privacy page erases everything the site saved", async ({ page }) => {
     const problems = watchProblems(page);
     await page.goto("/");
+    // Wait for the tool to load its saved settings, or it switches plain mode back off.
+    await expect(page.locator("#safe .redact").first()).toBeAttached();
     await page.locator("#wordsPanel summary").click();
     await page.locator("#words").fill("Globex");
     await page.locator("#plainMode").check({ force: true });
