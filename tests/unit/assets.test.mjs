@@ -19,7 +19,7 @@ test("no font files are shipped", () => {
 });
 
 test("only expected kinds of files are shipped", () => {
-  const unexpected = files.filter(f => ![".html", ".css", ".js", ".svg", ".png", ".webmanifest"].includes(extname(f)));
+  const unexpected = files.filter(f => ![".html", ".css", ".js", ".svg", ".png", ".mp4", ".webm", ".webmanifest"].includes(extname(f)));
   assert.deepEqual(unexpected, []);
 });
 
@@ -79,7 +79,8 @@ test("no file holds a complete key in a well-known format", () => {
 
 test("the offline cache lists every file the site needs", () => {
   const listed = new Set([...read("sw.js").matchAll(/^\s+"([^"]+)",$/gm)].map(m => m[1]));
-  const needed = files.filter(f => f !== "sw.js" && f !== "assets/og.png");
+  // The share image and the film are not needed offline.
+  const needed = files.filter(f => f !== "sw.js" && f !== "assets/og.png" && !f.startsWith("assets/film/"));
   assert.deepEqual(needed.filter(f => !listed.has(f)), []);
   assert.deepEqual([...listed].filter(f => f !== "./" && !files.includes(f)), []);
 });

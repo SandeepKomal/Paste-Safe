@@ -1,7 +1,8 @@
 // @ts-check
 // Scroll effects in the style of product pages. Pinned scenes stay on screen
 // while their section scrolls past: the masking scene grows to full width and
-// finds the secrets one by one, and the statement lights up word by word.
+// finds the secrets one by one, and the statement lights up word by word. The
+// film grows into place as it comes up the screen.
 // Elsewhere sections fade up and the hero recedes. Native scrolling stays in
 // charge; nothing here runs when the visitor prefers reduced motion.
 
@@ -26,6 +27,7 @@ export function wireMotion() {
   const scene = sceneParts(document.querySelector("[data-pin=product]"));
   const statement = /** @type {HTMLElement | null} */ (document.querySelector("[data-pin=statement]"));
   const statementWords = statement ? splitWords(/** @type {Element} */ (statement.querySelector("[data-words]"))) : [];
+  const growers = /** @type {HTMLElement[]} */ ([...document.querySelectorAll("[data-grow]")]);
 
   let frame = 0;
   const update = () => {
@@ -45,6 +47,10 @@ export function wireMotion() {
     if (statement) {
       const lit = clamp01((pinProgress(statement, vh) - 0.08) / 0.75) * statementWords.length;
       statementWords.forEach((w, i) => w.style.setProperty("--lit", clamp01(lit - i).toFixed(2)));
+    }
+    for (const el of growers) {
+      // 0 as the element's top enters the screen, 1 once it reaches the upper fifth.
+      el.style.setProperty("--grow", clamp01((vh - el.getBoundingClientRect().top) / (vh * 0.8)).toFixed(3));
     }
     for (const { el, words } of headlines) {
       const r = el.getBoundingClientRect();

@@ -1,6 +1,10 @@
 # Changelog
 
 ## Unreleased
+- A 15-second film under the hero: Ctrl C, Ctrl V, the secrets turn into labels, the AI answers and the values come back. 4K, silent, with a wide cut for larger screens and a tall cut for phones. It plays only while on screen, has a pause button, and waits for a press under reduced motion. Its source is `tools/promo/`
+- The gallery moves on by one card every few seconds, holds under the pointer or focus, and stops once you scroll it or press pause
+- Reel cards are drawn at twice their size and scaled down, so their text stays sharp while the ring turns
+- The figures sit under the statement, centred, with even spacing
 - Apple-style pinned scenes: the masking scene grows to full width and finds the secrets one by one as you scroll, and the statement lights up word by word
 - "Take a closer look" gallery of feature cards with arrow buttons
 - A Plain mode switch on the answer panel, kept in step with the one in the toolbar

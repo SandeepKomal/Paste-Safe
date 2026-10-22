@@ -27,6 +27,7 @@ const FILES = [
   "src/core/worker.js",
   "src/ui/clipboard.js",
   "src/ui/closer.js",
+  "src/ui/film.js",
   "src/ui/dom.js",
   "src/ui/motion.js",
   "src/ui/netwatch.js",
@@ -51,7 +52,9 @@ self.addEventListener("activate", e => {
 
 self.addEventListener("fetch", e => {
   const req = e.request;
-  if (req.method !== "GET" || new URL(req.url).origin !== self.location.origin) return;
+  // Videos stream in ranges straight from the network and are not kept offline.
+  if (req.method !== "GET" || req.destination === "video" || req.headers.has("range")) return;
+  if (new URL(req.url).origin !== self.location.origin) return;
   e.respondWith(
     fetch(req)
       .then(res => {

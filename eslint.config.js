@@ -17,6 +17,11 @@ export default [
     languageOptions: { ecmaVersion: 2022, sourceType: "module", globals: globals.node },
   },
   {
+    // Renders the promo film; code passed to page.evaluate() runs in the browser.
+    files: ["tools/**/*.mjs"],
+    languageOptions: { ecmaVersion: 2022, sourceType: "module", globals: { ...globals.node, ...globals.browser } },
+  },
+  {
     // Code passed to page.evaluate() runs in the browser.
     files: ["tests/e2e/**/*.js"],
     languageOptions: { globals: { ...globals.node, ...globals.browser } },

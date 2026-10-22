@@ -134,6 +134,22 @@
       </div>
     </section>
 
+    <section class="film" aria-labelledby="filmTitle">
+      <h2 class="film__title" id="filmTitle" data-reveal>Ctrl C. Ctrl V. <span>Nothing leaves your screen.</span></h2>
+      <div class="film__frame" data-grow>
+        <video class="film__video film__video--wide" data-film muted loop playsinline preload="metadata" poster="assets/film/paste-safe-wide.png" aria-describedby="filmText">
+          <source src="assets/film/paste-safe-wide.webm" type="video/webm">
+          <source src="assets/film/paste-safe-wide.mp4" type="video/mp4">
+        </video>
+        <video class="film__video film__video--tall" data-film muted loop playsinline preload="metadata" poster="assets/film/paste-safe-tall.png" aria-describedby="filmText">
+          <source src="assets/film/paste-safe-tall.webm" type="video/webm">
+          <source src="assets/film/paste-safe-tall.mp4" type="video/mp4">
+        </video>
+        <button class="film__toggle" type="button" data-film-toggle aria-label="Play the film"><i aria-hidden="true"></i></button>
+      </div>
+      <p class="visually-hidden" id="filmText">A 15-second film without sound. You copy a log with Ctrl C and paste it into Paste-Safe with Ctrl V. Its password, host, IP address, AWS key and email turn into labels such as [HOST_1]. You ask an AI about the masked log, paste its answer back, and the labels turn back into your real values.</p>
+    </section>
+
     <section class="pin pin--product" aria-labelledby="maskTitle" data-pin="product">
       <div class="pin__stage">
         <div class="pin__panel">
@@ -166,16 +182,13 @@ alert sent to <em>[EMAIL_1]</em></pre>
     <section class="pin pin--statement" aria-label="What Paste-Safe does" data-pin="statement">
       <div class="pin__stage">
         <p class="statement" data-words="pin">Paste-Safe turns passwords, keys and tokens into labels before they leave your screen. So you can ask any AI about real logs, configs and stack traces, and still get answers you can use. <strong>Private AI debugging is here.</strong></p>
+        <dl class="figures" aria-label="Paste-Safe in numbers" data-reveal>
+          <div><dt id="figRequests">0</dt><dd>requests from this page to other sites, counted live</dd></div>
+          <div><dt id="figRules" data-count>53</dt><dd>secret formats detected, from cloud keys to password hashes</dd></div>
+          <div><dt>0</dt><dd>accounts, cookies or trackers</dd></div>
+          <div><dt>MIT</dt><dd>open source, so you can read every line</dd></div>
+        </dl>
       </div>
-    </section>
-
-    <section class="figures-wrap" aria-label="Paste-Safe in numbers">
-      <dl class="figures" data-reveal>
-        <div><dt id="figRequests">0</dt><dd>requests from this page to other sites, counted live</dd></div>
-        <div><dt id="figRules" data-count>53</dt><dd>secret formats detected, from cloud keys to password hashes</dd></div>
-        <div><dt>0</dt><dd>accounts, cookies or trackers</dd></div>
-        <div><dt>MIT</dt><dd>open source, so you can read every line</dd></div>
-      </dl>
     </section>
 
     <section class="tool" id="tool" aria-labelledby="toolTitle">
@@ -322,6 +335,7 @@ alert sent to <em>[EMAIL_1]</em></pre>
         <div class="closer__nav">
           <button class="closer__arrow" type="button" data-closer="-1" aria-label="Previous">‹</button>
           <button class="closer__arrow" type="button" data-closer="1" aria-label="Next">›</button>
+          <button class="closer__arrow closer__play" type="button" data-closer-play aria-label="Pause the gallery"><i aria-hidden="true"></i></button>
         </div>
       </div>
       <div class="closer__track" id="closerTrack" tabindex="0" aria-label="Features">
