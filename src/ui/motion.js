@@ -35,12 +35,20 @@ export function wireMotion() {
     if (heroTop) heroTop.style.setProperty("--recede", clamp01(scrollY / (vh * 0.7)).toFixed(3));
     if (scene) {
       const p = pinProgress(scene.section, vh);
-      // First the panel grows to full width, then the secrets are found one by one. The last
-      // third is left for the statement, which rises over the scene while it stays pinned.
-      scene.section.style.setProperty("--grow", clamp01(p / 0.24).toFixed(3));
-      const found = clamp01((p - 0.26) / 0.36) * scene.labels.length;
+      // Three steps over the first two thirds: Find outlines the secrets one by one, Mask turns
+      // them into labels, Ask points at the side you copy. The last third is left for the
+      // statement, which rises over the scene while it stays pinned.
+      scene.section.style.setProperty("--grow", clamp01(p / 0.06).toFixed(3));
+      const step = p < 0.22 ? 0 : p < 0.44 ? 1 : 2;
+      if (scene.step !== step) {
+        scene.step = step;
+        scene.section.dataset.step = scene.steps[step]?.dataset.step ?? "";
+        scene.steps.forEach((s, i) => s.classList.toggle("is-on", i === step));
+      }
+      const hit = clamp01((p - 0.03) / 0.16) * scene.marks.length;
+      scene.marks.forEach((m, i) => m.style.setProperty("--hit", clamp01(hit - i).toFixed(2)));
+      const found = clamp01((p - 0.24) / 0.17) * scene.labels.length;
       scene.labels.forEach((l, i) => l.style.setProperty("--on", clamp01(found - i).toFixed(2)));
-      scene.marks.forEach((m, i) => m.style.setProperty("--on", clamp01(found - i).toFixed(2)));
       const n = Math.min(scene.labels.length, Math.floor(found + 0.5));
       if (scene.count && scene.shown !== n) scene.count.textContent = `${(scene.shown = n)} hidden`;
     }
@@ -74,10 +82,11 @@ function pinProgress(/** @type {HTMLElement} */ section, /** @type {number} */ v
 
 function sceneParts(/** @type {Element | null} */ section) {
   if (!(section instanceof HTMLElement)) return null;
-  const product = /** @type {HTMLElement} */ (section.querySelector(".product"));
   return {
-    section, product,
-    title: /** @type {HTMLElement} */ (section.querySelector(".pin__title")),
+    section,
+    split: /** @type {HTMLElement} */ (section.querySelector(".split")),
+    steps: /** @type {HTMLElement[]} */ ([...section.querySelectorAll(".split__steps li")]),
+    step: -1,
     labels: /** @type {HTMLElement[]} */ ([...section.querySelectorAll("#heroSafe em")]),
     marks: /** @type {HTMLElement[]} */ ([...section.querySelectorAll("#heroRaw mark")]),
     count: section.querySelector("#heroCount"),
@@ -85,11 +94,10 @@ function sceneParts(/** @type {Element | null} */ section) {
   };
 }
 
-/** Shrinks the window when the screen is too short to show it whole under the title. */
+/** Shrinks the scene when the screen is too short to show the steps and the window whole. */
 function fitScene(/** @type {NonNullable<ReturnType<typeof sceneParts>>} */ scene) {
   scene.section.style.setProperty("--fit", "1");
-  const room = innerHeight - scene.title.offsetHeight - 120;
-  const fit = Math.min(1, room / Math.max(1, scene.product.offsetHeight));
+  const fit = Math.min(1, (innerHeight - 96) / Math.max(1, scene.split.offsetHeight));
   scene.section.style.setProperty("--fit", Math.max(0.55, fit).toFixed(3));
 }
 

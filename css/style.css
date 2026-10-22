@@ -180,9 +180,30 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); }
   clip-path: inset(calc((1 - var(--grow, 1)) * 9%) calc((1 - var(--grow, 1)) * 7%) round calc((1 - var(--grow, 1)) * 40px));
 }
 .has-motion .pin__title { opacity: calc(.15 + var(--grow, 1) * .85); }
-.has-motion .pin--product .product { transform: scale(calc(var(--fit, 1) * (.9 + var(--grow, 1) * .1))); transform-origin: 50% 50%; }
+.has-motion .pin--product .split { transform: scale(var(--fit, 1)); transform-origin: 50% 50%; }
 .has-motion .pin--product .product em { opacity: var(--on, 1); transition: opacity .25s; }
-.has-motion .pin--product .product mark { outline-color: rgb(176 176 182 / calc(var(--on, 1))); }
+/* The steps light the window in turn: Find outlines the secrets, Mask brings in the labels,
+   Ask dims your side and rings the side you copy. motion.js sets data-step and --hit. */
+.has-motion .pin--product .product mark { outline: 1.5px dashed rgb(29 29 31 / calc(.2 + var(--hit, 1) * .8)); }
+.has-motion .pin--product .product__pane { transition: opacity .4s, box-shadow .4s; }
+.has-motion .pin--product[data-step="find"] .product__pane--safe,
+.has-motion .pin--product[data-step="ask"] .product__pane:not(.product__pane--safe) { opacity: .4; }
+.has-motion .pin--product[data-step="ask"] .product__pane--safe { box-shadow: inset 0 0 0 2px var(--ink); }
+
+/* Masking scene: the steps beside the log window */
+.split { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); align-items: center; gap: clamp(32px, 5vw, 72px); width: 100%; max-width: 1120px; }
+.split .pin__title { max-width: 13ch; text-align: left; font-size: clamp(2rem, 1.2rem + 2.2vw, 3.25rem); }
+.split__steps { display: grid; gap: 4px; margin: clamp(24px, 3vw, 36px) 0 0; padding: 0; list-style: none; }
+.split__steps li { padding: 12px 0 12px 18px; border-left: 2px solid var(--rule); color: var(--muted); font-size: .9375rem; line-height: 1.45; }
+.split__steps b { display: block; margin-bottom: 2px; color: var(--ink); font-size: 1.0625rem; }
+.has-motion .split__steps li { color: var(--faint); transition: color .35s, border-color .35s; }
+.has-motion .split__steps b { color: inherit; }
+.has-motion .split__steps li.is-on { border-left-color: var(--ink); color: var(--muted); }
+.has-motion .split__steps li.is-on b { color: var(--ink); }
+.split .product { margin: 0; }
+.split .product__grid { grid-template-columns: minmax(0, 1fr); }
+.split .product__arrow { height: 36px; border-inline: 0; border-block: 1px solid var(--rule); }
+.split .product__arrow span { transform: rotate(90deg); }
 
 /* The short film under the hero: a wide cut for larger screens, a tall one for phones.
    It plays behind a brush-stroke stencil on the white page. With motion on, the stage pins
@@ -709,6 +730,11 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--faint); }
   .product__grid { grid-template-columns: minmax(0, 1fr); }
   .product__arrow { height: 36px; border-inline: 0; border-block: 1px solid var(--rule); }
   .product__arrow span { transform: rotate(90deg); }
+  .split { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .split .pin__title { max-width: 18ch; margin-inline: auto; text-align: center; }
+  .split__steps { margin-top: 14px; }
+  .has-motion .split__steps li { display: none; padding: 0; border: 0; text-align: center; }
+  .has-motion .split__steps li.is-on { display: block; }
   .figures { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 0; }
   .figures > div:nth-child(3) { border-left: 0; }
   .compare__grid { grid-template-columns: minmax(0, 1fr); }

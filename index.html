@@ -162,28 +162,37 @@
     <section class="pin pin--product" aria-labelledby="maskTitle" data-pin="product">
       <div class="pin__stage">
         <div class="pin__panel">
-          <h2 class="pin__title" id="maskTitle">Every secret becomes a label. <span>Right here, on your device.</span></h2>
-          <figure class="product" aria-labelledby="productCaption">
-            <div class="product__bar" aria-hidden="true"><i></i><i></i><i></i><span>deploy-error.log</span></div>
-            <div class="product__grid">
-              <div class="product__pane">
-                <p class="product__label">Your log <span>stays on your device</span></p>
-                <pre id="heroRaw"><span class="c">09:12:44Z</span> connecting to postgres://app:<mark>Tr0ub4dor&amp;3xyz</mark>@<mark>prod-db.internal</mark>/orders
+          <div class="split">
+            <div class="split__text">
+              <h2 class="pin__title" id="maskTitle">Every secret becomes a label. <span>Right here, on your device.</span></h2>
+              <ol class="split__steps">
+                <li data-step="find"><b>Find</b> Paste a log. Passwords, keys, hosts, IPs and emails are found as you type.</li>
+                <li data-step="mask"><b>Mask</b> Each one becomes a label like [HOST_1]. The same value always gets the same label.</li>
+                <li data-step="ask"><b>Ask</b> Copy the safe side into any AI. Nothing real leaves your screen.</li>
+              </ol>
+            </div>
+            <figure class="product" aria-labelledby="productCaption">
+              <div class="product__bar" aria-hidden="true"><i></i><i></i><i></i><span>deploy-error.log</span></div>
+              <div class="product__grid">
+                <div class="product__pane">
+                  <p class="product__label">Your log <span>stays on your device</span></p>
+                  <pre id="heroRaw"><span class="c">09:12:44Z</span> connecting to postgres://app:<mark>Tr0ub4dor&amp;3xyz</mark>@<mark>prod-db.internal</mark>/orders
 <span class="c">09:12:49Z</span> ERROR timeout from <mark>10.20.4.17</mark>
 AWS_ACCESS_KEY_ID=<mark>AKIAIOSFODNN7EXAMPLE</mark>
 alert sent to <mark>ops@acme-pay.io</mark></pre>
-              </div>
-              <div class="product__arrow" aria-hidden="true"><span>→</span></div>
-              <div class="product__pane product__pane--safe">
-                <p class="product__label">What the AI sees <b id="heroCount">5 hidden</b></p>
-                <pre id="heroSafe"><span class="c">09:12:44Z</span> connecting to postgres://app:<em>[DB_PASSWORD_1]</em>@<em>[HOST_1]</em>/orders
+                </div>
+                <div class="product__arrow" aria-hidden="true"><span>→</span></div>
+                <div class="product__pane product__pane--safe">
+                  <p class="product__label">What the AI sees <b id="heroCount">5 hidden</b></p>
+                  <pre id="heroSafe"><span class="c">09:12:44Z</span> connecting to postgres://app:<em>[DB_PASSWORD_1]</em>@<em>[HOST_1]</em>/orders
 <span class="c">09:12:49Z</span> ERROR timeout from <em>[IP_1]</em>
 AWS_ACCESS_KEY_ID=<em>[AWS_KEY_1]</em>
 alert sent to <em>[EMAIL_1]</em></pre>
+                </div>
               </div>
-            </div>
-            <figcaption id="productCaption" class="product__caption">A made-up log, masked by the same code that runs in the tool below.</figcaption>
-          </figure>
+              <figcaption id="productCaption" class="product__caption">A made-up log, masked by the same code that runs in the tool below.</figcaption>
+            </figure>
+          </div>
         </div>
       </div>
     </section>

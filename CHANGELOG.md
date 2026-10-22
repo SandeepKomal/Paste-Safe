@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- The masking scene is a side-by-side split: Find, Mask and Ask steps beside the log window. As you scroll, Find outlines the secrets one by one, Mask turns them into labels, and Ask dims your side and rings the side you copy. On phones the current step sits above the window
 - After the masking scene has found its secrets, the statement rises over it like a sheet of paper with a soft top edge while the scene stays pinned, then pins in turn and lights up word by word
 - The film plays behind a light grey brush-stroke shape on the white page. As you scroll, the section holds still while the stroke stretches open until the film fills the screen, then three headlines rise over it. With reduced motion the stroke stays put, the headlines sit below it, and the film waits for its button. Rendered in 4K, with a 9:16 cut for phones
 - `npm start` and the browser tests use a small Node server that answers Range requests, as GitHub Pages does, so videos can seek
