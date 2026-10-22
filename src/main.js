@@ -9,7 +9,6 @@ import { copyText } from "./ui/clipboard.js";
 import { debounce, formatBytes, h, req } from "./ui/dom.js";
 import { watchExternalRequests } from "./ui/netwatch.js";
 import { wirePeek } from "./ui/peek.js";
-import { wirePrivacyReel } from "./ui/privacy-reel.js";
 import { wireScrollStory } from "./ui/scroll-story.js";
 import { KEYS, load, save } from "./ui/store.js";
 import { CATEGORY_NAMES, renderLedger, renderMirror, renderSegments } from "./ui/render.js";
@@ -61,6 +60,11 @@ const el = {
   verifyCommit: req("#verifyCommit", HTMLElement),
   coverageList: req("#coverageList", HTMLElement),
   coverageFoot: req("#coverageFoot", HTMLElement),
+  figRequests: req("#figRequests", HTMLElement),
+  figRules: req("#figRules", HTMLElement),
+  actionbar: req("#actionbar", HTMLElement),
+  actionHidden: req("#actionHidden", HTMLElement),
+  actionCopy: req("#actionCopy", HTMLButtonElement),
   withNote: req("#withNote", HTMLInputElement),
   words: req("#words", HTMLTextAreaElement),
   openFile: req("#openFile", HTMLButtonElement),
@@ -152,6 +156,7 @@ function paint() {
 
   const hidden = findings.filter(f => !state.shown.has(f.value));
   el.statHidden.textContent = String(hidden.length);
+  el.actionHidden.textContent = String(hidden.length);
   el.statSize.textContent = formatBytes(text);
   el.ledgerWrap.hidden = !findings.length;
   el.ledgerEmpty.hidden = findings.length > 0;
@@ -362,14 +367,17 @@ el.plainMode.addEventListener("change", () => {
 
 /** @type {ReturnType<typeof setTimeout> | undefined} */
 let noteReset;
-wireCopy(el.copySafe, () => (el.withNote.checked ? withNote(state.safeText) : state.safeText), el.safe, () => {
+const safeToCopy = () => (el.withNote.checked ? withNote(state.safeText) : state.safeText);
+const copiedSafe = () => {
   const n = state.detection.findings.filter(f => !state.shown.has(f.value)).length;
   const msg = `Copied. ${n} secret${n === 1 ? "" : "s"} replaced, raw text not copied.`;
   el.copyNote.textContent = msg;
   clearTimeout(noteReset);
   noteReset = setTimeout(() => (el.copyNote.textContent = ""), 6000);
   return msg;
-});
+};
+wireCopy(el.copySafe, safeToCopy, el.safe, copiedSafe);
+wireCopy(el.actionCopy, safeToCopy, el.safe, copiedSafe);
 wireCopy(
   el.copyRestored, () => state.restoredText, el.restored,
   () => "Copied the answer with your real values.",
@@ -388,6 +396,7 @@ new ResizeObserver(syncScroll).observe(el.input);
 
 watchExternalRequests(n => {
   el.netcount.textContent = String(n);
+  el.figRequests.textContent = String(n);
   el.netcheck.classList.toggle("is-warn", n > 0);
 });
 
@@ -417,8 +426,22 @@ if (COMMIT !== "dev") {
   el.verifyCommit.replaceChildren(" from commit ", h("a", { text: COMMIT, attrs: { href: `${REPO}/commit/${COMMIT}` } }));
 }
 
+el.figRules.textContent = String(RULES.length);
+
+// The phone action bar shows while the tool is on screen but its own Copy button is not.
+const onScreen = new Map();
+const syncActionbar = () => {
+  const show = !!(onScreen.get(el.dropZone) || onScreen.get(el.ledgerWrap) || onScreen.get(el.safe)) && !onScreen.get(el.copySafe);
+  el.actionbar.classList.toggle("is-shown", show);
+  el.actionbar.inert = !show;
+};
+const watcher = new IntersectionObserver(entries => {
+  for (const e of entries) onScreen.set(e.target, e.isIntersecting);
+  syncActionbar();
+});
+for (const target of [el.dropZone, el.safe, el.ledgerWrap, el.copySafe]) watcher.observe(target);
+
 paintCoverage();
-wirePrivacyReel();
 wireScrollStory();
 loadExample();
 

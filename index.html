@@ -61,74 +61,33 @@
         <li>No server, no account</li>
         <li>Open source, MIT</li>
       </ul>
-      <div class="reel" role="img" aria-label="A slowly turning ring of cards showing a secret being found, replaced with a label and put back, all on this device.">
-        <div class="reel__stage" data-privacy-reel-stage aria-hidden="true">
-          <div class="reel__tilt">
-            <div class="reel__track" data-privacy-reel>
-              <article class="reel__card" data-privacy-card>
-                <span class="reel__label"><i></i>Raw log</span>
-                <strong class="reel__value">Authorization</strong>
-                <span class="reel__sub">Bearer sk_••••••</span>
-                <span class="reel__meter"><span></span></span>
-              </article>
-              <article class="reel__card" data-privacy-card>
-                <span class="reel__label"><i></i>Detected</span>
-                <strong class="reel__value">API key</strong>
-                <span class="reel__sub">matched locally</span>
-                <span class="reel__meter"><span></span></span>
-              </article>
-              <article class="reel__card" data-privacy-card>
-                <span class="reel__label"><i></i>Masked</span>
-                <strong class="reel__value">[SECRET_1]</strong>
-                <span class="reel__sub">stable placeholder</span>
-                <span class="reel__meter"><span></span></span>
-              </article>
-              <article class="reel__card" data-privacy-card>
-                <span class="reel__label"><i></i>Safe output</span>
-                <strong class="reel__value">password=[PASS_1]</strong>
-                <span class="reel__sub">context preserved</span>
-                <span class="reel__meter"><span></span></span>
-              </article>
-              <article class="reel__card" data-privacy-card>
-                <span class="reel__label"><i></i>Remote IP</span>
-                <strong class="reel__value">192.0.2.10</strong>
-                <span class="reel__sub">private value</span>
-                <span class="reel__meter"><span></span></span>
-              </article>
-              <article class="reel__card" data-privacy-card>
-                <span class="reel__label"><i></i>Safe label</span>
-                <strong class="reel__value">[IP_1]</strong>
-                <span class="reel__sub">same host, safe label</span>
-                <span class="reel__meter"><span></span></span>
-              </article>
-              <article class="reel__card" data-privacy-card>
-                <span class="reel__label"><i></i>Email found</span>
-                <strong class="reel__value">ops@example.test</strong>
-                <span class="reel__sub">matched locally</span>
-                <span class="reel__meter"><span></span></span>
-              </article>
-              <article class="reel__card" data-privacy-card>
-                <span class="reel__label"><i></i>Placeholder</span>
-                <strong class="reel__value">[EMAIL_1]</strong>
-                <span class="reel__sub">nothing disclosed</span>
-                <span class="reel__meter"><span></span></span>
-              </article>
-              <article class="reel__card" data-privacy-card>
-                <span class="reel__label"><i></i>Local map</span>
-                <strong class="reel__value">[SECRET_1] ↔ value</strong>
-                <span class="reel__sub">kept in this tab</span>
-                <span class="reel__meter"><span></span></span>
-              </article>
-              <article class="reel__card" data-privacy-card>
-                <span class="reel__label"><i></i>Restore</span>
-                <strong class="reel__value">label → real value</strong>
-                <span class="reel__sub">resolved on device</span>
-                <span class="reel__meter"><span></span></span>
-              </article>
-            </div>
+      <figure class="product" aria-labelledby="productCaption">
+        <div class="product__bar" aria-hidden="true"><i></i><i></i><i></i><span>deploy-error.log</span></div>
+        <div class="product__grid">
+          <div class="product__pane">
+            <p class="product__label">Your log <span>stays on your device</span></p>
+            <pre id="heroRaw"><span class="c">09:12:44Z</span> connecting to postgres://app:<mark>Tr0ub4dor&amp;3xyz</mark>@<mark>prod-db.internal</mark>/orders
+<span class="c">09:12:49Z</span> ERROR timeout from <mark>10.20.4.17</mark>
+AWS_ACCESS_KEY_ID=<mark>AKIAIOSFODNN7EXAMPLE</mark>
+alert sent to <mark>ops@acme-pay.io</mark></pre>
+          </div>
+          <div class="product__arrow" aria-hidden="true"><span>→</span></div>
+          <div class="product__pane product__pane--safe">
+            <p class="product__label">What the AI sees <b>5 hidden</b></p>
+            <pre id="heroSafe"><span class="c">09:12:44Z</span> connecting to postgres://app:<em>[DB_PASSWORD_1]</em>@<em>[HOST_1]</em>/orders
+<span class="c">09:12:49Z</span> ERROR timeout from <em>[IP_1]</em>
+AWS_ACCESS_KEY_ID=<em>[AWS_KEY_1]</em>
+alert sent to <em>[EMAIL_1]</em></pre>
           </div>
         </div>
-      </div>
+        <figcaption id="productCaption" class="product__caption">A made-up log, masked by the same code that runs in the tool below.</figcaption>
+      </figure>
+      <dl class="figures">
+        <div><dt id="figRequests">0</dt><dd>requests from this page to other sites, counted live</dd></div>
+        <div><dt id="figRules">33</dt><dd>secret formats detected, from AWS keys to card numbers</dd></div>
+        <div><dt>0</dt><dd>accounts, cookies or trackers</dd></div>
+        <div><dt>MIT</dt><dd>open source, so you can read every line</dd></div>
+      </dl>
     </section>
 
     <section class="tool" id="tool" aria-labelledby="toolTitle">
@@ -263,6 +222,33 @@
     </section>
 
     <p class="visually-hidden" id="status" role="status" aria-live="polite"></p>
+
+    <section class="compare" aria-labelledby="cmpTitle">
+      <div class="section-head">
+        <p class="eyebrow">Why not just paste it?</p>
+        <h2 id="cmpTitle">Same answer. None of the exposure.</h2>
+      </div>
+      <div class="compare__grid">
+        <div class="card compare__col">
+          <p class="compare__tag compare__tag--bad">Pasting the raw log</p>
+          <ul>
+            <li>Keys and passwords are kept in the AI service's chat history</li>
+            <li>Depending on your plan and settings, chats may be used to train models</li>
+            <li>Anyone with access to that account can read them</li>
+            <li>Every secret you shared should be rotated afterwards</li>
+          </ul>
+        </div>
+        <div class="card compare__col compare__col--good">
+          <p class="compare__tag">Pasting through Paste-Safe</p>
+          <ul>
+            <li>The AI only sees labels like [AWS_KEY_1]</li>
+            <li>The same value keeps the same label, so the answer still makes sense</li>
+            <li>Real values go back into the answer on your device</li>
+            <li>Masked values never leave this tab, so they need no rotating</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
     <section class="scroll-story" id="how" aria-labelledby="storyTitle" data-scroll-story>
       <header class="scroll-story__intro">
@@ -413,6 +399,10 @@ python3 -m http.server 8080</code></pre>
     <p><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="https://github.com/SandeepKomal/paste-safe">Source</a> · <a href="https://github.com/SandeepKomal/paste-safe/blob/main/CHANGELOG.md">Changelog</a> · <a href="https://github.com/SandeepKomal/paste-safe/blob/main/SECURITY.md">Security</a></p>
   </footer>
 
+  <div class="actionbar" id="actionbar" inert>
+    <span><b id="actionHidden">0</b> hidden</span>
+    <button class="btn btn--primary" id="actionCopy" type="button"><span class="btn__label">Copy safe text</span><span class="btn__done" aria-hidden="true">Copied</span></button>
+  </div>
   <div class="peek" id="peek" aria-hidden="true" hidden><span class="peek__label">Real value</span><span id="peekValue"></span></div>
   <noscript><p class="noscript">Paste-Safe needs JavaScript to find and hide secrets.</p></noscript>
 </body>

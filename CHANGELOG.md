@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+- Hero shows a made-up log next to what the AI sees, masked by the real detector, instead of the turning ring of cards
+- Hero figures explain themselves: the live request count, how many secret formats are detected, no accounts or trackers, MIT
+- "Why not just paste it?" compares pasting a raw log with pasting through Paste-Safe
+- On phones, a bar with the hidden count and Copy appears while the tool is on screen and its own Copy button is not
+- On phones and tablets, the "How it works" picture stays pinned under the header and changes with the step being read
+
 ## 2.1.0
 - New white and grey design: one theme, system fonts, a centred hero and a cleaner workbench on desktop and phones
 - The header shows the version (and, on the live site, the commit) next to the request counter

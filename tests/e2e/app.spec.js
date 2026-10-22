@@ -155,42 +155,30 @@ test("the main layout is two columns on desktop and one on phones", async ({ pag
 });
 });
 
-test.describe("hero reel", () => {
-test("shows ten connected white 3D cards", async ({ page }) => {
+test.describe("hero", () => {
+test("the figures show live counts", async ({ page }) => {
   await page.goto("/");
-  const stage = page.locator("[data-privacy-reel-stage]");
-  const cards = page.locator("[data-privacy-card]");
-  await expect(cards).toHaveCount(10);
-  await expect(page.locator(".reel")).toContainText("[SECRET_1]");
-  const geometry = await stage.evaluate(element => {
-    const styles = getComputedStyle(element);
-    const radius = Number.parseFloat(styles.getPropertyValue("--privacy-reel-radius"));
-    const width = Number.parseFloat(styles.getPropertyValue("--privacy-card-width"));
-    return {
-      radius, width,
-      expectedWidth: 2 * radius * Math.tan(Math.PI / element.querySelectorAll("[data-privacy-card]").length) + 1.5,
-      has3D: getComputedStyle(element.querySelector("[data-privacy-reel]")).transformStyle,
-    };
-  });
-  expect(geometry.radius).toBeGreaterThan(0);
-  expect(Math.abs(geometry.width - geometry.expectedWidth)).toBeLessThan(1);
-  expect(geometry.has3D).toBe("preserve-3d");
-  const box = await stage.boundingBox();
-  expect(box?.height).toBeGreaterThan(160);
+  await expect(page.locator("#figRequests")).toHaveText("0");
+  await expect(page.locator("#figRules")).toHaveText(/^\d{2,}$/);
+  await expect(page.locator(".product")).toContainText("[AWS_KEY_1]");
 });
 
-test("rotates, and stops for reduced motion", async ({ page }) => {
+test("the phone action bar appears over the tool and copies the safe text", async ({ page, context, browserName, viewport }) => {
+  test.skip((viewport?.width ?? 1280) > 640, "The action bar is for phones.");
+  const bar = page.locator("#actionbar");
   await page.goto("/");
-  const reel = page.locator("[data-privacy-reel]");
-  const card = page.locator("[data-privacy-card]").first();
-  await expect.poll(async () => reel.evaluate(e => getComputedStyle(e).animationName)).toBe("reel-spin");
-  const before = await card.boundingBox();
-  await page.waitForTimeout(400);
-  const after = await card.boundingBox();
-  if (!before || !after) throw new Error("card has no layout box");
-  expect(Math.abs(after.x - before.x) + Math.abs(after.y - before.y)).toBeGreaterThan(0.5);
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect.poll(async () => reel.evaluate(e => getComputedStyle(e).animationName)).toBe("none");
+  await expect(bar).not.toHaveClass(/is-shown/);
+  await page.locator(".ledger").evaluate(e => e.scrollIntoView({ block: "start" }));
+  await expect(bar).toHaveClass(/is-shown/);
+  await expect(page.locator("#actionHidden")).toHaveText("11");
+  if (browserName === "chromium") {
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.locator("#actionCopy").click();
+    await expect(page.locator("#actionCopy")).toHaveAttribute("data-state", "done");
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toContain("[AWS_KEY_1]");
+  }
+  await page.locator("#copySafe").evaluate(e => e.scrollIntoView({ block: "center" }));
+  await expect(bar).not.toHaveClass(/is-shown/);
 });
 });
 
@@ -218,6 +206,8 @@ test("scroll story scenes fit their stage without colliding with its footer", as
     for (const step of ["detect", "mask", "restore"]) {
       await page.locator(`[data-story-step="${step}"]`).evaluate(element => element.scrollIntoView({ block: "center", behavior: "instant" }));
       await expect(stage).toHaveAttribute("data-active-step", step, { timeout: 5000 });
+      // Measure where the scene settles, not mid-way through its entrance.
+      await page.waitForFunction(() => !document.getAnimations().some(a => a instanceof CSSTransition));
       const layout = await stage.evaluate(element => {
         const step = element.getAttribute("data-active-step") ?? "detect";
         const active = element.querySelector(`[data-story-scene="${step}"]`);
@@ -240,6 +230,21 @@ test("scroll story scenes fit their stage without colliding with its footer", as
       expect(layout.sceneScrollHeight).toBeLessThanOrEqual(layout.sceneClientHeight + 2);
       expect(layout.sceneBottom).toBeLessThanOrEqual(layout.footerTop + 1);
     }
+  }
+});
+
+test("on narrow screens the stage stays pinned above the chapter being read", async ({ page, viewport }) => {
+  test.skip((viewport?.width ?? 1280) > 960, "Desktop shows the stage beside the chapters.");
+  await page.goto("/#how");
+  const stage = page.locator("[data-story-stage]");
+  for (const step of ["detect", "mask", "restore"]) {
+    const chapter = page.locator(`[data-story-step="${step}"]`);
+    await chapter.evaluate(e => scrollTo(0, e.getBoundingClientRect().top + scrollY - innerHeight * 0.55));
+    await expect(stage).toHaveAttribute("data-active-step", step);
+    const [stageBox, chapterBox] = [await stage.boundingBox(), await chapter.locator("h3").boundingBox()];
+    if (!stageBox || !chapterBox) throw new Error("missing layout box");
+    expect(stageBox.y).toBeGreaterThanOrEqual(0);
+    expect(stageBox.y + stageBox.height).toBeLessThanOrEqual(chapterBox.y + 1);
   }
 });
 
