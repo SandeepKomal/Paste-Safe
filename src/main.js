@@ -11,6 +11,7 @@ import { watchExternalRequests } from "./ui/netwatch.js";
 import { wirePeek } from "./ui/peek.js";
 import { wirePrivacyReel } from "./ui/privacy-reel.js";
 import { wireScrollStory } from "./ui/scroll-story.js";
+import { KEYS, load, save } from "./ui/store.js";
 import { CATEGORY_NAMES, renderLedger, renderMirror, renderSegments } from "./ui/render.js";
 
 // Above this size, detection is debounced instead of running on every keystroke.
@@ -21,8 +22,6 @@ const WORKER_LIMIT = 200_000;
 // laying out tens of thousands of inline elements takes the browser seconds.
 const RICH_LIMIT = 2_000;
 const MAX_FILE_BYTES = 50 * 1024 * 1024;
-const WORDS_KEY = "paste-safe:words";
-const PLAIN_KEY = "paste-safe:plain";
 const TYPES = [...RULES.map(r => r.type), "PRIVATE", "SECRET_LIKE"];
 
 /** Templates to start a word list from. Lines starting with # are notes. */
@@ -281,20 +280,12 @@ el.dropZone.addEventListener("drop", e => {
   openFile(file);
 });
 
-try {
-  el.words.value = localStorage.getItem(WORDS_KEY) ?? "";
-} catch {
-  // Storage can be blocked; the list then lasts for this visit only.
-}
+el.words.value = load(KEYS.words) ?? "";
 const readWords = () => (words = el.words.value.split("\n"));
 readWords();
 function wordsChanged() {
   readWords();
-  try {
-    localStorage.setItem(WORDS_KEY, el.words.value);
-  } catch {
-    // See above.
-  }
+  save(KEYS.words, el.words.value);
   analyse();
   paintCoverage();
 }
@@ -337,18 +328,8 @@ for (const b of document.querySelectorAll("[data-starter]")) {
     el.words.focus();
   });
 }
-el.withNote.addEventListener("change", () => {
-  try {
-    localStorage.setItem("paste-safe:note", el.withNote.checked ? "1" : "0");
-  } catch {
-    // See above.
-  }
-});
-try {
-  el.withNote.checked = localStorage.getItem("paste-safe:note") !== "0";
-} catch {
-  // See above.
-}
+el.withNote.checked = load(KEYS.note) !== "0";
+el.withNote.addEventListener("change", () => save(KEYS.note, el.withNote.checked ? "1" : "0"));
 el.answer.addEventListener("input", paintAnswer);
 el.ledger.addEventListener("change", e => {
   const t = e.target;
@@ -371,20 +352,12 @@ wirePeek({
 
 // Plain mode hides real values on the page, for a shared screen.
 const setPlain = (/** @type {boolean} */ on) => document.documentElement.classList.toggle("is-plain", on);
-try {
-  el.plainMode.checked = localStorage.getItem(PLAIN_KEY) === "1";
-} catch {
-  // See above.
-}
+el.plainMode.checked = load(KEYS.plain) === "1";
 setPlain(el.plainMode.checked);
 el.plainMode.addEventListener("change", () => {
   setPlain(el.plainMode.checked);
   el.status.textContent = el.plainMode.checked ? "Plain mode on: real values are hidden on this page." : "Plain mode off.";
-  try {
-    localStorage.setItem(PLAIN_KEY, el.plainMode.checked ? "1" : "0");
-  } catch {
-    // See above.
-  }
+  save(KEYS.plain, el.plainMode.checked ? "1" : "0");
 });
 
 /** @type {ReturnType<typeof setTimeout> | undefined} */

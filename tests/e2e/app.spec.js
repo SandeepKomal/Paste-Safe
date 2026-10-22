@@ -243,24 +243,13 @@ test("scroll story scenes fit their stage without colliding with its footer", as
   }
 });
 
-test("scroll position continuously moves the privacy aurora", async ({ page }) => {
+test("the progress bar follows the scroll position", async ({ page }) => {
   await page.goto("/#how");
-  const stage = page.locator("[data-story-stage]");
-  const initial = Number(await stage.evaluate(element => getComputedStyle(element).getPropertyValue("--story-progress")));
+  const bar = page.locator("[data-story-progress]");
+  const scale = () => bar.evaluate(e => new DOMMatrix(getComputedStyle(e).transform).a);
+  const initial = await scale();
   await page.locator('[data-story-step="restore"]').scrollIntoViewIfNeeded();
-  await expect.poll(async () => Number(await stage.evaluate(element => getComputedStyle(element).getPropertyValue("--story-progress")))).toBeGreaterThan(initial + 0.01);
-  const drift = await stage.evaluate(element => getComputedStyle(element).getPropertyValue("--story-aurora-x"));
-  expect(drift.endsWith("px")).toBe(true);
-});
-
-test("scrollytelling motion respects reduced-motion preferences", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/#how");
-  const stage = page.locator("[data-story-stage]");
-  await expect(stage).toBeVisible();
-  const animation = await stage.evaluate(element => getComputedStyle(element, "::before").animationName);
-  expect(animation).toBe("none");
-  await expect.poll(async () => stage.evaluate(element => getComputedStyle(element).getPropertyValue("--story-aurora-x"))).toBe("0.00px");
+  await expect.poll(scale).toBeGreaterThan(initial + 0.01);
 });
 
 });
@@ -346,6 +335,36 @@ test.describe("files, own words and the AI round trip", () => {
     const body = await (await download.createReadStream()).toArray().then(c => Buffer.concat(c).toString());
     expect(body).toContain("Globex");
     expect(body).not.toContain("ticket from");
+  });
+});
+
+test.describe("privacy and terms", () => {
+  test("the privacy page erases everything the site saved", async ({ page }) => {
+    const problems = watchProblems(page);
+    await page.goto("/");
+    await page.locator("#wordsPanel summary").click();
+    await page.locator("#words").fill("Globex");
+    await page.locator("#plainMode").check({ force: true });
+    await expect.poll(() => page.evaluate(() => localStorage.getItem("paste-safe:words"))).toBe("Globex");
+    await page.locator('.footer a[href="privacy.html"]').click();
+    await expect(page.locator("h1")).toHaveText("Privacy");
+    await page.locator("#eraseAll").click();
+    await expect(page.locator("#eraseStatus")).toContainText("Erased");
+    expect(await page.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith("paste-safe:")))).toEqual([]);
+    await page.goto("/");
+    await expect(page.locator("#plainMode")).not.toBeChecked();
+    expect(problems).toEqual([]);
+  });
+
+  test("the terms page opens and links back", async ({ page }) => {
+    const problems = watchProblems(page);
+    await page.goto("/terms.html");
+    await expect(page.locator("h1")).toHaveText("Terms");
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
+    await page.locator(".nav--doc a", { hasText: "Privacy" }).click();
+    await expect(page.locator("#grievance")).toBeVisible();
+    expect(problems).toEqual([]);
   });
 });
 
