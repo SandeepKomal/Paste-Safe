@@ -173,6 +173,31 @@ test("the reel shows ten use cases and stops for reduced motion", async ({ page 
   await expect.poll(() => reel.evaluate(e => getComputedStyle(e).animationName)).toBe("none");
 });
 
+test("every reel card keeps its text inside its edges", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const problems = await page.evaluate(() => [...document.querySelectorAll("[data-privacy-card]")].flatMap(card => {
+    const out = [];
+    for (const el of card.children) {
+      if (el.offsetLeft + el.offsetWidth > card.clientWidth - 4) out.push(`${el.className} is wider than its card`);
+      if (!el.classList.contains("reel__raw") && el.scrollWidth > el.clientWidth + 1) out.push(`${el.className} overflows`);
+    }
+    if (card.scrollHeight > card.clientHeight + 1) out.push("content is taller than the card");
+    return out.map(o => `${card.querySelector("b")?.textContent}: ${o}`);
+  }));
+  expect(problems).toEqual([]);
+});
+
+test("the logo is in the header and the footer", async ({ page }) => {
+  await page.goto("/");
+  for (const img of [page.locator(".wordmark img"), page.locator(".footer__brand img")]) {
+    await expect(img).toHaveAttribute("src", "assets/logo.svg");
+    await img.scrollIntoViewIfNeeded();
+    await expect.poll(() => img.evaluate(e => /** @type {HTMLImageElement} */ (e).naturalWidth)).toBeGreaterThan(0);
+  }
+  await expect(page.locator(".footer")).toContainText("© 2026 Paste-Safe · Sandeep Komal Pothu");
+});
+
 test("the figures show live counts", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#figRequests")).toHaveText("0");

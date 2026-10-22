@@ -19,8 +19,8 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Paste-Safe: ask any AI about your logs and keep every secret to yourself">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="icon" href="assets/favicon.png" type="image/png" sizes="64x64">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="css/style.css">
   <script type="module" src="src/main.js"></script>
@@ -30,7 +30,7 @@
 
   <header class="masthead">
     <div class="masthead__bar">
-      <a class="wordmark" href="./" aria-label="Paste-Safe, home"><span class="wordmark__mark" aria-hidden="true"></span>Paste-Safe</a>
+      <a class="wordmark" href="./" aria-label="Paste-Safe, home"><img src="assets/logo.svg" alt="" width="133" height="32"></a>
       <nav class="nav" aria-label="Page">
         <a href="#how">How it works</a>
         <a href="#coverage">Coverage</a>
@@ -78,7 +78,7 @@
                 <p class="reel__who"><b>Developer</b> stack trace</p>
                 <code class="reel__raw">postgres://app:hunt••••@db</code>
                 <span class="reel__arrow" aria-hidden="true">↓</span>
-                <code class="reel__label">[DB_PASSWORD_1]</code>
+                <code class="reel__label">[DB_<wbr>PASSWORD_1]</code>
               </article>
               <article class="reel__card" data-privacy-card>
                 <p class="reel__who"><b>QA</b> API test run</p>
@@ -96,37 +96,37 @@
                 <p class="reel__who"><b>Platform</b> vault login</p>
                 <code class="reel__raw">hvs.CAESIJ1o••••</code>
                 <span class="reel__arrow" aria-hidden="true">↓</span>
-                <code class="reel__label">[VAULT_TOKEN_1]</code>
+                <code class="reel__label">[VAULT_<wbr>TOKEN_1]</code>
               </article>
               <article class="reel__card" data-privacy-card>
                 <p class="reel__who"><b>Data</b> signed S3 link</p>
                 <code class="reel__raw">X-Amz-Signature=8f2c••••</code>
                 <span class="reel__arrow" aria-hidden="true">↓</span>
-                <code class="reel__label">[URL_TOKEN_1]</code>
+                <code class="reel__label">[URL_<wbr>TOKEN_1]</code>
               </article>
               <article class="reel__card" data-privacy-card>
                 <p class="reel__who"><b>SRE</b> alert config</p>
                 <code class="reel__raw">xoxb-1234••••</code>
                 <span class="reel__arrow" aria-hidden="true">↓</span>
-                <code class="reel__label">[SLACK_TOKEN_1]</code>
+                <code class="reel__label">[SLACK_<wbr>TOKEN_1]</code>
               </article>
               <article class="reel__card" data-privacy-card>
                 <p class="reel__who"><b>Mobile</b> app config</p>
                 <code class="reel__raw">AIzaSyD-9tSr••••</code>
                 <span class="reel__arrow" aria-hidden="true">↓</span>
-                <code class="reel__label">[GOOGLE_KEY_1]</code>
+                <code class="reel__label">[GOOGLE_<wbr>KEY_1]</code>
               </article>
               <article class="reel__card" data-privacy-card>
                 <p class="reel__who"><b>CI/CD</b> workflow log</p>
                 <code class="reel__raw">ghp_8fJ2kLmQ••••</code>
                 <span class="reel__arrow" aria-hidden="true">↓</span>
-                <code class="reel__label">[GITHUB_TOKEN_1]</code>
+                <code class="reel__label">[GITHUB_<wbr>TOKEN_1]</code>
               </article>
               <article class="reel__card" data-privacy-card>
                 <p class="reel__who"><b>Payments</b> checkout service</p>
                 <code class="reel__raw">sk_live_51Hx••••</code>
                 <span class="reel__arrow" aria-hidden="true">↓</span>
-                <code class="reel__label">[STRIPE_KEY_1]</code>
+                <code class="reel__label">[STRIPE_<wbr>KEY_1]</code>
               </article>
             </div>
           </div>
@@ -466,8 +466,13 @@ python3 -m http.server 8080</code></pre>
   </main>
 
   <footer class="footer">
-    <p>© 2026 Paste-Safe · Sandeep Komal Pothu · MIT License · Uses your device's own fonts</p>
-    <p><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="https://github.com/SandeepKomal/paste-safe">Source</a> · <a href="https://github.com/SandeepKomal/paste-safe/blob/main/CHANGELOG.md">Changelog</a> · <a href="https://github.com/SandeepKomal/paste-safe/blob/main/SECURITY.md">Security</a></p>
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <img src="assets/logo.svg" alt="Paste-Safe" width="134" height="32" loading="lazy">
+        <p>© 2026 Paste-Safe · Sandeep Komal Pothu · MIT License · Uses your device's own fonts</p>
+      </div>
+      <p class="footer__links"><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="https://github.com/SandeepKomal/paste-safe">Source</a> · <a href="https://github.com/SandeepKomal/paste-safe/blob/main/CHANGELOG.md">Changelog</a> · <a href="https://github.com/SandeepKomal/paste-safe/blob/main/SECURITY.md">Security</a></p>
+    </div>
   </footer>
 
   <div class="actionbar" id="actionbar" inert>

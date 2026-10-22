@@ -54,7 +54,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
-main, .masthead__bar, .footer {
+main, .masthead__bar, .footer__inner {
   width: min(1200px, 100%);
   margin-inline: auto;
   padding-left: var(--gutter);
@@ -100,16 +100,9 @@ code { font-family: var(--font-mono); font-size: .88em; }
   -webkit-backdrop-filter: saturate(180%) blur(20px);
 }
 .masthead__bar { display: flex; align-items: center; gap: 28px; height: 56px; }
-.wordmark { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); font-weight: 600; font-size: 1.0625rem; letter-spacing: -.022em; }
+.wordmark { display: inline-flex; align-items: center; }
+.wordmark img { display: block; height: 32px; width: auto; }
 .wordmark:hover { text-decoration: none; }
-.wordmark__mark {
-  position: relative; width: 22px; height: 22px; border-radius: 7px;
-  background: linear-gradient(160deg, #3a3a3c, #1d1d1f);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 18%);
-}
-.wordmark__mark::after {
-  content: ""; position: absolute; left: 5px; right: 5px; top: 10px; height: 3px; border-radius: 2px; background: #fff;
-}
 .nav { display: flex; gap: 26px; margin-left: auto; }
 .nav a { color: var(--ink-soft); font-size: .8125rem; letter-spacing: -.005em; }
 .nav a:hover { color: var(--ink); text-decoration: none; }
@@ -191,7 +184,7 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); }
 .reel__who b { color: var(--ink); font-size: .9375rem; font-weight: 650; letter-spacing: -.015em; }
 .reel__raw { max-width: 100%; padding: 2px 5px; border-radius: 5px; background: #fff; color: var(--raw-ink); outline: 1px dashed var(--raw-line); outline-offset: -1px; font-size: .6875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .reel__arrow { padding-left: 4px; color: var(--faint); font-size: .75rem; line-height: 1; }
-.reel__label { padding: 3px 7px; border-radius: 6px; background: var(--label-bg); color: var(--ink); font-size: .75rem; font-weight: 600; }
+.reel__label { max-width: 100%; padding: 3px 7px; border-radius: 6px; background: var(--label-bg); color: var(--ink); font-size: .75rem; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; }
 
 /* Hero product window: a made-up log next to what the AI sees */
 .product { width: 100%; max-width: 1040px; margin: clamp(24px, 4vw, 40px) 0 0; border: 1px solid var(--rule); border-radius: 20px; background: #fff; box-shadow: 0 40px 80px -30px rgb(0 0 0 / 22%), 0 2px 6px rgb(0 0 0 / 4%); overflow: hidden; text-align: left; }
@@ -565,7 +558,10 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--faint); }
 .doc__status { flex-basis: 100%; color: var(--ok) !important; font-size: .875rem !important; font-weight: 500; }
 .doc__status:empty { display: none; }
 
-.footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; margin-top: clamp(80px, 10vw, 140px); padding-block: 22px calc(28px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--rule); color: var(--muted); font-size: .75rem; }
+.footer { margin-top: clamp(80px, 10vw, 140px); background: var(--bg-soft); border-top: 1px solid var(--rule); color: var(--muted); font-size: .75rem; }
+.footer__inner { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px; padding-block: 36px calc(36px + env(safe-area-inset-bottom, 0px)); }
+.footer__brand { display: grid; gap: 12px; }
+.footer__brand img { display: block; height: 32px; width: auto; }
 .footer a { color: var(--ink-soft); }
 .noscript { padding: 16px; text-align: center; }
 
@@ -664,16 +660,19 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--faint); }
   .scroll-story__chapter { padding: 26px 0; gap: 12px; }
   .scroll-story__chapter h3 { font-size: 1.85rem; }
   .scroll-story__chapter > p:not(.scroll-story__index, .scroll-story__micro) { font-size: 1rem; }
-  .footer { flex-direction: column; padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  .footer__inner { flex-direction: column; align-items: flex-start; padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  .wordmark img { height: 28px; }
   .actionbar { display: flex; }
   .product { border-radius: 16px; }
   .reel { margin-top: 40px; }
-  .reel__stage { height: 290px; perspective: 1000px; }
-  .reel__card { padding: 12px 11px; gap: 7px; border-radius: 13px; }
-  .reel__who { font-size: .6875rem; }
-  .reel__who b { font-size: .8125rem; }
+  .reel__stage { height: 232px; perspective: 1000px; }
+  .reel__tilt { top: 126px; }
+  .product { margin-top: 12px; }
+  .reel__card { padding: 11px 10px; gap: 6px; border-radius: 12px; }
+  .reel__who { font-size: .625rem; }
+  .reel__who b { font-size: .75rem; }
   .reel__raw { font-size: .5625rem; }
-  .reel__label { font-size: .6875rem; }
+  .reel__label { padding: 2px 5px; font-size: .625rem; }
   .product__pane { padding: 14px 16px 16px; }
   .product pre { font-size: 11.5px; line-height: 1.85; }
   .figures dd { font-size: .8125rem; }

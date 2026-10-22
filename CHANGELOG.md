@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+- New Paste-Safe logo in the header and footer; new favicon and app icons
+- Footer sits on its own light grey band
+- Reel labels wrap inside their card instead of running into the next one, and the reel is smaller on phones
 - Scroll effects in the style of product pages, also on phones: sections fade up, the hero recedes, the product window tilts into place, three headlines light up word by word, and the detector count counts up. All of it is off for reduced motion
 - The reel no longer clips its front card, and the grey shadow under it is gone
 - "Why not just paste it?" uses a light grey card instead of black
