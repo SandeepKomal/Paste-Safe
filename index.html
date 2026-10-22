@@ -31,7 +31,7 @@
   <header class="masthead">
     <div class="masthead__bar">
       <a class="wordmark" href="./" aria-label="Paste-Safe, home"><img src="assets/logo.svg" alt="" width="133" height="32"></a>
-      <nav class="nav" aria-label="Page">
+      <nav class="nav" id="pageNav" aria-label="Page">
         <a href="#how">How it works</a>
         <a href="#coverage">Coverage</a>
         <a href="#verify">Verify</a>
@@ -43,6 +43,7 @@
           <span class="netcheck__dot" aria-hidden="true"></span>
           <span><b id="netcount">0</b> <span class="netcheck__long">requests to other sites</span><span class="netcheck__short" aria-hidden="true">requests</span></span>
         </p>
+        <button class="menu-toggle" type="button" data-menu-toggle aria-controls="pageNav" aria-expanded="false" aria-label="Open the menu"><span aria-hidden="true"></span></button>
       </div>
     </div>
   </header>
