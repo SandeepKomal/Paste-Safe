@@ -39,15 +39,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # The browser install sometimes hangs on GitHub's runners, so it gets two tries of eight minutes.
+      # The browser install sometimes hangs on a slow package mirror; fail it in minutes, not hours.
       - name: Install browsers
-        timeout-minutes: 17
-        run: |
-          for attempt in 1 2; do
-            timeout 8m npx playwright install --with-deps chromium firefox webkit && exit 0
-            echo "::warning::Browser install attempt $attempt did not finish; trying again."
-          done
-          exit 1
+        timeout-minutes: 15
+        run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run test:e2e
         env:
           CI: "true"
