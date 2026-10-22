@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'none'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Changelog · Paste-Safe</title>
+  <meta name="description" content="Every change to Paste-Safe, newest first.">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" href="assets/favicon.png" type="image/png" sizes="64x64">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="masthead__bar">
+      <a class="wordmark" href="./" aria-label="Paste-Safe, home"><img src="assets/logo.svg" alt="" width="133" height="32"></a>
+      <a class="doc-back" href="./"><span aria-hidden="true">←</span> Back to the tool</a>
+    </div>
+  </header>
+
+  <main class="doc">
+    <nav class="nav--doc" aria-label="About Paste-Safe">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="security.html">Security</a>
+        <a href="changelog.html" aria-current="page">Changelog</a>
+        <a href="source.html">Source</a>
+    </nav>
+    <article class="doc__body">
+      <p class="eyebrow">Changelog</p>
+      <h1>What's new</h1>
+      <p class="doc__lede">Every change to Paste-Safe, newest first. The version running in your tab is shown in the header of the tool.</p>
+      <div class="timeline">
+      <section class="release" id="vunreleased">
+        <h2>Coming next <span class="release__tag">In progress</span></h2>
+        <ul>
+          <li>A 24-second film under the hero: Ctrl C, Ctrl V, the secrets turn into labels, the AI answers and the values come back. 4K, silent, with a wide cut for larger screens and a tall cut for phones. As you scroll it pins, the headline steps back and the film grows until it fills the screen. It plays only while on screen, has a pause button, and waits for a press under reduced motion. Its source is <code>tools/promo/</code></li>
+          <li>The gallery moves on by one card every few seconds, holds under the pointer or focus, and stops once you scroll it or press pause</li>
+          <li>Reel cards are drawn at twice their size and scaled down, so their text stays sharp while the ring turns</li>
+          <li>The figures sit under the statement, centred, with even spacing</li>
+          <li>Apple-style pinned scenes: the masking scene grows to full width and finds the secrets one by one as you scroll, and the statement lights up word by word</li>
+          <li>"Take a closer look" gallery of feature cards with arrow buttons</li>
+          <li>A Plain mode switch on the answer panel, kept in step with the one in the toolbar</li>
+          <li>New Paste-Safe logo in the header and footer; new favicon and app icons</li>
+          <li>Footer sits on its own light grey band</li>
+          <li>Reel labels wrap inside their card instead of running into the next one, and the reel is smaller on phones</li>
+          <li>Scroll effects in the style of product pages, also on phones: sections fade up, the hero recedes, the product window tilts into place, three headlines light up word by word, and the detector count counts up. All of it is off for reduced motion</li>
+          <li>The reel no longer clips its front card, and the grey shadow under it is gone</li>
+          <li>"Why not just paste it?" uses a light grey card instead of black</li>
+          <li>Copyright line in every footer</li>
+          <li>20 more detectors for IT teams: HashiCorp Vault, DigitalOcean, Doppler, PyPI, Postman, Grafana, New Relic, Sentry DSNs, Atlassian, Linear, Supabase, Mailgun, SonarQube, Databricks, kubeconfig client keys, Azure shared access keys, AWS account IDs in ARNs, <code>--password</code>/<code>--token</code> flags, password hashes (bcrypt, argon2, SHA-crypt) and NTLM hashes; PGP private key blocks</li>
+          <li>The hero reel is back above the product window, with a card for each kind of IT work showing a value and the label it becomes</li>
+          <li>One monochrome palette: raw values and alerts use a dashed outline instead of orange, restored values and status marks are grey and ink instead of green, links are ink</li>
+          <li>Hero shows a made-up log next to what the AI sees, masked by the real detector, instead of the turning ring of cards</li>
+          <li>Hero figures explain themselves: the live request count, how many secret formats are detected, no accounts or trackers, MIT</li>
+          <li>"Why not just paste it?" compares pasting a raw log with pasting through Paste-Safe</li>
+          <li>On phones, a bar with the hidden count and Copy appears while the tool is on screen and its own Copy button is not</li>
+          <li>On phones and tablets, the "How it works" picture stays pinned under the header and changes with the step being read</li>
+        </ul>
+      </section>
+      <section class="release" id="v2-1-0">
+        <h2>Version 2.1.0 <span class="release__tag release__tag--latest">Latest</span></h2>
+        <ul>
+          <li>New white and grey design: one theme, system fonts, a centred hero and a cleaner workbench on desktop and phones</li>
+          <li>The header shows the version (and, on the live site, the commit) next to the request counter</li>
+          <li>"What this copy catches": the page runs the detector on fake samples and lists what it misses, such as people's names</li>
+          <li>Restoring now reports labels the AI changed beyond recognition: "5 labels put back. 1 still looks like a label." Those stay highlighted</li>
+          <li>Plain mode hides real values on the page for a shared screen; copying the restored answer asks first while it is on</li>
+          <li>Copy safe text says what was copied: "11 secrets replaced, raw text not copied."</li>
+          <li>Word lists: import and export as a file, start from a sample list, and add notes with <code>#</code></li>
+          <li>Links to open an empty ChatGPT, Claude or Gemini chat (your text is not sent with them)</li>
+          <li>Removed the Board, Lens and Sticker themes and their code</li>
+          <li>Privacy notice and terms of use, written for India's DPDP Act, 2023 and DPDP Rules, 2025, with a button that erases everything the site saved; compliance checklist in <code>docs/DPDP-COMPLIANCE.md</code></li>
+          <li>Simpler scroll story and reel code; settings storage in one module</li>
+        </ul>
+      </section>
+      <section class="release" id="v2-0-0">
+        <h2>Version 2.0.0</h2>
+        <ul>
+          <li>Installable as an app and works offline (service worker caches only this site's files)</li>
+          <li>Share image, app icons, issue and PR templates, code of conduct</li>
+          <li>Copy adds a note asking the AI to keep labels as they are; restore also accepts labels the AI changed slightly (<code>IP_1</code>, <code>[ip-1]</code>)</li>
+          <li>New detectors: Google Cloud key IDs, Hugging Face, Shopify, Twilio and Discord tokens, Basic auth, Docker logins, session cookies, tokens in URLs, card numbers, phone numbers, usernames in paths, IPv6 and MAC addresses</li>
+          <li>Your own words to always hide, saved in the browser</li>
+          <li>Open or drop a text file; large inputs are checked in a worker</li>
+          <li>Fix: very large logs no longer freeze the page (highlights switch off above 2,000 labels)</li>
+          <li>Warn before closing the tab while labels are in use</li>
+          <li>Board theme, now the default: split-flap labels and a departure board in the intro; the workbench turns over between your text and the safe text</li>
+          <li>Fix slow matching on crafted input in the SECRET, HOST, EMAIL and DB_PASSWORD rules</li>
+          <li>Move JSDoc types into <code>types/index.d.ts</code>; trim comments</li>
+        </ul>
+      </section>
+      <section class="release" id="v1-2-0">
+        <h2>Version 1.2.0</h2>
+        <ul>
+          <li>Use system fonts; no third-party assets shipped (<code>font-src 'none'</code>)</li>
+          <li>Test that blocks font files, external URLs and key-shaped strings</li>
+        </ul>
+      </section>
+      <section class="release" id="v1-1-0">
+        <h2>Version 1.1.0</h2>
+        <ul>
+          <li>Lens and Sticker themes with a switcher</li>
+          <li>Hover a label to peek at its value</li>
+          <li>Category colours for labels and findings</li>
+        </ul>
+      </section>
+      <section class="release" id="v1-0-0">
+        <h2>Version 1.0.0</h2>
+        <ul>
+          <li>New UI with live highlighting and a findings table</li>
+          <li>Azure, GitLab, npm and SendGrid detectors</li>
+          <li>Linear-time detection (1 MB in well under a second)</li>
+          <li>Request counter in the header</li>
+        </ul>
+      </section>
+      <section class="release" id="v0-1-0">
+        <h2>Version 0.1.0</h2>
+        <ul>
+          <li>First release</li>
+        </ul>
+      </section>
+      </div>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <img src="assets/logo.svg" alt="Paste-Safe" width="134" height="32" loading="lazy">
+        <p>© 2026 Paste-Safe · Sandeep Komal Pothu · MIT License</p>
+      </div>
+      <p class="footer__links"><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="security.html">Security</a> · <a href="changelog.html">Changelog</a> · <a href="source.html">Source</a></p>
+    </div>
+  </footer>
+</body>
+</html>

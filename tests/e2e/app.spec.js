@@ -579,6 +579,24 @@ test.describe("privacy and terms", () => {
     await expect(page.locator("#grievance")).toBeVisible();
     expect(problems).toEqual([]);
   });
+
+  test("the footer pages share tabs, link back to the tool and fit the screen", async ({ page }) => {
+    const problems = watchProblems(page);
+    await page.goto("/");
+    await page.locator('.footer a[href="changelog.html"]').click();
+    await expect(page.locator("h1")).toHaveText("What's new");
+    await expect(page.locator(".release").first()).toContainText("In progress");
+    for (const [name, heading] of [["Security", "Security"], ["Source", "Source"], ["Terms", "Terms"], ["Privacy", "Privacy"], ["Changelog", "What's new"]]) {
+      await page.locator(".nav--doc a", { hasText: name }).click();
+      await expect(page.locator("h1")).toHaveText(heading);
+      await expect(page.locator('.nav--doc a[aria-current="page"]')).toHaveText(name);
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      expect(overflow).toBeLessThanOrEqual(0);
+    }
+    await page.locator(".doc-back").click();
+    await expect(page.locator("#input")).toBeVisible();
+    expect(problems).toEqual([]);
+  });
 });
 
 test.describe("install and offline", () => {

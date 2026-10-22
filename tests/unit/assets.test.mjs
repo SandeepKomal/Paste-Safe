@@ -7,7 +7,7 @@ import { join, extname } from "node:path";
 
 const ROOT = new URL("../../", import.meta.url).pathname;
 /** Everything the Pages workflow publishes. */
-const SHIPPED = ["index.html", "privacy.html", "terms.html", "sw.js", "manifest.webmanifest", "css", "src", "assets"];
+const SHIPPED = ["index.html", "privacy.html", "terms.html", "security.html", "changelog.html", "source.html", "sw.js", "manifest.webmanifest", "css", "src", "assets"];
 
 const walk = p => (statSync(join(ROOT, p)).isDirectory() ? readdirSync(join(ROOT, p)).flatMap(f => walk(join(p, f))) : [p]);
 const files = SHIPPED.flatMap(walk);
@@ -125,4 +125,12 @@ test("every reel card shows a label the detector really uses", async () => {
   const labels = [...read("index.html").replaceAll("<wbr>", "").matchAll(/<code class="reel__label">\[([A-Z_]+)_\d+\]<\/code>/g)].map(m => m[1]);
   assert.equal(labels.length, 10);
   for (const type of labels) assert.ok(types.has(type), `${type} is not a detector type`);
+});
+
+test("the changelog page lists every release and change in CHANGELOG.md", () => {
+  const md = read("CHANGELOG.md");
+  const page = read("changelog.html");
+  const releases = [...md.matchAll(/^## (.+)$/gm)].map(m => m[1]);
+  assert.equal([...page.matchAll(/<section class="release"/g)].length, releases.length, "changelog.html has another number of releases; run node tools/changelog.mjs");
+  assert.equal([...page.matchAll(/<li>/g)].length, [...md.matchAll(/^- /gm)].length, "changelog.html has another number of changes than CHANGELOG.md");
 });
