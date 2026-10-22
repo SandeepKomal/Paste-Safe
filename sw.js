@@ -26,6 +26,7 @@ const FILES = [
   "src/core/transform.js",
   "src/core/worker.js",
   "src/ui/clipboard.js",
+  "src/ui/closer.js",
   "src/ui/dom.js",
   "src/ui/motion.js",
   "src/ui/netwatch.js",

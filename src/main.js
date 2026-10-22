@@ -9,6 +9,7 @@ import { copyText } from "./ui/clipboard.js";
 import { debounce, formatBytes, h, req } from "./ui/dom.js";
 import { watchExternalRequests } from "./ui/netwatch.js";
 import { wirePeek } from "./ui/peek.js";
+import { wireCloser } from "./ui/closer.js";
 import { wireMotion } from "./ui/motion.js";
 import { wirePrivacyReel } from "./ui/privacy-reel.js";
 import { wireScrollStory } from "./ui/scroll-story.js";
@@ -57,6 +58,7 @@ const el = {
   peek: req("#peek", HTMLElement),
   peekValue: req("#peekValue", HTMLElement),
   plainMode: req("#plainMode", HTMLInputElement),
+  plainModeAnswer: req("#plainModeAnswer", HTMLInputElement),
   build: req("#build", HTMLAnchorElement),
   verifyVersion: req("#verifyVersion", HTMLElement),
   verifyCommit: req("#verifyCommit", HTMLElement),
@@ -358,13 +360,18 @@ wirePeek({
 });
 
 // Plain mode hides real values on the page, for a shared screen.
-const setPlain = (/** @type {boolean} */ on) => document.documentElement.classList.toggle("is-plain", on);
-el.plainMode.checked = load(KEYS.plain) === "1";
-setPlain(el.plainMode.checked);
-el.plainMode.addEventListener("change", () => {
-  setPlain(el.plainMode.checked);
-  el.status.textContent = el.plainMode.checked ? "Plain mode on: real values are hidden on this page." : "Plain mode off.";
-  save(KEYS.plain, el.plainMode.checked ? "1" : "0");
+// The toolbar and the answer pane each have a switch; they stay in step.
+const plainSwitches = [el.plainMode, el.plainModeAnswer];
+const setPlain = (/** @type {boolean} */ on) => {
+  for (const s of plainSwitches) s.checked = on;
+  document.documentElement.classList.toggle("is-plain", on);
+};
+setPlain(load(KEYS.plain) === "1");
+for (const sw of plainSwitches) sw.addEventListener("change", () => {
+  const on = sw.checked;
+  setPlain(on);
+  el.status.textContent = on ? "Plain mode on: real values are hidden on this page." : "Plain mode off.";
+  save(KEYS.plain, on ? "1" : "0");
 });
 
 /** @type {ReturnType<typeof setTimeout> | undefined} */
@@ -446,6 +453,7 @@ for (const target of [el.dropZone, el.safe, el.ledgerWrap, el.copySafe]) watcher
 paintCoverage();
 wirePrivacyReel();
 wireScrollStory();
+wireCloser();
 wireMotion();
 loadExample();
 

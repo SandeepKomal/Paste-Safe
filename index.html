@@ -132,27 +132,44 @@
           </div>
         </div>
       </div>
-      <figure class="product" aria-labelledby="productCaption" data-product>
-        <div class="product__bar" aria-hidden="true"><i></i><i></i><i></i><span>deploy-error.log</span></div>
-        <div class="product__grid">
-          <div class="product__pane">
-            <p class="product__label">Your log <span>stays on your device</span></p>
-            <pre id="heroRaw"><span class="c">09:12:44Z</span> connecting to postgres://app:<mark>Tr0ub4dor&amp;3xyz</mark>@<mark>prod-db.internal</mark>/orders
+    </section>
+
+    <section class="pin pin--product" aria-labelledby="maskTitle" data-pin="product">
+      <div class="pin__stage">
+        <div class="pin__panel">
+          <h2 class="pin__title" id="maskTitle">Every secret becomes a label. <span>Right here, on your device.</span></h2>
+          <figure class="product" aria-labelledby="productCaption">
+            <div class="product__bar" aria-hidden="true"><i></i><i></i><i></i><span>deploy-error.log</span></div>
+            <div class="product__grid">
+              <div class="product__pane">
+                <p class="product__label">Your log <span>stays on your device</span></p>
+                <pre id="heroRaw"><span class="c">09:12:44Z</span> connecting to postgres://app:<mark>Tr0ub4dor&amp;3xyz</mark>@<mark>prod-db.internal</mark>/orders
 <span class="c">09:12:49Z</span> ERROR timeout from <mark>10.20.4.17</mark>
 AWS_ACCESS_KEY_ID=<mark>AKIAIOSFODNN7EXAMPLE</mark>
 alert sent to <mark>ops@acme-pay.io</mark></pre>
-          </div>
-          <div class="product__arrow" aria-hidden="true"><span>→</span></div>
-          <div class="product__pane product__pane--safe">
-            <p class="product__label">What the AI sees <b>5 hidden</b></p>
-            <pre id="heroSafe"><span class="c">09:12:44Z</span> connecting to postgres://app:<em>[DB_PASSWORD_1]</em>@<em>[HOST_1]</em>/orders
+              </div>
+              <div class="product__arrow" aria-hidden="true"><span>→</span></div>
+              <div class="product__pane product__pane--safe">
+                <p class="product__label">What the AI sees <b id="heroCount">5 hidden</b></p>
+                <pre id="heroSafe"><span class="c">09:12:44Z</span> connecting to postgres://app:<em>[DB_PASSWORD_1]</em>@<em>[HOST_1]</em>/orders
 <span class="c">09:12:49Z</span> ERROR timeout from <em>[IP_1]</em>
 AWS_ACCESS_KEY_ID=<em>[AWS_KEY_1]</em>
 alert sent to <em>[EMAIL_1]</em></pre>
-          </div>
+              </div>
+            </div>
+            <figcaption id="productCaption" class="product__caption">A made-up log, masked by the same code that runs in the tool below.</figcaption>
+          </figure>
         </div>
-        <figcaption id="productCaption" class="product__caption">A made-up log, masked by the same code that runs in the tool below.</figcaption>
-      </figure>
+      </div>
+    </section>
+
+    <section class="pin pin--statement" aria-label="What Paste-Safe does" data-pin="statement">
+      <div class="pin__stage">
+        <p class="statement" data-words="pin">Paste-Safe turns passwords, keys and tokens into labels before they leave your screen. So you can ask any AI about real logs, configs and stack traces, and still get answers you can use. <strong>Private AI debugging is here.</strong></p>
+      </div>
+    </section>
+
+    <section class="figures-wrap" aria-label="Paste-Safe in numbers">
       <dl class="figures" data-reveal>
         <div><dt id="figRequests">0</dt><dd>requests from this page to other sites, counted live</dd></div>
         <div><dt id="figRules" data-count>53</dt><dd>secret formats detected, from cloud keys to password hashes</dd></div>
@@ -284,6 +301,11 @@ alert sent to <em>[EMAIL_1]</em></pre>
                 <h3 id="restoredTitle">With your real values</h3>
                 <p class="hint" id="restoreNote">Real values come back highlighted.</p>
               </div>
+              <label class="toggle toggle--pane" title="Hide real values on this page, for a shared screen">
+                <input class="toggle__input" id="plainModeAnswer" type="checkbox" role="switch">
+                <span class="toggle__track" aria-hidden="true"></span>
+                <span>Plain mode</span>
+              </label>
               <button class="btn btn--primary" id="copyRestored" type="button"><span class="btn__label">Copy answer</span><span class="btn__done" aria-hidden="true">Copied</span></button>
             </div>
             <pre class="sheet" id="restored" tabindex="0" aria-labelledby="restoredTitle" data-empty="The answer with your real values appears here."></pre>
@@ -293,6 +315,60 @@ alert sent to <em>[EMAIL_1]</em></pre>
     </section>
 
     <p class="visually-hidden" id="status" role="status" aria-live="polite"></p>
+
+    <section class="closer" aria-labelledby="closerTitle">
+      <div class="closer__head" data-reveal>
+        <h2 id="closerTitle">Take a closer look.</h2>
+        <div class="closer__nav">
+          <button class="closer__arrow" type="button" data-closer="-1" aria-label="Previous">‹</button>
+          <button class="closer__arrow" type="button" data-closer="1" aria-label="Next">›</button>
+        </div>
+      </div>
+      <div class="closer__track" id="closerTrack" tabindex="0" aria-label="Features">
+        <article class="closer__card">
+          <div class="closer__art" aria-hidden="true">
+            <div class="art-plain"><span></span><span></span><span class="is-short"></span><i class="art-switch"></i></div>
+          </div>
+          <h3>Plain mode</h3>
+          <p>Share your screen without sharing a secret. Every real value on the page is blurred, and copying the answer asks first.</p>
+        </article>
+        <article class="closer__card">
+          <div class="closer__art" aria-hidden="true">
+            <div class="art-restore"><code class="art-label">[AWS_KEY_1]</code><b>↓</b><code class="art-value">AKIAIOSFODNN7…</code></div>
+          </div>
+          <h3>Restore</h3>
+          <p>Paste the AI's reply and the labels turn back into your real values, on your device.</p>
+        </article>
+        <article class="closer__card">
+          <div class="closer__art" aria-hidden="true">
+            <div class="art-left"><p>3 labels put back.</p><p><b>1 still looks like a label.</b></p><code>[IP_7]</code></div>
+          </div>
+          <h3>Leftover check</h3>
+          <p>If the AI invents or mangles a label, you are told before you use a half-restored answer.</p>
+        </article>
+        <article class="closer__card">
+          <div class="closer__art" aria-hidden="true">
+            <div class="art-cover"><p><i>✓</i>AWS key</p><p><i>✓</i>Vault token</p><p><i>✓</i>Password hash</p><p class="is-gap"><i>–</i>Person's name</p></div>
+          </div>
+          <h3>Coverage you can see</h3>
+          <p>The page runs its own detector on fake samples and lists what it misses, not just what it catches.</p>
+        </article>
+        <article class="closer__card">
+          <div class="closer__art" aria-hidden="true">
+            <div class="art-words"><p>Northwind Traders</p><p>prod-eu-cluster</p><b>↓</b><code>[PRIVATE_1]</code></div>
+          </div>
+          <h3>Your own words</h3>
+          <p>Add client, project and server names once. Share the list with your team as a file, never your logs.</p>
+        </article>
+        <article class="closer__card">
+          <div class="closer__art" aria-hidden="true">
+            <div class="art-offline"><span class="art-pill"><i></i>0 requests</span><code>connect-src 'none'</code></div>
+          </div>
+          <h3>Offline and open</h3>
+          <p>No server, no account, works without internet. Every line is on GitHub to read or run yourself.</p>
+        </article>
+      </div>
+    </section>
 
     <section class="compare" aria-labelledby="cmpTitle">
       <div class="section-head" data-reveal>
