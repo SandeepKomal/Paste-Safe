@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+- 20 more detectors for IT teams: HashiCorp Vault, DigitalOcean, Doppler, PyPI, Postman, Grafana, New Relic, Sentry DSNs, Atlassian, Linear, Supabase, Mailgun, SonarQube, Databricks, kubeconfig client keys, Azure shared access keys, AWS account IDs in ARNs, `--password`/`--token` flags, password hashes (bcrypt, argon2, SHA-crypt) and NTLM hashes; PGP private key blocks
+- The hero reel is back above the product window, with a card for each kind of IT work showing a value and the label it becomes
+- One monochrome palette: raw values and alerts use a dashed outline instead of orange, restored values and status marks are grey and ink instead of green, links are ink
 - Hero shows a made-up log next to what the AI sees, masked by the real detector, instead of the turning ring of cards
 - Hero figures explain themselves: the live request count, how many secret formats are detected, no accounts or trackers, MIT
 - "Why not just paste it?" compares pasting a raw log with pasting through Paste-Safe
