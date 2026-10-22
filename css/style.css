@@ -165,8 +165,14 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); }
 }
 .statement strong { display: block; margin-top: .9em; font-weight: 650; }
 
-.has-motion .pin--product { height: 320svh; margin-top: 0; }
-.has-motion .pin--statement { height: 240svh; }
+.has-motion .pin--product { height: 400svh; margin-top: 0; }
+/* The statement rises over the pinned masking scene like a sheet of paper, for the last screen of
+   that scene's pinned stretch, then pins in turn. The sheet's top is an empty, soft-edged lip, so
+   the text arrives on solid white. */
+.has-motion .pin--statement {
+  position: relative; z-index: 1; height: 270svh; margin-top: -100svh; padding-top: 30svh;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0%), #fff 30svh);
+}
 .has-motion .pin__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 .has-motion .pin--statement .pin__stage { padding: 24px 0; }
 .has-motion .pin__panel {
