@@ -1,9 +1,7 @@
 # Changelog
 
 ## Unreleased
-- The film plays behind a light grey brush-stroke shape on the white page. As you scroll, the section holds still while the stroke stretches open until the film fills the screen, then three headlines rise over it. With reduced motion the stroke stays put, the headlines sit below it, and the film waits for its button. Rendered in 4K, with a 9:16 cut for phones
-- `npm start` and the browser tests use a small Node server that answers Range requests, as GitHub Pages does, so videos can seek
-- A 24-second film under the hero: Ctrl C, Ctrl V, the secrets turn into labels, the AI answers and the values come back. Silent, with a wide cut for larger screens and a tall cut for phones, rendered from 4K frames. Its source is `tools/promo/`
+- A 24-second film under the hero: Ctrl C, Ctrl V, the secrets turn into labels, the AI answers and the values come back. 4K, silent, with a wide cut for larger screens and a tall cut for phones. As you scroll it pins, the headline steps back and the film grows until it fills the screen. It plays only while on screen, has a pause button, and waits for a press under reduced motion. Its source is `tools/promo/`
 - The gallery moves on by one card every few seconds, holds under the pointer or focus, and stops once you scroll it or press pause
 - Reel cards are drawn at twice their size and scaled down, so their text stays sharp while the ring turns
 - The figures sit under the statement, centred, with even spacing
