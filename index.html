@@ -49,19 +49,21 @@
 
   <main>
     <section class="hero" aria-labelledby="heroTitle">
-      <p class="eyebrow">For logs, configs and stack traces</p>
-      <h1 id="heroTitle">Ask any AI about your logs. <span>Keep every secret to yourself.</span></h1>
-      <p class="hero__lede">Passwords, keys, tokens, IPs and emails become labels before you share. When the AI answers, your real values go back in. Everything happens in this tab.</p>
-      <div class="hero__actions">
-        <a class="btn btn--primary btn--lg" href="#tool">Start masking</a>
-        <a class="btn btn--quiet btn--lg" href="#coverage">See what it catches <span aria-hidden="true">›</span></a>
+      <div class="hero__top" data-hero-top>
+        <p class="eyebrow">For logs, configs and stack traces</p>
+        <h1 id="heroTitle">Ask any AI about your logs. <span>Keep every secret to yourself.</span></h1>
+        <p class="hero__lede">Passwords, keys, tokens, IPs and emails become labels before you share. When the AI answers, your real values go back in. Everything happens in this tab.</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary btn--lg" href="#tool">Start masking</a>
+          <a class="btn btn--quiet btn--lg" href="#coverage">See what it catches <span aria-hidden="true">›</span></a>
+        </div>
+        <ul class="hero__facts">
+          <li>Runs in your browser</li>
+          <li>No server, no account</li>
+          <li>Open source, MIT</li>
+        </ul>
       </div>
-      <ul class="hero__facts">
-        <li>Runs in your browser</li>
-        <li>No server, no account</li>
-        <li>Open source, MIT</li>
-      </ul>
-      <div class="reel">
+      <div class="reel" data-reveal>
         <p class="reel__title">One tool for every IT team that pastes logs into AI</p>
         <div class="reel__stage" data-privacy-reel-stage role="img" aria-label="Cards for ten kinds of IT work, each showing a secret from that work turned into a label: DevOps, kubectl logs: [SECRET_1]; Developer, stack trace: [DB_PASSWORD_1]; QA, API test run: [JWT_1]; Security, firewall log: [IP_1]; Platform, vault login: [VAULT_TOKEN_1]; Data, signed S3 link: [URL_TOKEN_1]; SRE, alert config: [SLACK_TOKEN_1]; Mobile, app config: [GOOGLE_KEY_1]; CI/CD, workflow log: [GITHUB_TOKEN_1]; Payments, checkout service: [STRIPE_KEY_1].">
           <div class="reel__tilt" aria-hidden="true">
@@ -130,7 +132,7 @@
           </div>
         </div>
       </div>
-      <figure class="product" aria-labelledby="productCaption">
+      <figure class="product" aria-labelledby="productCaption" data-product>
         <div class="product__bar" aria-hidden="true"><i></i><i></i><i></i><span>deploy-error.log</span></div>
         <div class="product__grid">
           <div class="product__pane">
@@ -151,16 +153,16 @@ alert sent to <em>[EMAIL_1]</em></pre>
         </div>
         <figcaption id="productCaption" class="product__caption">A made-up log, masked by the same code that runs in the tool below.</figcaption>
       </figure>
-      <dl class="figures">
+      <dl class="figures" data-reveal>
         <div><dt id="figRequests">0</dt><dd>requests from this page to other sites, counted live</dd></div>
-        <div><dt id="figRules">53</dt><dd>secret formats detected, from cloud keys to password hashes</dd></div>
+        <div><dt id="figRules" data-count>53</dt><dd>secret formats detected, from cloud keys to password hashes</dd></div>
         <div><dt>0</dt><dd>accounts, cookies or trackers</dd></div>
         <div><dt>MIT</dt><dd>open source, so you can read every line</dd></div>
       </dl>
     </section>
 
     <section class="tool" id="tool" aria-labelledby="toolTitle">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <h2 id="toolTitle">Mask, ask, restore.</h2>
         <p>Paste on the left. Copy the safe text on the right into any AI.</p>
       </div>
@@ -293,12 +295,12 @@ alert sent to <em>[EMAIL_1]</em></pre>
     <p class="visually-hidden" id="status" role="status" aria-live="polite"></p>
 
     <section class="compare" aria-labelledby="cmpTitle">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <p class="eyebrow">Why not just paste it?</p>
-        <h2 id="cmpTitle">Same answer. None of the exposure.</h2>
+        <h2 id="cmpTitle" data-words>Same answer. None of the exposure.</h2>
       </div>
       <div class="compare__grid">
-        <div class="card compare__col">
+        <div class="card compare__col" data-reveal>
           <p class="compare__tag compare__tag--bad">Pasting the raw log</p>
           <ul>
             <li>Keys and passwords are kept in the AI service's chat history</li>
@@ -307,7 +309,7 @@ alert sent to <em>[EMAIL_1]</em></pre>
             <li>Every secret you shared should be rotated afterwards</li>
           </ul>
         </div>
-        <div class="card compare__col compare__col--good">
+        <div class="card compare__col compare__col--good" data-reveal>
           <p class="compare__tag">Pasting through Paste-Safe</p>
           <ul>
             <li>The AI only sees labels like [AWS_KEY_1]</li>
@@ -320,7 +322,7 @@ alert sent to <em>[EMAIL_1]</em></pre>
     </section>
 
     <section class="scroll-story" id="how" aria-labelledby="storyTitle" data-scroll-story>
-      <header class="scroll-story__intro">
+      <header class="scroll-story__intro" data-reveal>
         <p class="eyebrow">A safer round trip</p>
         <h2 id="storyTitle">From raw log to useful answer. <span>Without handing over the secrets.</span></h2>
         <p>Scroll through the journey. Paste-Safe keeps the original values in this tab while the AI works with consistent labels.</p>
@@ -428,30 +430,30 @@ alert sent to <em>[EMAIL_1]</em></pre>
     </section>
 
     <section class="coverage" id="coverage" aria-labelledby="coverageTitle">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <p class="eyebrow">Coverage</p>
-        <h2 id="coverageTitle">What this copy catches.</h2>
+        <h2 id="coverageTitle" data-words>What this copy catches.</h2>
         <p>Your browser just ran the detector on these fake samples. Misses are listed too: one you can see is safer than one you can't.</p>
       </div>
-      <div class="card coverage__card">
+      <div class="card coverage__card" data-reveal>
         <ul class="coverage__list" id="coverageList"></ul>
         <p class="coverage__foot" id="coverageFoot"></p>
       </div>
     </section>
 
     <section class="verify" id="verify" aria-labelledby="verifyTitle">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <p class="eyebrow">Trust, but verify</p>
-        <h2 id="verifyTitle">Check the copy you're running.</h2>
+        <h2 id="verifyTitle" data-words>Check the copy you're running.</h2>
       </div>
       <div class="verify__grid">
-        <dl class="facts">
+        <dl class="facts" data-reveal>
           <div><dt>Nothing leaves this tab.</dt><dd>There is no server. The page's security policy blocks it from sending data, and the header counts every request to another site.</dd></div>
           <div><dt>You can see which version runs.</dt><dd>The header shows <b id="verifyVersion">v2.1.0</b><span id="verifyCommit"></span>. Compare it with the <a href="https://github.com/SandeepKomal/paste-safe/blob/main/CHANGELOG.md">changelog</a> and the source.</dd></div>
           <div><dt>Nothing is saved.</dt><dd>Close or reload the tab and your text and labels are gone. Only your word list and settings stay in this browser, and you can <a href="privacy.html">erase them</a>. Read the <a href="privacy.html">privacy notice</a>.</dd></div>
           <div><dt>It can miss things.</dt><dd>Detection is pattern-based. Names of people and companies are not detected unless they are on your word list. Read the safe text before you paste it anywhere.</dd></div>
         </dl>
-        <div class="card selfhost">
+        <div class="card selfhost" data-reveal>
           <h3>Run your own copy</h3>
           <p class="hint">Serve the exact files you reviewed. No build step, no dependencies at runtime.</p>
           <pre class="selfhost__code"><code>git clone https://github.com/SandeepKomal/paste-safe
@@ -464,7 +466,7 @@ python3 -m http.server 8080</code></pre>
   </main>
 
   <footer class="footer">
-    <p>Paste-Safe · MIT License · Uses your device's own fonts</p>
+    <p>© 2026 Paste-Safe · Sandeep Komal Pothu · MIT License · Uses your device's own fonts</p>
     <p><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="https://github.com/SandeepKomal/paste-safe">Source</a> · <a href="https://github.com/SandeepKomal/paste-safe/blob/main/CHANGELOG.md">Changelog</a> · <a href="https://github.com/SandeepKomal/paste-safe/blob/main/SECURITY.md">Security</a></p>
   </footer>
 

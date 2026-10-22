@@ -1,6 +1,10 @@
 # Changelog
 
 ## Unreleased
+- Scroll effects in the style of product pages, also on phones: sections fade up, the hero recedes, the product window tilts into place, three headlines light up word by word, and the detector count counts up. All of it is off for reduced motion
+- The reel no longer clips its front card, and the grey shadow under it is gone
+- "Why not just paste it?" uses a light grey card instead of black
+- Copyright line in every footer
 - 20 more detectors for IT teams: HashiCorp Vault, DigitalOcean, Doppler, PyPI, Postman, Grafana, New Relic, Sentry DSNs, Atlassian, Linear, Supabase, Mailgun, SonarQube, Databricks, kubeconfig client keys, Azure shared access keys, AWS account IDs in ARNs, `--password`/`--token` flags, password hashes (bcrypt, argon2, SHA-crypt) and NTLM hashes; PGP private key blocks
 - The hero reel is back above the product window, with a card for each kind of IT work showing a value and the label it becomes
 - One monochrome palette: raw values and alerts use a dashed outline instead of orange, restored values and status marks are grey and ink instead of green, links are ink

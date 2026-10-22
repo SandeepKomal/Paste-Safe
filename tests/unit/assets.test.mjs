@@ -115,7 +115,7 @@ test("the hero example shows what the detector really produces", async () => {
   const { spans, findings } = detect(raw);
   assert.equal(toText(mask(raw, spans)), text("heroSafe"));
   assert.match(html, new RegExp(`>${findings.length} hidden<`));
-  assert.match(html, new RegExp(`<dt id="figRules">${RULES.length}</dt>`));
+  assert.match(html, new RegExp(`<dt id="figRules"[^>]*>${RULES.length}</dt>`));
 });
 
 test("every reel card shows a label the detector really uses", async () => {

@@ -9,6 +9,7 @@ import { copyText } from "./ui/clipboard.js";
 import { debounce, formatBytes, h, req } from "./ui/dom.js";
 import { watchExternalRequests } from "./ui/netwatch.js";
 import { wirePeek } from "./ui/peek.js";
+import { wireMotion } from "./ui/motion.js";
 import { wirePrivacyReel } from "./ui/privacy-reel.js";
 import { wireScrollStory } from "./ui/scroll-story.js";
 import { KEYS, load, save } from "./ui/store.js";
@@ -445,6 +446,7 @@ for (const target of [el.dropZone, el.safe, el.ledgerWrap, el.copySafe]) watcher
 paintCoverage();
 wirePrivacyReel();
 wireScrollStory();
+wireMotion();
 loadExample();
 
 // Offline support and "install as an app". Only works over https or localhost.
