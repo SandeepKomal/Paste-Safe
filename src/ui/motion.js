@@ -2,7 +2,8 @@
 // Scroll effects in the style of product pages. Pinned scenes stay on screen
 // while their section scrolls past: the masking scene grows to full width and
 // finds the secrets one by one, the statement lights up word by word, and the
-// film grows from a card until it fills the screen.
+// film grows from a card until it fills the screen before the masking scene
+// rises over it.
 // Elsewhere sections fade up and the hero recedes. Native scrolling stays in
 // charge; nothing here runs when the visitor prefers reduced motion.
 
@@ -49,8 +50,9 @@ export function wireMotion() {
       statementWords.forEach((w, i) => w.style.setProperty("--lit", clamp01(lit - i).toFixed(2)));
     }
     if (film) {
-      // The film grows over the first half of its pinned stretch, then plays full screen.
-      const g = clamp01((pinProgress(film.section, vh) - 0.05) / 0.45);
+      // The film grows over the first part of its pinned stretch and plays full screen until the
+      // masking scene rises over it for the last screen.
+      const g = clamp01((pinProgress(film.section, vh) - 0.04) / 0.4);
       film.section.style.setProperty("--grow", (g * g * (3 - 2 * g)).toFixed(3));
     }
     for (const { el, words } of headlines) {
