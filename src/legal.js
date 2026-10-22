@@ -1,6 +1,9 @@
 // @ts-check
 import { eraseAll } from "./ui/store.js";
 import { req } from "./ui/dom.js";
+import { refuseFrames } from "./ui/frame.js";
+
+refuseFrames();
 
 const button = req("#eraseAll", HTMLButtonElement);
 const status = req("#eraseStatus", HTMLElement);

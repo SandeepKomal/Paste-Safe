@@ -599,6 +599,17 @@ test.describe("privacy and terms", () => {
   });
 });
 
+test.describe("framing", () => {
+  test("the tool refuses to run inside another site's frame", async ({ page, baseURL }) => {
+    for (const path of ["/", "/privacy.html"]) {
+      await page.setContent(`<iframe src="${baseURL}${path}" width="800" height="400"></iframe>`);
+      const frame = page.frameLocator("iframe");
+      await expect(frame.getByRole("link", { name: "Open Paste-Safe" })).toBeVisible();
+      await expect(frame.locator("textarea, button")).toHaveCount(0);
+    }
+  });
+});
+
 test.describe("install and offline", () => {
   test("the page opens offline after the first visit", async ({ page, context }) => {
     await page.goto("/");

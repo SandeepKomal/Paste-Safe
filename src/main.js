@@ -11,12 +11,15 @@ import { watchExternalRequests } from "./ui/netwatch.js";
 import { wirePeek } from "./ui/peek.js";
 import { wireCloser } from "./ui/closer.js";
 import { wireFilm } from "./ui/film.js";
+import { refuseFrames } from "./ui/frame.js";
 import { wireMenu } from "./ui/menu.js";
 import { wireMotion } from "./ui/motion.js";
 import { wirePrivacyReel } from "./ui/privacy-reel.js";
 import { wireScrollStory } from "./ui/scroll-story.js";
 import { KEYS, load, save } from "./ui/store.js";
 import { CATEGORY_NAMES, renderLedger, renderMirror, renderSegments } from "./ui/render.js";
+
+refuseFrames();
 
 // Above this size, detection is debounced instead of running on every keystroke.
 const SYNC_LIMIT = 50_000;
