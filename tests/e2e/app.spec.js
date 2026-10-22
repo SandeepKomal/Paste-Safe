@@ -317,12 +317,15 @@ test("the film pins and grows until it fills the screen", async ({ page }) => {
   expect(await page.locator(".film__stage").boundingBox().then(b => Math.abs(b?.y ?? 99))).toBeLessThan(2);
 });
 
-test("the film is not downloaded until it is near, and then only the cut that is shown", async ({ page, viewport }) => {
+test("the film is not downloaded until it stays on screen, and then only the cut that is shown", async ({ page, viewport }) => {
   const fetched = [];
   page.on("request", r => { if (/\/assets\/film\/.*\.(webm|mp4)$/.test(r.url())) fetched.push(r.url()); });
   await page.goto("/");
   await page.waitForLoadState("load");
-  await page.waitForTimeout(500);
+  // Scrolling past the film fetches nothing.
+  await page.evaluate(() => scrollBy(0, 200));
+  await page.locator("#tool").scrollIntoViewIfNeeded();
+  await page.waitForTimeout(800);
   expect(fetched).toEqual([]);
   await page.locator(".film__frame").scrollIntoViewIfNeeded();
   await expect.poll(() => page.locator("[data-film] source[src]").count()).toBeGreaterThan(0);

@@ -3,20 +3,19 @@
 // CSS shows one of them. The shown cut plays, muted, while it is on screen, and
 // the button pauses or plays it. When the visitor prefers reduced motion it
 // waits on its first frame until they press play. The sources have no URL until
-// the film is on screen, or the visitor scrolls while it is about a screen away,
-// because some browsers fetch video whatever its preload says; then only the
-// shown cut gets them, so visitors who never get here download none.
+// the film has been on screen for a moment, because some browsers fetch video
+// whatever its preload says; then only the shown cut gets them, so visitors who
+// never stop here, or only scroll past, download none. The poster shows meanwhile.
 
 export function wireFilm() {
   const cuts = /** @type {HTMLVideoElement[]} */ ([...document.querySelectorAll("[data-film]")]);
   const toggle = /** @type {HTMLButtonElement | null} */ (document.querySelector("[data-film-toggle]"));
   const frame = cuts[0]?.parentElement;
-  const section = frame?.closest("section");
-  if (!frame || !section || !toggle) return;
+  if (!frame || !toggle) return;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)");
   let seen = false;
-  let near = false;
-  let moved = false;
+  let settled = false;
+  let timer = 0;
   let wanted = !reduce.matches;
 
   const shown = () => cuts.find(v => v.offsetParent !== null);
@@ -37,8 +36,8 @@ export function wireFilm() {
     const active = shown();
     for (const v of cuts) if (v !== active && !v.paused) v.pause();
     if (!active) return;
-    if (seen || (near && moved)) attach(active);
-    if (wanted && seen && !document.hidden) active.play().catch(() => show(false));
+    if (seen && settled) attach(active);
+    if (wanted && seen && settled && !document.hidden) active.play().catch(() => show(false));
     else active.pause();
   };
   for (const v of cuts) {
@@ -49,14 +48,12 @@ export function wireFilm() {
     wanted = shown()?.paused ?? false;
     sync();
   });
-  new IntersectionObserver(([e]) => { seen = e.isIntersecting; sync(); }, { threshold: 0.4 }).observe(frame);
-  new IntersectionObserver(([e]) => { near = e.isIntersecting; sync(); }, { rootMargin: "100% 0px" }).observe(section);
-  addEventListener("scroll", () => {
-    const r = section.getBoundingClientRect();
-    moved = true;
-    near = r.top < innerHeight * 2 && r.bottom > -innerHeight;
+  new IntersectionObserver(([e]) => {
+    seen = e.isIntersecting;
+    clearTimeout(timer);
+    if (seen && !settled) timer = setTimeout(() => { settled = seen; sync(); }, 300);
     sync();
-  }, { once: true, passive: true });
+  }, { threshold: 0.4 }).observe(frame);
   document.addEventListener("visibilitychange", sync);
   matchMedia("(max-width: 640px)").addEventListener("change", sync);
   show(false);
