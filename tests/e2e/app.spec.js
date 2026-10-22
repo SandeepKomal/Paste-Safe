@@ -265,6 +265,58 @@ test("the gallery arrows step through the cards", async ({ page }) => {
   await expect(page.locator('[data-closer="-1"]')).toBeEnabled();
 });
 
+test("the gallery moves on by itself until paused", async ({ page }) => {
+  await page.goto("/");
+  const track = page.locator("#closerTrack");
+  await track.scrollIntoViewIfNeeded();
+  await page.mouse.move(1, 1);
+  await expect.poll(() => track.evaluate(e => e.scrollLeft), { timeout: 9000 }).toBeGreaterThan(100);
+  const play = page.locator("[data-closer-play]");
+  await expect(play).toHaveAttribute("aria-label", "Pause the gallery");
+  await play.click();
+  await expect(play).toHaveAttribute("aria-label", "Play the gallery");
+  const left = await track.evaluate(e => e.scrollLeft);
+  await page.mouse.move(1, 1);
+  await page.waitForTimeout(5500);
+  expect(Math.abs((await track.evaluate(e => e.scrollLeft)) - left)).toBeLessThan(2);
+});
+
+test("the film shows the cut that fits the screen and the button pauses it", async ({ page, viewport }) => {
+  await page.goto("/");
+  const frame = page.locator(".film__frame");
+  await frame.scrollIntoViewIfNeeded();
+  const tall = (viewport?.width ?? 1280) <= 640;
+  await expect(page.locator(tall ? ".film__video--tall" : ".film__video--wide")).toBeVisible();
+  await expect(page.locator(tall ? ".film__video--wide" : ".film__video--tall")).toBeHidden();
+  const ratio = await frame.evaluate(e => e.clientWidth / e.clientHeight);
+  expect(Math.abs(ratio - (tall ? 4 / 5 : 16 / 9))).toBeLessThan(0.02);
+  const playable = await page.evaluate(() => {
+    const v = document.createElement("video");
+    return Boolean(v.canPlayType('video/webm; codecs="vp9"') || v.canPlayType('video/mp4; codecs="avc1.640028"'));
+  });
+  test.skip(!playable, "This browser build has no video codecs.");
+  const toggle = page.locator("[data-film-toggle]");
+  await expect(toggle).toHaveAttribute("data-state", "playing", { timeout: 10000 });
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("data-state", "paused");
+  await expect(toggle).toHaveAttribute("aria-label", "Play the film");
+});
+
+test("the film pins and grows until it fills the screen", async ({ page }) => {
+  await page.goto("/");
+  const section = page.locator("[data-pin=film]");
+  const middle = await section.evaluate(e => e.getBoundingClientRect().top + scrollY + (e.offsetHeight - innerHeight) * 0.75);
+  await page.evaluate(y => scrollTo(0, y), middle);
+  await expect.poll(() => section.evaluate(e => Number(e.style.getPropertyValue("--grow")))).toBe(1);
+  const box = await page.locator(".film__frame").boundingBox();
+  const vp = page.viewportSize();
+  // It reaches the screen's edges on one axis and stays within them on the other.
+  const fill = Math.max((box?.width ?? 0) / (vp?.width ?? 1), (box?.height ?? 0) / (vp?.height ?? 1));
+  expect(fill).toBeGreaterThan(0.98);
+  expect(fill).toBeLessThan(1.02);
+  expect(await page.locator(".film__stage").boundingBox().then(b => Math.abs(b?.y ?? 99))).toBeLessThan(2);
+});
+
 test("reduced motion leaves everything in place", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
@@ -275,6 +327,12 @@ test("reduced motion leaves everything in place", async ({ page }) => {
   // Without motion the scenes are ordinary sections, not tall pinned ones.
   expect(await page.locator("[data-pin=product]").evaluate(e => e.offsetHeight < innerHeight * 1.5)).toBe(true);
   expect(await page.locator(".pin--product .pin__stage").evaluate(e => getComputedStyle(e).position)).toBe("static");
+  // The gallery and the film stay still until asked.
+  await expect(page.locator("[data-closer-play]")).toBeHidden();
+  await page.locator(".film__frame").scrollIntoViewIfNeeded();
+  await page.waitForTimeout(800);
+  await expect(page.locator("[data-film-toggle]")).toHaveAttribute("data-state", "paused");
+  expect(await page.locator("[data-film]").evaluateAll(vs => vs.every(v => /** @type {HTMLVideoElement} */ (v).paused))).toBe(true);
 });
 });
 

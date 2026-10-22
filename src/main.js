@@ -10,6 +10,7 @@ import { debounce, formatBytes, h, req } from "./ui/dom.js";
 import { watchExternalRequests } from "./ui/netwatch.js";
 import { wirePeek } from "./ui/peek.js";
 import { wireCloser } from "./ui/closer.js";
+import { wireFilm } from "./ui/film.js";
 import { wireMotion } from "./ui/motion.js";
 import { wirePrivacyReel } from "./ui/privacy-reel.js";
 import { wireScrollStory } from "./ui/scroll-story.js";
@@ -454,6 +455,7 @@ paintCoverage();
 wirePrivacyReel();
 wireScrollStory();
 wireCloser();
+wireFilm();
 wireMotion();
 loadExample();
 
