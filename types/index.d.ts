@@ -41,4 +41,6 @@ export interface Segment {
   placeholder?: string;
   /** Set when this run is a real value put back for a label. */
   restored?: string;
+  /** Set when this run still looks like a label after restoring. */
+  leftover?: boolean;
 }

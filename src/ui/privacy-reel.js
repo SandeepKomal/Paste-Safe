@@ -24,9 +24,9 @@ export function wirePrivacyReel() {
     const tablet = tabletQuery.matches;
     const radius = Math.max(
       mobile ? 134 : 150,
-      Math.min(mobile ? 156 : 205, width * (mobile ? 0.41 : tablet ? 0.34 : 0.34)),
+      Math.min(mobile ? 156 : tablet ? 205 : 250, width * (mobile ? 0.41 : 0.34)),
     );
-    const height = mobile ? 126 : tablet ? 140 : 154;
+    const height = mobile ? 126 : tablet ? 148 : 172;
     const cardWidth = 2 * radius * Math.tan(Math.PI / cards.length) + 1.5;
 
     stage.style.setProperty("--privacy-reel-radius", `${radius.toFixed(2)}px`);
@@ -38,7 +38,5 @@ export function wirePrivacyReel() {
   };
 
   layoutReel();
-  const observer = new ResizeObserver(layoutReel);
-  observer.observe(stage);
-  window.addEventListener("resize", layoutReel, { passive: true });
+  new ResizeObserver(layoutReel).observe(stage);
 }

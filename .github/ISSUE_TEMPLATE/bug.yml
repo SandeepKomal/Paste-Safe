@@ -18,8 +18,3 @@ body:
     attributes:
       label: Browser and device
       placeholder: e.g. Chrome 140 on Windows, Safari on iPhone
-  - type: dropdown
-    id: theme
-    attributes:
-      label: Theme
-      options: [Board, Lens, Sticker]

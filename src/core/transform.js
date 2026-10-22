@@ -48,6 +48,37 @@ export function restore(answer, findings) {
   return out;
 }
 
+/**
+ * Splits out text that still looks like a label after restoring: a label the
+ * AI invented or changed beyond recognition. Its secret was not put back, so the
+ * reply must not be used as if it were complete.
+ * @param {readonly Segment[]} segments  output of `restore`
+ * @param {readonly string[]} types  rule types, such as AWS_KEY, to also match without brackets
+ * @returns {Segment[]}
+ */
+export function markLeftovers(segments, types) {
+  const bare = [...new Set(types)].map(escapeRegExp).sort((a, b) => b.length - a.length).join("|");
+  // Bounded repeats keep this linear on long runs of brackets and underscores.
+  const re = new RegExp(
+    "\\[[A-Za-z][A-Za-z0-9]{0,30}(?:[_ -][A-Za-z0-9]{1,30}){0,4}[_ -]\\d{1,6}\\]" +
+    (bare ? `|(?<![A-Za-z0-9_])(?:${bare})[_-]\\d{1,6}(?![A-Za-z0-9_])` : ""),
+    "g",
+  );
+  return segments.flatMap(s => {
+    if (s.restored || s.placeholder) return [s];
+    /** @type {Segment[]} */
+    const out = [];
+    let pos = 0;
+    for (const m of s.text.matchAll(re)) {
+      if (m.index > pos) out.push({ text: s.text.slice(pos, m.index) });
+      out.push({ text: m[0], leftover: true });
+      pos = m.index + m[0].length;
+    }
+    if (pos < s.text.length) out.push({ text: s.text.slice(pos) });
+    return out;
+  });
+}
+
 const keyOf = (/** @type {string} */ label) => label.replace(/[[\]]/g, "").replace(/[ -]/g, "_").toUpperCase();
 
 /** Put in front of the safe text so the AI keeps labels intact in its reply. */

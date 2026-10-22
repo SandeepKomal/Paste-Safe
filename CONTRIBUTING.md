@@ -28,6 +28,8 @@ Use fake values in tests. GitHub flags key-shaped strings even when they're fake
 - User text goes into the DOM as text only (`h()` in `src/ui/dom.js`). ESLint blocks `innerHTML`.
 - Keep `src/core/` free of DOM code.
 
-Themes are CSS tokens: Lens on `:root`, Sticker on `:root[data-skin="sticker"]`, Board on `:root[data-skin="board"]`, plus a block of theme-only rules for each in `css/style.css`. Browser tests run in all three.
+Colours, fonts and radii are tokens on `:root` at the top of `css/style.css`. There is one light theme; keep to the white and grey palette.
 
-If you add a file the site needs, add it to `FILES` in `sw.js` too, so it works offline. A unit test checks this. Bump `CACHE` in `sw.js` when you release.
+When a detector change catches or misses one of the fake samples in `src/coverage.js`, update that sample's `gap` flag. A unit test checks the card matches the detector.
+
+If you add a file the site needs, add it to `FILES` in `sw.js` too, so it works offline. A unit test checks this. When you release, bump the version in `package.json`, `src/version.js`, `index.html`, `sw.js` (`CACHE`) and `CHANGELOG.md`; a unit test checks they agree.

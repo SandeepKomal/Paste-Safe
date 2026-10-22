@@ -1,9 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { detect } from "../../src/core/detect.js";
-import { AI_NOTE, mask, restore, toText, withNote } from "../../src/core/transform.js";
+import { AI_NOTE, markLeftovers, mask, restore, toText, withNote } from "../../src/core/transform.js";
 import { entropy, isIPv6, luhn, RULES, RANDOM_RULE, wordRules } from "../../src/core/rules.js";
 import { EXAMPLE } from "../../src/example.js";
+import { SAMPLES } from "../../src/coverage.js";
 
 // Fake keys in well-known formats are joined from two halves so GitHub's
 // secret scanner doesn't block pushes of this file. None of them are real.
@@ -212,4 +213,38 @@ test("no rule slows down on hostile input (ReDoS guard)", () => {
       assert.ok(ms < 150, `${rule.type} took ${Math.round(ms)} ms on a hostile input`);
     }
   }
+});
+
+test("labels left in a restored answer are marked, known ones are not", () => {
+  const { findings } = detect("from 10.20.4.17 with AKIAIOSFODNN7EXAMPLE");
+  const types = RULES.map(r => r.type);
+  const segs = markLeftovers(restore("Block [IP_1], rotate AWS_KEY_2 and [Secret 4]. HTTP_2 and v1_2 are fine.", findings), types);
+  assert.deepEqual(segs.filter(s => s.leftover).map(s => s.text), ["AWS_KEY_2", "[Secret 4]"]);
+  assert.equal(segs.filter(s => s.restored).length, 1);
+  assert.equal(toText(segs), "Block 10.20.4.17, rotate AWS_KEY_2 and [Secret 4]. HTTP_2 and v1_2 are fine.");
+  assert.deepEqual(markLeftovers([], types), []);
+});
+
+test("leftover marking stays fast on hostile input", () => {
+  const types = RULES.map(r => r.type);
+  for (const text of ["[a_".repeat(20_000), "[" + "a_1".repeat(20_000), "AWS_KEY_".repeat(10_000)]) {
+    const t = performance.now();
+    markLeftovers([{ text }], types);
+    assert.ok(performance.now() - t < 150);
+  }
+});
+
+test("word list lines starting with # are notes", () => {
+  const rules = wordRules(["# Clients", "Northwind Traders"]);
+  assert.equal(toText(mask("# Clients: Northwind Traders", detect("# Clients: Northwind Traders", rules).spans)), "# Clients: [PRIVATE_1]");
+});
+
+test("the coverage card matches the detector, gaps included", () => {
+  // The page shows these results live. If a detector change flips one, update its `gap`.
+  for (const s of SAMPLES) {
+    assert.ok(s.text.includes(s.secret), s.name);
+    const caught = !safe(s.text).includes(s.secret);
+    assert.equal(caught, !s.gap, `${s.name}: expected ${s.gap ? "a known gap" : "to be caught"}`);
+  }
+  assert.ok(SAMPLES.some(s => s.gap), "the card should list at least one known gap");
 });

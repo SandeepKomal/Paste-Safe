@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.1.0
+- New white and grey design: one theme, system fonts, a centred hero and a cleaner workbench on desktop and phones
+- The header shows the version (and, on the live site, the commit) next to the request counter
+- "What this copy catches": the page runs the detector on fake samples and lists what it misses, such as people's names
+- Restoring now reports labels the AI changed beyond recognition: "5 labels put back. 1 still looks like a label." Those stay highlighted
+- Plain mode hides real values on the page for a shared screen; copying the restored answer asks first while it is on
+- Copy safe text says what was copied: "11 secrets replaced, raw text not copied."
+- Word lists: import and export as a file, start from a sample list, and add notes with `#`
+- Links to open an empty ChatGPT, Claude or Gemini chat (your text is not sent with them)
+- Removed the Board, Lens and Sticker themes and their code
+
 ## 2.0.0
 - Installable as an app and works offline (service worker caches only this site's files)
 - Share image, app icons, issue and PR templates, code of conduct

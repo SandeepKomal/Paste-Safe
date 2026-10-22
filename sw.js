@@ -1,7 +1,8 @@
 // Lets Paste-Safe open offline and be installed as an app. Only this site's own
 // files are cached. Network first, so online visits always get the latest version.
 
-const CACHE = "paste-safe-v6-connected-white-3d-reel";
+// The Pages workflow appends the deployed commit, so each deploy gets a fresh cache.
+const CACHE = "paste-safe-2.1.0";
 const FILES = [
   "./",
   "index.html",
@@ -12,20 +13,18 @@ const FILES = [
   "assets/icon-512.png",
   "assets/icon-maskable-512.png",
   "src/main.js",
+  "src/coverage.js",
   "src/example.js",
+  "src/version.js",
   "src/core/detect.js",
   "src/core/rules.js",
   "src/core/transform.js",
   "src/core/worker.js",
   "src/ui/clipboard.js",
   "src/ui/dom.js",
-  "src/ui/flip.js",
-  "src/ui/gate.js",
   "src/ui/netwatch.js",
   "src/ui/peek.js",
   "src/ui/render.js",
-  "src/ui/skin-boot.js",
-  "src/ui/skin.js",
   "src/ui/scroll-story.js",
   "src/ui/privacy-reel.js",
 ];

@@ -77,3 +77,12 @@ test("the app manifest points at icons that exist", () => {
   const manifest = JSON.parse(read("manifest.webmanifest"));
   for (const icon of manifest.icons) assert.ok(files.includes(icon.src), icon.src);
 });
+
+test("the version shown on the page matches package.json and the changelog", async () => {
+  const { VERSION, COMMIT } = await import("../../src/version.js");
+  assert.equal(VERSION, JSON.parse(read("package.json")).version);
+  assert.equal(COMMIT, "dev", "the deploy workflow fills in the commit; the source keeps 'dev'");
+  assert.match(read("CHANGELOG.md"), new RegExp(`^## ${VERSION.replace(/\./g, "\\.")}$`, "m"));
+  assert.match(read("index.html"), new RegExp(`>v${VERSION.replace(/\./g, "\\.")}<`));
+  assert.match(read("sw.js"), new RegExp(`"paste-safe-${VERSION.replace(/\./g, "\\.")}"`));
+});

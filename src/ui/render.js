@@ -12,16 +12,6 @@ export const CATEGORY_NAMES = {
 };
 
 const MAX_STAGGER = 24;
-// Past this many labels, each is drawn as one piece instead of one span per
-// character; hundreds of thousands of spans freeze the page on large logs.
-const MAX_SPLIT_LABELS = 400;
-
-// Stable per label, so a sticker keeps its angle across re-renders.
-export function tiltOf(/** @type {string} */ placeholder) {
-  let h = 0;
-  for (const c of placeholder) h = (h * 31 + c.charCodeAt(0)) | 0;
-  return `${((Math.abs(h) % 9) - 4) * 0.9}deg`;
-}
 
 /**
  * Only labels not in `seen` get `is-new`, so typing doesn't replay every animation.
@@ -33,20 +23,20 @@ export function tiltOf(/** @type {string} */ placeholder) {
 export function renderSegments(el, segments, seen, categoryOf = new Map()) {
   const frag = document.createDocumentFragment();
   let fresh = 0;
-  const split = segments.filter(s => s.placeholder).length <= MAX_SPLIT_LABELS;
   for (const s of segments) {
     if (s.placeholder) {
       const isNew = !seen.has(s.placeholder);
-      // One span per character so the Board theme can draw each as a flap.
-      const chars = split ? [...s.text].map((ch, j) => h("span", { className: "fl", text: ch, vars: { j } })) : [s.text];
       frag.append(h("span", {
-        className: `redact${isNew ? " is-new" : ""}${split ? "" : " redact--flat"}`,
+        className: isNew ? "redact is-new" : "redact",
+        text: s.text,
         attrs: { "data-ph": s.placeholder, "data-cat": categoryOf.get(s.placeholder) ?? "unknown" },
-        vars: { r: tiltOf(s.placeholder), ...(isNew ? { i: Math.min(fresh++, MAX_STAGGER) } : {}) },
-      }, chars));
+        vars: isNew ? { i: Math.min(fresh++, MAX_STAGGER) } : {},
+      }));
       seen.add(s.placeholder);
     } else if (s.restored) {
       frag.append(h("span", { className: "restored", text: s.text, attrs: { "data-ph": s.restored, title: `Was ${s.restored}` } }));
+    } else if (s.leftover) {
+      frag.append(h("mark", { className: "leftover", text: s.text, attrs: { title: "Still looks like a label: no real value was put back here" } }));
     } else {
       frag.append(s.text);
     }
