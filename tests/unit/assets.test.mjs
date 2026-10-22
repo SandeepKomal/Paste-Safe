@@ -104,8 +104,11 @@ test("the hero example shows what the detector really produces", async () => {
   const { RULES } = await import("../../src/core/rules.js");
   const html = read("index.html");
   const text = id => {
-    const pre = html.match(new RegExp(`<pre id="${id}">([\\s\\S]*?)</pre>`))?.[1] ?? "";
-    return pre.replace(/<[^>]+>/g, "").replaceAll("&amp;", "&");
+    let pre = html.match(new RegExp(`<pre id="${id}">([\\s\\S]*?)</pre>`))?.[1] ?? "";
+    // Strip until nothing changes, so a tag split by another tag can't survive.
+    for (let before = ""; before !== pre;) [before, pre] = [pre, pre.replace(/<[^>]*>/g, "")];
+    assert.doesNotMatch(pre, /[<>]/, `#${id} still holds markup`);
+    return pre.replaceAll("&amp;", "&");
   };
   const raw = text("heroRaw");
   assert.ok(raw.length > 0);
