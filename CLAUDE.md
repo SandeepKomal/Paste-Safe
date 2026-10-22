@@ -9,7 +9,8 @@ server code, no build step, no network requests.
 - `npm start` serves the site at http://localhost:8080.
 - `npm run check` runs eslint, tsc (JSDoc types, `jsconfig.json`) and the unit tests.
 - `npm run test:e2e` runs Playwright in Chromium, Firefox and WebKit, each at desktop
-  and phone sizes (`playwright.config.js`).
+  and phone sizes (`playwright.config.js`). They serve the site with `tests/serve.mjs`; CI runs
+  them in Playwright's own Docker image, whose tag follows the version in `package-lock.json`.
 - `node tools/changelog.mjs` rebuilds `changelog.html` after `CHANGELOG.md` changes.
   A unit test fails if they disagree.
 
