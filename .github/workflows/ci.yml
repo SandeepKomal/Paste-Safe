@@ -15,6 +15,7 @@ jobs:
   check:
     name: Lint, types and unit tests
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -29,6 +30,8 @@ jobs:
   e2e:
     name: Browser tests
     runs-on: ubuntu-latest
+    # A normal run takes about eight minutes; a hung step fails the job instead of running for hours.
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -36,7 +39,15 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium firefox webkit
+      # The browser install sometimes hangs on GitHub's runners, so it gets two tries of eight minutes.
+      - name: Install browsers
+        timeout-minutes: 17
+        run: |
+          for attempt in 1 2; do
+            timeout 8m npx playwright install --with-deps chromium firefox webkit && exit 0
+            echo "::warning::Browser install attempt $attempt did not finish; trying again."
+          done
+          exit 1
       - run: npm run test:e2e
         env:
           CI: "true"
