@@ -1,7 +1,7 @@
 # Changelog
 
 ## Unreleased
-- A 15-second film under the hero: Ctrl C, Ctrl V, the secrets turn into labels, the AI answers and the values come back. 4K, silent, with a wide cut for larger screens and a tall cut for phones. It plays only while on screen, has a pause button, and waits for a press under reduced motion. Its source is `tools/promo/`
+- A 24-second film under the hero: Ctrl C, Ctrl V, the secrets turn into labels, the AI answers and the values come back. 4K, silent, with a wide cut for larger screens and a tall cut for phones. As you scroll it pins, the headline steps back and the film grows until it fills the screen. It plays only while on screen, has a pause button, and waits for a press under reduced motion. Its source is `tools/promo/`
 - The gallery moves on by one card every few seconds, holds under the pointer or focus, and stops once you scroll it or press pause
 - Reel cards are drawn at twice their size and scaled down, so their text stays sharp while the ring turns
 - The figures sit under the statement, centred, with even spacing

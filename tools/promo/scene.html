@@ -122,7 +122,9 @@ then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.<
 </div>
 
 <script>
-  const DURATION = 15;
+  // The timeline below is written in beats; PACE stretches it to the film's real length.
+  const BEATS = 15;
+  const PACE = 1.6;
   const $ = s => document.querySelector(s);
   const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
   const span = (t, a, b) => clamp((t - a) / (b - a));
@@ -174,7 +176,7 @@ then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.<
     $("#cableV").setAttribute("d", p ? `M0 0 C 0 ${-90 * u()}, ${300 * u()} ${-40 * u()}, ${760 * u()} ${-120 * u()}` : path(360 * u(), 640 * u()));
   }
 
-  function render(t) {
+  function draw(t) {
     const p = portrait();
     // Captions: one at a time, each with a soft rise.
     const caps = [[.35, 2.25], [2.25, 4.3], [4.55, 8.1], [8.35, 10.75], [10.75, 12.7]];
@@ -229,12 +231,12 @@ then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.<
 
     // End card, then a fade to white so the loop starts clean.
     const endIn = out(span(t, 13.05, 13.75));
-    const endOut = ease(span(t, DURATION - .55, DURATION - .05));
+    const endOut = ease(span(t, BEATS - .55, BEATS - .05));
     place($("#end"), 0, (1 - endIn) * 40, lerp(.96, 1, endIn), 0, endIn * (1 - endOut));
   }
 
-  window.render = render;
-  window.DURATION = DURATION;
+  window.render = t => draw(t / PACE);
+  window.DURATION = BEATS * PACE;
   window.ready = document.fonts.ready.then(() => new Promise(r => {
     const img = $("#end img");
     img.complete ? r() : (img.onload = img.onerror = r);
@@ -243,7 +245,7 @@ then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.<
   if (!navigator.webdriver) {
     ready.then(() => {
       const start = performance.now();
-      const tick = now => { render(((now - start) / 1000) % DURATION); requestAnimationFrame(tick); };
+      const tick = now => { window.render(((now - start) / 1000) % window.DURATION); requestAnimationFrame(tick); };
       requestAnimationFrame(tick);
     });
   }

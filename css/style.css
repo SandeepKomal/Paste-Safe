@@ -53,6 +53,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  overflow-x: clip;
 }
 main, .masthead__bar, .footer__inner {
   width: min(1200px, 100%);
@@ -178,14 +179,25 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); }
 .has-motion .pin--product .product mark { outline-color: rgb(176 176 182 / calc(var(--on, 1))); }
 
 /* The short film under the hero: a wide cut for larger screens, a tall one for phones */
-.film { display: grid; justify-items: center; gap: clamp(28px, 4vw, 44px); padding-top: clamp(72px, 10vw, 128px); }
+.pin--film { padding-top: clamp(72px, 10vw, 128px); }
+.film__stage { align-content: center; gap: clamp(28px, 4vw, 44px); }
 .film__title { max-width: 20ch; text-align: center; font-size: clamp(2rem, 1.2rem + 3vw, 3.75rem); }
 .film__title span { color: var(--faint); }
 .film__frame {
   position: relative; width: 100%; max-width: 1120px; aspect-ratio: 16 / 9; border-radius: 28px; overflow: hidden;
   background: #fff; box-shadow: 0 0 0 1px var(--rule), 0 40px 80px -40px rgb(0 0 0 / 20%);
 }
-.has-motion .film__frame { transform: scale(calc(.86 + var(--grow, 1) * .14)); transform-origin: 50% 0; }
+/* Pinned: the headline steps back and the film grows until it fills the screen. motion.js sets --film-scale and --film-shift. */
+.has-motion .pin--film { height: 260svh; padding-top: 0; }
+/* The stage spans the whole window so the film can reach both edges; the header's height is kept clear. */
+.has-motion .film__stage { width: 100vw; margin-left: calc(50% - 50vw); padding: 52px var(--gutter) 0; }
+.has-motion .film__title { opacity: calc(1 - var(--grow, 0) * 1.6); transform: translateY(calc(var(--grow, 0) * -32px)); }
+.has-motion .film__frame {
+  max-width: min(1120px, calc((100svh - 300px) * 16 / 9));
+  transform: translateY(calc(var(--film-shift, 0px) * var(--grow, 0))) scale(calc(1 + (var(--film-scale, 1) - 1) * var(--grow, 0)));
+  border-radius: calc((1 - var(--grow, 0)) * 28px);
+  box-shadow: 0 0 0 1px rgb(229 229 234 / calc(1 - var(--grow, 0))), 0 40px 80px -40px rgb(0 0 0 / calc((1 - var(--grow, 0)) * 20%));
+}
 .film__video { display: block; width: 100%; height: 100%; object-fit: cover; }
 .film__video--tall { display: none; }
 .film__toggle {
@@ -780,6 +792,7 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--faint); }
   .product pre { font-size: 11.5px; line-height: 1.85; }
   .figures dd { font-size: .8125rem; }
   .film__frame { aspect-ratio: 4 / 5; border-radius: 22px; }
+  .has-motion .film__frame { max-width: calc((100svh - 280px) * 4 / 5); }
   .film__video--wide { display: none; }
   .film__video--tall { display: block; }
   .compare__col { padding: 22px; }

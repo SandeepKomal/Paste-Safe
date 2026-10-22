@@ -302,6 +302,21 @@ test("the film shows the cut that fits the screen and the button pauses it", asy
   await expect(toggle).toHaveAttribute("aria-label", "Play the film");
 });
 
+test("the film pins and grows until it fills the screen", async ({ page }) => {
+  await page.goto("/");
+  const section = page.locator("[data-pin=film]");
+  const middle = await section.evaluate(e => e.getBoundingClientRect().top + scrollY + (e.offsetHeight - innerHeight) * 0.75);
+  await page.evaluate(y => scrollTo(0, y), middle);
+  await expect.poll(() => section.evaluate(e => Number(e.style.getPropertyValue("--grow")))).toBe(1);
+  const box = await page.locator(".film__frame").boundingBox();
+  const vp = page.viewportSize();
+  // It reaches the screen's edges on one axis and stays within them on the other.
+  const fill = Math.max((box?.width ?? 0) / (vp?.width ?? 1), (box?.height ?? 0) / (vp?.height ?? 1));
+  expect(fill).toBeGreaterThan(0.98);
+  expect(fill).toBeLessThan(1.02);
+  expect(await page.locator(".film__stage").boundingBox().then(b => Math.abs(b?.y ?? 99))).toBeLessThan(2);
+});
+
 test("reduced motion leaves everything in place", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
