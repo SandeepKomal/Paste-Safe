@@ -510,7 +510,7 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--faint); }
   /* The stage sits above the chapters instead of beside them. */
   .scroll-story__layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "stage" "chapters"; gap: 8px; }
   .scroll-story__stage-shell { position: relative; top: auto; }
-  .scroll-story__stage { height: clamp(430px, 70svh, 540px); min-height: 430px; border-radius: 24px; }
+  .scroll-story__stage { height: clamp(490px, 70svh, 560px); min-height: 490px; border-radius: 24px; }
   .scroll-story__scene { inset: 60px 18px 50px; gap: 14px; }
   .scroll-story__code p { padding: 7px 14px; }
   .scroll-story__transform { gap: 8px; }
