@@ -10,6 +10,8 @@
 - Word lists: import and export as a file, start from a sample list, and add notes with `#`
 - Links to open an empty ChatGPT, Claude or Gemini chat (your text is not sent with them)
 - Removed the Board, Lens and Sticker themes and their code
+- Privacy notice and terms of use, written for India's DPDP Act, 2023 and DPDP Rules, 2025, with a button that erases everything the site saved; compliance checklist in `docs/DPDP-COMPLIANCE.md`
+- Simpler scroll story and reel code; settings storage in one module
 
 ## 2.0.0
 - Installable as an app and works offline (service worker caches only this site's files)

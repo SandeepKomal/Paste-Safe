@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'none'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Privacy · Paste-Safe</title>
+  <meta name="description" content="How Paste-Safe handles information: your text never leaves your browser.">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="src/legal.js"></script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="masthead__bar">
+      <a class="wordmark" href="./" aria-label="Paste-Safe, home"><span class="wordmark__mark" aria-hidden="true"></span>Paste-Safe</a>
+      <nav class="nav nav--doc" aria-label="Legal">
+        <a href="./">Back to the tool</a>
+        <a href="privacy.html" aria-current="page">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="doc">
+    <article class="doc__body">
+      <p class="eyebrow">Privacy notice · Effective 22 October 2026 · Version 1.0</p>
+      <h1>Privacy</h1>
+      <p class="doc__lede">Paste-Safe does not collect, receive or store your personal data. The text you paste is processed only inside your browser and is gone when you close the tab.</p>
+
+      <section class="doc__summary card" aria-labelledby="atAGlance">
+        <h2 id="atAGlance">At a glance</h2>
+        <ul>
+          <li><b>Your text</b> never leaves your device. The page is technically blocked from sending it anywhere.</li>
+          <li><b>No accounts, cookies, analytics, advertising or tracking.</b></li>
+          <li><b>Saved on your device only:</b> your word list and two settings. You can erase them below.</li>
+          <li><b>Hosting:</b> GitHub serves the site's files and may log your IP address, as any web host does. We have no access to those logs.</li>
+        </ul>
+      </section>
+
+      <h2>1. Who we are</h2>
+      <p>Paste-Safe is a free, open-source tool maintained by the owner of the <a href="https://github.com/SandeepKomal">@SandeepKomal</a> GitHub account ("we"). This notice explains how the website at <code>sandeepkomal.github.io/paste-safe</code> handles information, and your rights under India's Digital Personal Data Protection Act, 2023 (the "DPDP Act") and the Digital Personal Data Protection Rules, 2025.</p>
+
+      <h2>2. The text you paste</h2>
+      <p>Logs, configuration files and answers you paste or open are read and masked by code running in your browser. They are kept only in the memory of the open tab and are discarded when you close or reload it.</p>
+      <p>They are never sent to us or to anyone else. The page's Content Security Policy (<code>connect-src 'none'</code>) stops it from making network requests, and the counter in the header shows every request your browser has made to another site. You can read every line of the <a href="https://github.com/SandeepKomal/paste-safe">source code</a> or run your own copy.</p>
+      <p>Because this text never reaches us, we do not process it, and we are not a data fiduciary for it under the DPDP Act. If it contains other people's personal data, you remain responsible for how you use it, including what you paste into an AI service afterwards.</p>
+
+      <h2>3. What is stored on your device</h2>
+      <p>Only if you use these features, your browser's local storage keeps:</p>
+      <div class="table-wrap">
+        <table class="doc__table">
+          <thead><tr><th scope="col">Item</th><th scope="col">Purpose</th><th scope="col">Kept until</th></tr></thead>
+          <tbody>
+            <tr><td><code>paste-safe:words</code></td><td>Your list of words to always hide</td><td>You erase it</td></tr>
+            <tr><td><code>paste-safe:note</code></td><td>Whether copying adds a note for the AI</td><td>You erase it</td></tr>
+            <tr><td><code>paste-safe:plain</code></td><td>Whether plain mode is on</td><td>You erase it</td></tr>
+            <tr><td>Offline cache</td><td>The site's own files, so it opens without internet. No personal data.</td><td>You clear site data</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>These stay on your device and are never sent to us. Your word list may contain names you consider personal, which is why it is kept only in your browser and only exported when you choose to.</p>
+      <div class="doc__erase card">
+        <div>
+          <h3>Erase what this site saved</h3>
+          <p class="hint">Removes your word list and settings from this browser. Your text was never saved.</p>
+        </div>
+        <button class="btn btn--primary" id="eraseAll" type="button">Erase saved data</button>
+        <p class="doc__status" id="eraseStatus" role="status" aria-live="polite"></p>
+      </div>
+
+      <h2>4. What we do not do</h2>
+      <ul>
+        <li>We do not use cookies, analytics, advertising, fingerprinting or any third-party scripts or fonts.</li>
+        <li>We do not create accounts, profiles or automated decisions about you.</li>
+        <li>We do not sell, share or transfer personal data, inside or outside India, because we do not receive any.</li>
+      </ul>
+
+      <h2>5. Hosting</h2>
+      <p>The site is hosted on GitHub Pages. To deliver the files and keep the service secure, GitHub may process technical data such as your IP address, under the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub General Privacy Statement</a>. We do not receive visitor logs or analytics from GitHub. If you prefer, you can <a href="./#verify">run your own copy</a>, and no request reaches GitHub at all.</p>
+
+      <h2>6. Links to other services</h2>
+      <p>The page links to ChatGPT, Claude, Gemini and GitHub. These links open an empty page and carry none of your text. Once you are on another service, its own privacy policy applies, including to anything you paste there.</p>
+
+      <h2>7. Children</h2>
+      <p>Paste-Safe is meant for people who work with logs and code. We do not knowingly process personal data of children (anyone under 18), and the tool collects none from any user.</p>
+
+      <h2>8. Security</h2>
+      <p>The page loads only its own files, blocks network requests through its security policy, never inserts your text into the page as HTML, and is tested automatically on every change. Please report a weakness privately through <a href="https://github.com/SandeepKomal/paste-safe/security/advisories/new">GitHub's vulnerability reporting</a>. If we ever learned of a breach affecting personal data, we would inform affected people and the Data Protection Board of India as the DPDP Rules, 2025 require.</p>
+
+      <h2>9. Your rights</h2>
+      <p>Under the DPDP Act you may ask for a summary of your personal data we process, ask us to correct, complete, update or erase it, nominate another person to act for you, and have a grievance addressed. Because we hold no personal data about visitors, a request will usually find nothing to return. Data on your own device is under your control at all times: use the erase button above, or clear this site's data in your browser settings.</p>
+
+      <h2 id="grievance">10. Questions and grievances</h2>
+      <p>Contact the maintainer through <a href="https://github.com/SandeepKomal/paste-safe/issues/new/choose">a GitHub issue</a> for general questions, or <a href="https://github.com/SandeepKomal/paste-safe/security/advisories/new">privately</a> for anything sensitive. Do not include real secrets or personal data in a public issue. We aim to acknowledge a grievance within 7 days and will respond within 90 days at most, the period the DPDP Rules, 2025 allow. If you are not satisfied with our response, you can complain to the Data Protection Board of India.</p>
+
+      <h2>11. Language</h2>
+      <p>This notice is in English. If you would like it in another language listed in the Eighth Schedule to the Constitution of India, ask through the contacts above.</p>
+
+      <h2>12. Changes</h2>
+      <p>If this notice changes, we will update the date and version at the top and record the change in the <a href="https://github.com/SandeepKomal/paste-safe/blob/main/CHANGELOG.md">changelog</a>. We will not start collecting personal data without saying so here first and asking for your consent where the law requires it.</p>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <p>Paste-Safe · MIT License</p>
+    <p><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="https://github.com/SandeepKomal/paste-safe">Source</a> · <a href="https://github.com/SandeepKomal/paste-safe/blob/main/CHANGELOG.md">Changelog</a></p>
+  </footer>
+</body>
+</html>

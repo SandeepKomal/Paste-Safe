@@ -55,6 +55,7 @@ Everything runs in your browser. There's no backend, no analytics and no account
 - Only your settings are kept in your browser: your own words list, plain mode, and whether copy adds the note.
 - The header shows the version, and on the live site the commit, of the code running in your tab. Compare it with the [changelog](CHANGELOG.md).
 - The offline cache holds only the site's own files.
+- Read the [privacy notice](https://sandeepkomal.github.io/paste-safe/privacy.html) and [terms](https://sandeepkomal.github.io/paste-safe/terms.html). The privacy page has a button that erases everything the site saved. For India's DPDP Act, see the [compliance checklist](docs/DPDP-COMPLIANCE.md).
 
 ## Install it or use it offline
 

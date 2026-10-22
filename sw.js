@@ -6,6 +6,8 @@ const CACHE = "paste-safe-2.1.0";
 const FILES = [
   "./",
   "index.html",
+  "privacy.html",
+  "terms.html",
   "manifest.webmanifest",
   "css/style.css",
   "assets/icon.svg",
@@ -13,6 +15,7 @@ const FILES = [
   "assets/icon-512.png",
   "assets/icon-maskable-512.png",
   "src/main.js",
+  "src/legal.js",
   "src/coverage.js",
   "src/example.js",
   "src/version.js",
@@ -26,6 +29,7 @@ const FILES = [
   "src/ui/peek.js",
   "src/ui/render.js",
   "src/ui/scroll-story.js",
+  "src/ui/store.js",
   "src/ui/privacy-reel.js",
 ];
 
