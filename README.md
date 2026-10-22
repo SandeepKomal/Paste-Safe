@@ -76,7 +76,7 @@ Current Chrome, Edge, Firefox and Safari (16.4 or newer), on desktop and mobile.
 ```bash
 git clone https://github.com/SandeepKomal/paste-safe
 cd paste-safe
-python3 -m http.server 8080   # or any static web server
+node tests/server.mjs 8080   # or any static web server that answers Range requests, so the film can seek
 ```
 
 Review the files, then serve that folder. You can also fork it and turn on GitHub Pages (see below).
@@ -87,7 +87,7 @@ Review the files, then serve that folder. You can also fork it and turn on GitHu
 
 ## Development
 
-Node 22 and Python 3. No build step.
+Node 22. No build step.
 
 ```bash
 npm ci

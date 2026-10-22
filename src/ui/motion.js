@@ -1,8 +1,7 @@
 // @ts-check
 // Scroll effects in the style of product pages. Pinned scenes stay on screen
 // while their section scrolls past: the masking scene grows to full width and
-// finds the secrets one by one, the statement lights up word by word, and the
-// film grows from a card until it fills the screen.
+// finds the secrets one by one, and the statement lights up word by word.
 // Elsewhere sections fade up and the hero recedes. Native scrolling stays in
 // charge; nothing here runs when the visitor prefers reduced motion.
 
@@ -27,7 +26,6 @@ export function wireMotion() {
   const scene = sceneParts(document.querySelector("[data-pin=product]"));
   const statement = /** @type {HTMLElement | null} */ (document.querySelector("[data-pin=statement]"));
   const statementWords = statement ? splitWords(/** @type {Element} */ (statement.querySelector("[data-words]"))) : [];
-  const film = filmParts(document.querySelector("[data-pin=film]"));
 
   let frame = 0;
   const update = () => {
@@ -48,11 +46,6 @@ export function wireMotion() {
       const lit = clamp01((pinProgress(statement, vh) - 0.08) / 0.75) * statementWords.length;
       statementWords.forEach((w, i) => w.style.setProperty("--lit", clamp01(lit - i).toFixed(2)));
     }
-    if (film) {
-      // The film grows over the first half of its pinned stretch, then plays full screen.
-      const g = clamp01((pinProgress(film.section, vh) - 0.05) / 0.45);
-      film.section.style.setProperty("--grow", (g * g * (3 - 2 * g)).toFixed(3));
-    }
     for (const { el, words } of headlines) {
       const r = el.getBoundingClientRect();
       // 0 when the headline enters at the bottom, 1 once it reaches the upper third.
@@ -64,16 +57,14 @@ export function wireMotion() {
   addEventListener("scroll", schedule, { passive: true });
   addEventListener("resize", () => {
     if (scene) fitScene(scene);
-    if (film) fitFilm(film);
     schedule();
   });
   if (scene) fitScene(scene);
-  if (film) fitFilm(film);
   update();
 }
 
 /** How far a pinned section has scrolled: 0 as its stage pins, 1 as it lets go. */
-function pinProgress(/** @type {HTMLElement} */ section, /** @type {number} */ vh) {
+export function pinProgress(/** @type {HTMLElement} */ section, /** @type {number} */ vh) {
   const r = section.getBoundingClientRect();
   return clamp01(-r.top / Math.max(1, r.height - vh));
 }
@@ -97,20 +88,6 @@ function fitScene(/** @type {NonNullable<ReturnType<typeof sceneParts>>} */ scen
   const room = innerHeight - scene.title.offsetHeight - 120;
   const fit = Math.min(1, room / Math.max(1, scene.product.offsetHeight));
   scene.section.style.setProperty("--fit", Math.max(0.55, fit).toFixed(3));
-}
-
-function filmParts(/** @type {Element | null} */ section) {
-  const frame = section?.querySelector(".film__frame");
-  return section instanceof HTMLElement && frame instanceof HTMLElement ? { section, frame } : null;
-}
-
-/** How much the film must grow, and move, to fill the screen from where it sits in its stage. */
-function fitFilm(/** @type {NonNullable<ReturnType<typeof filmParts>>} */ film) {
-  const { frame } = film;
-  const scale = Math.min(innerWidth / frame.offsetWidth, innerHeight / frame.offsetHeight);
-  const shift = innerHeight / 2 - (frame.offsetTop + frame.offsetHeight / 2);
-  film.section.style.setProperty("--film-scale", Math.max(1, scale).toFixed(3));
-  film.section.style.setProperty("--film-shift", `${shift.toFixed(1)}px`);
 }
 
 /** Wraps each word of the element's text in a span, keeping inner markup. */
