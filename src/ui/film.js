@@ -5,7 +5,9 @@
 // on, the stage is pinned while the section scrolls by: the stroke stretches
 // open until the film fills the screen, then the headlines rise over it. When
 // the visitor prefers reduced motion, the stroke stays put and the film waits
-// for the button. Nothing is downloaded until the film is about a screen away.
+// for the button. The sources have no URL until the film is about a screen
+// away, because some browsers fetch video whatever its preload says; then only
+// the shown cut gets them, so visitors who never get here download none.
 
 const clamp01 = (/** @type {number} */ n) => Math.min(1, Math.max(0, n));
 const smooth = (/** @type {number} */ n) => n * n * (3 - 2 * n);
@@ -20,6 +22,7 @@ export function wireFilm() {
   if (!pin || !(stage instanceof HTMLElement) || !toggle || !cuts.length) return;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let seen = false;
+  let near = false;
   let wanted = !reduce;
 
   const shown = () => cuts.find(v => v.offsetParent !== null);
@@ -27,10 +30,20 @@ export function wireFilm() {
     toggle.dataset.state = playing ? "playing" : "paused";
     toggle.setAttribute("aria-label", playing ? "Pause the film" : "Play the film");
   };
+  const attach = (/** @type {HTMLVideoElement} */ v) => {
+    const sources = /** @type {HTMLSourceElement[]} */ ([...v.querySelectorAll("source[data-src]")]);
+    if (!sources.length) return;
+    for (const s of sources) {
+      s.src = s.dataset.src ?? "";
+      s.removeAttribute("data-src");
+    }
+    v.load();
+  };
   const sync = () => {
     const active = shown();
     for (const v of cuts) if (v !== active && !v.paused) v.pause();
     if (!active) return;
+    if (near) attach(active);
     if (wanted && seen && !document.hidden) active.play().catch(() => show(false));
     else active.pause();
   };
@@ -43,11 +56,7 @@ export function wireFilm() {
     sync();
   });
   new IntersectionObserver(([e]) => { seen = e.isIntersecting; sync(); }, { threshold: 0.25 }).observe(stage);
-  // The page asks for no video until the film is about a screen away, and then
-  // only for the cut that is shown, so visitors who never get here load none.
-  new IntersectionObserver(([e]) => {
-    if (e.isIntersecting && shown()?.preload === "none") /** @type {HTMLVideoElement} */ (shown()).preload = "auto";
-  }, { rootMargin: "100% 0px" }).observe(pin);
+  new IntersectionObserver(([e]) => { near = e.isIntersecting; sync(); }, { rootMargin: "100% 0px" }).observe(pin);
   document.addEventListener("visibilitychange", sync);
   matchMedia("(max-width: 640px)").addEventListener("change", sync);
   show(false);
