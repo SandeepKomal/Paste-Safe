@@ -27,11 +27,29 @@ jobs:
       - run: npm run typecheck
       - run: npm test
 
+  # The browser tests run in Playwright's own image, which has the browsers and their
+  # system libraries installed, so nothing is downloaded from the (sometimes very slow)
+  # Ubuntu mirror. The image tag follows the Playwright version in package-lock.json.
+  playwright-version:
+    name: Playwright version
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: v
+        run: echo "version=$(node -p "require('./package-lock.json').packages['node_modules/@playwright/test'].version")" >> "$GITHUB_OUTPUT"
+
   e2e:
     name: Browser tests
+    needs: playwright-version
     runs-on: ubuntu-latest
     # A normal run takes about eight minutes; a hung step fails the job instead of running for hours.
     timeout-minutes: 40
+    container:
+      image: mcr.microsoft.com/playwright:v${{ needs.playwright-version.outputs.version }}-noble
+      options: --user 1001
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -39,10 +57,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # The browser install sometimes hangs on a slow package mirror; fail it in minutes, not hours.
-      - name: Install browsers
-        timeout-minutes: 15
-        run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run test:e2e
         env:
           CI: "true"
