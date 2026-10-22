@@ -5,7 +5,7 @@
 // on, the stage is pinned while the section scrolls by: the stroke stretches
 // open until the film fills the screen, then the headlines rise over it. When
 // the visitor prefers reduced motion, the stroke stays put and the film waits
-// for the button.
+// for the button. Nothing is downloaded until the film is about a screen away.
 
 const clamp01 = (/** @type {number} */ n) => Math.min(1, Math.max(0, n));
 const smooth = (/** @type {number} */ n) => n * n * (3 - 2 * n);
@@ -43,6 +43,11 @@ export function wireFilm() {
     sync();
   });
   new IntersectionObserver(([e]) => { seen = e.isIntersecting; sync(); }, { threshold: 0.25 }).observe(stage);
+  // The page asks for no video until the film is about a screen away, and then
+  // only for the cut that is shown, so visitors who never get here load none.
+  new IntersectionObserver(([e]) => {
+    if (e.isIntersecting && shown()?.preload === "none") /** @type {HTMLVideoElement} */ (shown()).preload = "auto";
+  }, { rootMargin: "100% 0px" }).observe(pin);
   document.addEventListener("visibilitychange", sync);
   matchMedia("(max-width: 640px)").addEventListener("change", sync);
   show(false);

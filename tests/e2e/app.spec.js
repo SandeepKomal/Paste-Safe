@@ -322,6 +322,15 @@ test("the brush stroke stretches open as you scroll, then the headlines rise ove
   await expect.poll(() => page.locator("[data-film-line]").first().evaluate(e => Number(getComputedStyle(e).opacity))).toBeGreaterThan(0.9);
 });
 
+test("the film is not downloaded until it is near", async ({ page, viewport }) => {
+  test.skip((viewport?.width ?? 1280) <= 640, "On phones the film is within a screen of the top.");
+  const media = [];
+  page.on("request", r => { if (/\.(mp4|webm)$/.test(new URL(r.url()).pathname)) media.push(r.url()); });
+  await page.goto("/#how");
+  await page.waitForTimeout(800);
+  expect(media).toEqual([]);
+});
+
 test("with reduced motion the film waits for its button", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
