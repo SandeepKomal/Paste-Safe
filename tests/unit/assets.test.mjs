@@ -105,9 +105,9 @@ test("the hero example shows what the detector really produces", async () => {
   const html = read("index.html");
   const text = id => {
     let pre = html.match(new RegExp(`<pre id="${id}">([\\s\\S]*?)</pre>`))?.[1] ?? "";
-    // Strip until nothing changes, so a tag split by another tag can't survive.
-    for (let before = ""; before !== pre;) [before, pre] = [pre, pre.replace(/<[^>]*>/g, "")];
-    assert.doesNotMatch(pre, /[<>]/, `#${id} still holds markup`);
+    // The example uses only these tags; anything else fails the check below.
+    for (const tag of ['<span class="c">', "</span>", "<mark>", "</mark>", "<em>", "</em>"]) pre = pre.replaceAll(tag, "");
+    assert.doesNotMatch(pre, /[<>]/, `#${id} holds markup the test does not expect`);
     return pre.replaceAll("&amp;", "&");
   };
   const raw = text("heroRaw");
