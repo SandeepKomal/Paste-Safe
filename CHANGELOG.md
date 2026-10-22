@@ -1,7 +1,7 @@
 # Changelog
 
 ## Unreleased
-- The film is painted: each scene shows through wide, dry-edged brush strokes in light grey, deeper grey and graphite, and the next scene's strokes paint over the last. It runs the full width of the window on white, so the strokes look painted on the page, and plays by itself while on screen, in 4K
+- The film plays behind a light grey brush-stroke shape on the white page. As you scroll, the section holds still while the stroke stretches open until the film fills the screen, then three headlines rise over it. With reduced motion the stroke stays put, the headlines sit below it, and the film waits for its button. Rendered in 4K, with a 9:16 cut for phones
 - `npm start` and the browser tests use a small Node server that answers Range requests, as GitHub Pages does, so videos can seek
 - A 24-second film under the hero: Ctrl C, Ctrl V, the secrets turn into labels, the AI answers and the values come back. Silent, with a wide cut for larger screens and a tall cut for phones, rendered from 4K frames. Its source is `tools/promo/`
 - The gallery moves on by one card every few seconds, holds under the pointer or focus, and stops once you scroll it or press pause

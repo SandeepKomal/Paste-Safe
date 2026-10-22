@@ -1,28 +1,27 @@
 <!doctype html>
 <!--
-  The promo film shown on the home page, drawn as a web page so it can be
-  rendered frame by frame. render.mjs opens this file, calls render(t) for each
-  frame and saves the frames; ffmpeg turns them into video. Nothing here ships.
-  Open it in a browser to watch it play in real time.
+  The film on the home page, drawn as a web page so it can be rendered frame by
+  frame. render.mjs opens this file, calls render(t) for each frame and saves
+  the frames; ffmpeg turns them into video. Nothing here ships. Open it in a
+  browser to watch it play in real time.
+
+  The page shows the film behind a brush-stroke stencil (stroke.html), so the
+  film has no captions of its own and loops without a cut.
 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Paste-Safe promo</title>
+<title>Paste-Safe film</title>
 <style>
   :root {
     --ink: #1d1d1f; --muted: #6e6e73; --faint: #86868b; --rule: #e5e5ea;
     --label-bg: #ececf0; --raw-ink: #3a3a3c; --raw-line: #b0b0b6; --soft: #f5f5f7;
   }
   * { box-sizing: border-box; margin: 0; }
-  html, body { height: 100%; background: #fff; overflow: hidden; }
+  html, body { height: 100%; background: #e4e4e9; overflow: hidden; }
   body { font-family: Inter, system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
   #stage { position: fixed; inset: 0; --u: calc(min(100vw, 100vh) / 1080); font-size: calc(var(--u) * 16); }
   .layer { position: absolute; left: 50%; top: 50%; will-change: transform, opacity; }
-
-  .cap { position: absolute; left: 0; right: 0; top: calc(var(--u) * 104); text-align: center; }
-  .cap p { position: absolute; left: 0; right: 0; font: 600 calc(var(--u) * var(--cap, 80))/1.08 "Inter Display", Inter, sans-serif; letter-spacing: -.035em; }
-  .cap p span { display: block; margin-top: calc(var(--u) * 10); color: var(--faint); font-weight: 500; font-size: .5em; letter-spacing: -.02em; }
 
   .plate {
     display: flex; gap: calc(var(--u) * 26); padding: calc(var(--u) * 30);
@@ -66,22 +65,12 @@
   .bubble--ai { justify-self: start; border: 1px solid var(--rule); }
   .bubble .lab { color: var(--ink); font-weight: 700; border-radius: calc(var(--u) * 8); background: var(--label-bg); padding-inline: calc(var(--u) * 8); }
 
-  /* Each scene fills the frame but shows only through brush strokes, as if painted onto the white page.
-     The strokes are drawn per frame into an SVG mask; see paintMask(). */
-  .scene { position: absolute; inset: 0; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
-  /* Light grey, a deeper grey, then graphite: bold paint, kept to the site's greys and ink. */
-  #sceneKeys { background: linear-gradient(160deg, #ececf0, #dedee4); }
-  #sceneLog { background: linear-gradient(160deg, #dcdce2, #c9c9d0); }
-  #sceneChat { background: linear-gradient(200deg, #3a3a3e, #1d1d1f); }
-  /* The ink line under the end card's headline. */
-  #endLine { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-  #endLine path { fill: none; stroke-linecap: round; }
-
-  .end { display: grid; justify-items: center; gap: calc(var(--u) * 34); text-align: center; }
-  .end img { width: calc(var(--u) * 560); }
-  .end h2 { font: 600 calc(var(--u) * 84)/1.05 "Inter Display", Inter, sans-serif; letter-spacing: -.04em; }
-  .end p { color: var(--muted); font: 500 calc(var(--u) * 32)/1.4 Inter, sans-serif; letter-spacing: -.01em; }
-  .end p b { color: var(--ink); font-weight: 600; }
+  /* Each scene fills the frame in light grey. The page shows the film through a brush-stroke
+     stencil, so the grey reads as paint on the white page. */
+  .scene { position: absolute; inset: 0; }
+  #sceneKeys { background: radial-gradient(120% 90% at 30% 15%, #f2f2f5, #e4e4e9 55%, #d8d8de); }
+  #sceneLog { background: radial-gradient(120% 90% at 75% 20%, #efeff2, #e0e0e5 55%, #d4d4da); }
+  #sceneChat { background: radial-gradient(120% 90% at 50% 0%, #f0f0f3, #e2e2e7 55%, #d6d6dc); }
 </style>
 </head>
 <body>
@@ -118,21 +107,6 @@ then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.<
       </div>
     </div>
   </div>
-
-  <div class="cap" id="caps">
-    <p data-cap="0">Ctrl C your logs.<span>Straight from the terminal, CI or browser.</span></p>
-    <p data-cap="1">Ctrl V into Paste-Safe.<span>It runs in your browser. Nothing is uploaded.</span></p>
-    <p data-cap="2">Every secret becomes a label.<span>Passwords, keys, hosts, IPs and emails.</span></p>
-    <p data-cap="3">Ask any AI.<span>It only ever sees the labels.</span></p>
-    <p data-cap="4">Paste the answer back.<span>Your real values return, on your device.</span></p>
-  </div>
-
-  <div class="layer end" id="end">
-    <img src="../../assets/logo.svg" alt="Paste-Safe">
-    <h2>Ctrl C. Ctrl V. Stay private.</h2>
-    <p>Mask secrets in your logs before any AI sees them.<br><b>Free, open source, works offline.</b></p>
-  </div>
-  <svg id="endLine" aria-hidden="true"></svg>
 </div>
 
 <script>
@@ -146,7 +120,6 @@ then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.<
   const out = x => 1 - (1 - x) ** 3;
   const back = x => 1 + 2.2 * (x - 1) ** 3 + 1.2 * (x - 1) ** 2;
   const lerp = (a, b, k) => a + (b - a) * k;
-  const fade = (t, a, b, len = .45) => Math.min(out(span(t, a, a + len)), 1 - ease(span(t, b - len, b)));
   /** A key press between a and a+.32s: down fast, back up softly. */
   const press = (t, a) => (t < a ? 0 : t < a + .08 ? (t - a) / .08 : 1 - out(span(t, a + .14, a + .34)));
 
@@ -176,118 +149,37 @@ then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.<
     el.style.opacity = o;
   };
 
-  // Brush strokes. A stroke is a gentle curve painted as many parallel strands
-  // with ragged ends, so it reads as one swipe of a wide brush. Coordinates are
-  // in u from the centre of the frame, before the stroke's rotation.
-  const random = seed => () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
-  const ROUGH = `<filter id="r" x="-10%" y="-40%" width="120%" height="180%"><feTurbulence type="fractalNoise" baseFrequency="0.011" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="26" xChannelSelector="R" yChannelSelector="G"/></filter>`;
-
-  function stroke({ x, y, angle, length, bend = 0, width, flip = false, seed = 1 }) {
-    const rnd = random(seed);
-    const count = Math.max(14, Math.round(width / 9));
-    const strands = [];
-    for (let i = 0; i < count; i++) {
-      const d = (i / (count - 1) - .5) * width;
-      const edge = Math.abs(d) / (width / 2);
-      // A loaded brush starts square and runs dry at the far end: the strands
-      // stop at very different points there, leaving streaks.
-      const x0 = -length / 2 + rnd() * 40 * (1 + edge * 3);
-      const x1 = length / 2 - (rnd() ** 1.6) * length * (.08 + edge * .22);
-      const streak = rnd() < .12;
-      strands.push({
-        d: `M${x0.toFixed(1)} ${d.toFixed(1)} Q0 ${(bend + d * .96).toFixed(1)} ${x1.toFixed(1)} ${d.toFixed(1)}`,
-        width: ((width / count) * (streak ? 1.1 : 1.9 + rnd() * .5)).toFixed(1),
-        opacity: (streak ? .35 + rnd() * .3 : edge > .85 ? .45 + rnd() * .45 : .92 + rnd() * .08).toFixed(2),
-        lag: rnd() * .06 + edge * .04,
-      });
-    }
-    return { transform: `translate(${x} ${y}) rotate(${angle})${flip ? " scale(-1 1)" : ""}`, strands };
-  }
-
-  /** SVG for strokes painted in to `paint` (0..1) and wiped away from their start by `wipe` (0..1). */
-  function strokeSvg(list, color) {
-    return list.map(([st, paint, wipe]) => `<g transform="${st.transform}">${st.strands.map(({ d, width, opacity, lag }) => {
-      const a = clamp(wipe * 1.12 - lag), b = clamp(paint * 1.12 - lag);
-      // A zero-length dash still draws its round caps as a dot, so empty strands are left out.
-      return b - a > .002 ? `<path d="${d}" pathLength="1" stroke="${color}" stroke-width="${width}" stroke-opacity="${opacity}" stroke-dasharray="${(b - a).toFixed(4)} 3" stroke-dashoffset="${(-a).toFixed(4)}" fill="none" stroke-linecap="round"/>` : "";
-    }).join("")}</g>`).join("");
-  }
-
-  /** Shows a scene only through its strokes. */
-  function paintMask(el, list) {
-    const visible = list.some(([, paint, wipe]) => paint > 0 && wipe < 1);
-    el.style.visibility = visible ? "visible" : "hidden";
-    if (!visible) return;
-    const W = innerWidth / u(), H = innerHeight / u();
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${-W / 2} ${-H / 2} ${W} ${H}" preserveAspectRatio="none"><defs>${ROUGH}</defs><g filter="url(#r)">${strokeSvg(list, "#000")}</g></svg>`;
-    el.style.maskImage = el.style.webkitMaskImage = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
-  }
-
-  let S = {};
   function layout() {
     const p = portrait();
-    $("#stage").style.setProperty("--w", p ? 1010 : 1180);
-    $("#stage").style.setProperty("--code", p ? 36 : 38);
-    $("#stage").style.setProperty("--cap", p ? 70 : 84);
+    $("#stage").style.setProperty("--w", p ? 880 : 1180);
+    $("#stage").style.setProperty("--code", p ? 31 : 38);
     measure();
-    const W = innerWidth / u(), H = innerHeight / u();
-    // The ink line sits under the end card's headline.
-    const end = $("#end"), title = $("#end h2");
-    const lineY = (-end.offsetHeight / 2 + title.offsetTop + title.offsetHeight) / u() + 14;
-    // Each scene sits inside two or three wide, overlapping strokes.
-    const set = (list, flip, seed) => list.map(([y, angle, width, length, x = 0], i) => stroke({ x, y, angle, length, bend: (flip ? 1 : -1) * 50, width, flip, seed: seed + i * 7 }));
-    S = p ? {
-      keys: set([[-70, -9, 400, 1300], [300, 6, 380, 1300, 40]], false, 3),
-      log: set([[-90, -7, 400, 1350], [150, -3, 420, 1400], [390, -8, 360, 1300]], false, 11),
-      chat: set([[-80, 6, 400, 1350], [160, 3, 420, 1400], [400, 8, 360, 1300]], true, 41),
-      endLine: stroke({ x: 0, y: lineY, angle: -1.5, length: title.offsetWidth / u() * 1.06, bend: 10, width: 30, seed: 29 }),
-    } : {
-      keys: set([[90, -9, 430, 1800, -120], [190, -4, 330, 1700, 160]], false, 3),
-      log: set([[-80, -6, 400, 2000], [160, -2, 420, 2100], [380, -7, 330, 1900]], false, 11),
-      chat: set([[-70, 5, 400, 2000], [170, 2, 420, 2100], [390, 6, 330, 1900]], true, 41),
-      endLine: stroke({ x: 0, y: lineY, angle: -1.5, length: title.offsetWidth / u() * 1.06, bend: 10, width: 30, seed: 29 }),
-    };
-    $("#endLine").setAttribute("viewBox", `${-W / 2} ${-H / 2} ${W} ${H}`);
-    $("#endLine").innerHTML = "";
   }
 
   function draw(t) {
     const p = portrait();
-    // Captions: one at a time, each with a soft rise.
-    const caps = [[.35, 2.25], [2.25, 4.3], [4.55, 8.1], [8.35, 10.75], [10.75, 12.7]];
-    [...$("#caps").children].forEach((c, i) => {
-      const [a, b] = caps[i];
-      const o = fade(t, a, b);
-      c.style.opacity = o;
-      c.style.transform = `translateY(${(1 - out(span(t, a, a + .6))) * 26 * u()}px)`;
-      c.style.filter = `blur(${(1 - o) * 6 * u()}px)`;
-    });
-
-    // Scenes show through brush strokes. Each stroke paints in after the one
-    // before; at a change of scene the next scene's strokes paint over the old
-    // ones while the old ones are wiped away, and the end card is left on white.
-    const strokes = (list, start, end, gap = .2, len = .5) => list.map((st, i) => [st, ease(span(t, start + i * gap, start + i * gap + len)), end == null ? 0 : ease(span(t, end + i * gap, end + i * gap + len))]);
-    paintMask($("#sceneKeys"), [[S.keys[0], ease(span(t, 0, .6)), ease(span(t, 4.15, 4.65))], [S.keys[1], ease(span(t, 1.7, 2.25)), ease(span(t, 4.3, 4.8))]]);
-    paintMask($("#sceneLog"), strokes(S.log, 3.95, 8.25));
-    paintMask($("#sceneChat"), strokes(S.chat, 8.0, 12.45));
+    // Scenes cross-fade: keys, then the log, then the chat, then back to the
+    // empty keys scene so the loop has no cut.
+    $("#sceneLog").style.opacity = ease(span(t, 3.9, 4.5)) * (1 - ease(span(t, 13.6, 14.6)));
+    $("#sceneChat").style.opacity = ease(span(t, 8.0, 8.6)) * (1 - ease(span(t, 13.6, 14.6)));
 
     // The two key plates drop in and get pressed.
-    const keysY = p ? 120 : 110;
     const plate = (el, a, x, y, r) => {
       const k = back(span(t, a, a + .75));
-      place(el, x, lerp(y + 240, y, k), lerp(.72, 1, k), lerp(r - 18, r, k), out(span(t, a, a + .3)));
+      // Hidden again by the time the chat fades back to this scene, so the loop starts empty.
+      place(el, x, lerp(y + 240, y, k), lerp(.72, 1, k), lerp(r - 18, r, k), t < 12 ? out(span(t, a, a + .3)) : 0);
     };
     // Ctrl C starts in the middle and makes room when Ctrl V arrives.
     const room = ease(span(t, 1.75, 2.5));
-    plate($("#plateC"), .1, p ? lerp(0, -40, room) : lerp(0, -330, room), p ? lerp(keysY, keysY - 190, room) : keysY, p ? -5 : -6);
-    plate($("#plateV"), 1.9, p ? 40 : 330, p ? keysY + 190 : keysY + 20, p ? 4 : 5);
+    plate($("#plateC"), .3, p ? 0 : lerp(0, -330, room), p ? lerp(0, -170, room) : -10, p ? -5 : -6);
+    plate($("#plateV"), 1.9, p ? 20 : 330, p ? 170 : 10, p ? 4 : 5);
     const depth = (el, a) => el.style.setProperty("--depth", 12 - press(t, a) * 10);
-    depth($("#ctrl1"), 1.05); depth($("#keyC"), 1.17);
+    depth($("#ctrl1"), 1.25); depth($("#keyC"), 1.37);
     depth($("#ctrl2"), 2.85); depth($("#keyV"), 2.97);
 
     // The log is pasted in, then its secrets turn into labels one by one.
-    const logIn = out(span(t, 4.25, 5.0));
-    place($("#log"), 0, 110 + (1 - logIn) * 60, lerp(.96, 1, logIn), 0, 1);
+    const logIn = out(span(t, 4.2, 5.0));
+    place($("#log"), 0, (1 - logIn) * 60, lerp(.96, 1, logIn), 0, 1);
     [...$("#logText").children].forEach((line, i) => line.style.setProperty("--in", out(span(t, 4.45 + i * .07, 4.85 + i * .07))));
     let hidden = 0;
     cells.filter(c => !c.back).forEach((c, i) => {
@@ -300,7 +192,7 @@ then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.<
 
     // The AI chat: the question goes out with labels, the reply comes back and is restored.
     const chatIn = out(span(t, 8.3, 9.0));
-    place($("#chat"), 0, 120 + (1 - chatIn) * 60, lerp(.96, 1, chatIn), 0, 1);
+    place($("#chat"), 0, (1 - chatIn) * 60, lerp(.96, 1, chatIn), 0, 1);
     $("#ask").style.setProperty("--in", out(span(t, 8.75, 9.3)));
     $("#reply").style.setProperty("--in", out(span(t, 9.5, 10.05)));
     cells.filter(c => c.back).forEach((c, i) => {
@@ -308,21 +200,11 @@ then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.<
       c.el.style.setProperty("--k", k);
       c.el.style.setProperty("--cw", `${lerp(c.w[0], c.w[1], k)}px`);
     });
-
-    // End card with its ink line, then a fade to white so the loop starts clean.
-    const endIn = out(span(t, 13.05, 13.75));
-    const endOut = ease(span(t, BEATS - .55, BEATS - .05));
-    place($("#end"), 0, (1 - endIn) * 40, lerp(.96, 1, endIn), 0, endIn * (1 - endOut));
-    $("#endLine").innerHTML = strokeSvg([[S.endLine, ease(span(t, 13.55, 14.1)), 0]], "#1d1d1f");
-    $("#endLine").style.opacity = 1 - endOut;
   }
 
   window.render = t => draw(t / PACE);
   window.DURATION = BEATS * PACE;
-  window.ready = document.fonts.ready.then(() => new Promise(r => {
-    const img = $("#end img");
-    img.complete ? r() : (img.onload = img.onerror = r);
-  })).then(layout);
+  window.ready = document.fonts.ready.then(layout);
   addEventListener("resize", () => { layout(); });
   if (!navigator.webdriver) {
     ready.then(() => {

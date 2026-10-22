@@ -288,7 +288,7 @@ const canPlayFilm = page => page.evaluate(() => {
 
 test("the film runs the full width, shows the cut that fits and plays while on screen", async ({ page, viewport }) => {
   await page.goto("/");
-  const frame = page.locator(".film__frame");
+  const frame = page.locator(".film__stage");
   await frame.scrollIntoViewIfNeeded();
   const tall = (viewport?.width ?? 1280) <= 640;
   await expect(page.locator(tall ? ".film__video--tall" : ".film__video--wide")).toBeVisible();
@@ -304,10 +304,28 @@ test("the film runs the full width, shows the cut that fits and plays while on s
   await expect(toggle).toHaveAttribute("aria-label", "Play the film");
 });
 
+test("the brush stroke stretches open as you scroll, then the headlines rise over the film", async ({ page }) => {
+  await page.goto("/");
+  const pin = page.locator("[data-film-pin]");
+  const stage = page.locator(".film__stage");
+  const at = share => pin.evaluate((e, k) => e.getBoundingClientRect().top + scrollY + (e.offsetHeight - innerHeight) * k, share);
+  const stroke = () => stage.evaluate(e => Number(e.style.getPropertyValue("--stroke")));
+  await page.evaluate(y => scrollTo(0, y), await at(0));
+  await expect.poll(stroke).toBeLessThan(1.05);
+  // Halfway through opening it has grown, but not yet as far as it goes.
+  await page.evaluate(y => scrollTo(0, y), await at(0.25));
+  await expect.poll(stroke).toBeGreaterThan(1.3);
+  const half = await stroke();
+  await page.evaluate(y => scrollTo(0, y), await at(0.57));
+  await expect.poll(stroke).toBeGreaterThan(half + 0.3);
+  expect(Math.abs((await stage.boundingBox())?.y ?? 99)).toBeLessThan(2);
+  await expect.poll(() => page.locator("[data-film-line]").first().evaluate(e => Number(getComputedStyle(e).opacity))).toBeGreaterThan(0.9);
+});
+
 test("with reduced motion the film waits for its button", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await page.locator(".film__frame").scrollIntoViewIfNeeded();
+  await page.locator(".film__stage").scrollIntoViewIfNeeded();
   test.skip(!(await canPlayFilm(page)), "This browser build has no video codecs.");
   const toggle = page.locator("[data-film-toggle]");
   await page.waitForTimeout(600);
@@ -328,7 +346,7 @@ test("reduced motion leaves everything in place", async ({ page }) => {
   expect(await page.locator(".pin--product .pin__stage").evaluate(e => getComputedStyle(e).position)).toBe("static");
   // The gallery and the film stay still until asked.
   await expect(page.locator("[data-closer-play]")).toBeHidden();
-  await page.locator(".film__frame").scrollIntoViewIfNeeded();
+  await page.locator(".film__stage").scrollIntoViewIfNeeded();
   await page.waitForTimeout(800);
   await expect(page.locator("[data-film-toggle]")).toHaveAttribute("data-state", "paused");
   expect(await page.locator("[data-film]").evaluateAll(vs => vs.every(v => /** @type {HTMLVideoElement} */ (v).paused))).toBe(true);

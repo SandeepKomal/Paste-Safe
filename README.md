@@ -99,7 +99,7 @@ npm run test:e2e
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add a detector. Detection lives in `src/core/` (no DOM, tested in Node). UI code is in `src/ui/`, wired together in `src/main.js`. Types are in `types/index.d.ts`.
 
-The film on the home page is drawn in `tools/promo/scene.html` (open it in a browser to watch it play). `node tools/promo/render.mjs <out-dir>` renders it frame by frame and encodes it with ffmpeg; copy the 4K files into `assets/film/`.
+The film on the home page is drawn in `tools/promo/scene.html` (open it in a browser to watch it play), and the brush-stroke shape it plays behind in `tools/promo/stroke.html`. `node tools/promo/render.mjs <out-dir>` renders the film frame by frame and encodes it with ffmpeg, and `--stencil` saves the stroke shapes; copy the 4K files and the stroke PNGs into `assets/film/`.
 
 To host a fork, enable **Settings → Pages → Source: GitHub Actions** and push to `main`.
 

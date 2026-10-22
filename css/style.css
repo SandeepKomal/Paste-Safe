@@ -179,15 +179,34 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); }
 .has-motion .pin--product .product mark { outline-color: rgb(176 176 182 / calc(var(--on, 1))); }
 
 /* The short film under the hero: a wide cut for larger screens, a tall one for phones.
-   It runs the full width of the window on white, so its brush strokes read as painted on the page. */
+   It plays behind a brush-stroke stencil on the white page. With motion on, the stage pins
+   and film.js stretches the stroke open (--stroke) until the film fills the screen, then
+   raises the headlines over it. */
 .film { display: grid; justify-items: center; gap: clamp(20px, 3vw, 36px); padding-top: clamp(72px, 10vw, 128px); }
 .film__title { max-width: 20ch; text-align: center; font-size: clamp(2rem, 1.2rem + 3vw, 3.75rem); }
 .film__title span { color: var(--faint); }
-.film__frame { position: relative; justify-self: start; width: 100vw; max-height: calc(100svh - 160px); margin-left: calc(50% - 50vw); aspect-ratio: 16 / 9; background: #fff; }
-.film__video { display: block; width: 100%; height: 100%; object-fit: contain; }
+.film__pin { justify-self: start; width: 100vw; margin-left: calc(50% - 50vw); }
+.film__stage { position: relative; height: min(84svh, 62vw); overflow: hidden; }
+.film__paint {
+  position: absolute; inset: 0;
+  --mask: url("../assets/film/paste-safe-stroke-wide.png");
+  -webkit-mask: var(--mask) center / calc(100% * var(--stroke, 1)) calc(100% * var(--stroke, 1)) no-repeat;
+  mask: var(--mask) center / calc(100% * var(--stroke, 1)) calc(100% * var(--stroke, 1)) no-repeat;
+}
+.film__video { display: block; width: 100%; height: 100%; object-fit: cover; background: #e4e4e9; }
 .film__video--tall { display: none; }
+.film__lines { display: grid; justify-items: center; gap: 8px; padding: 24px var(--gutter) 0; text-align: center; }
+.film__lines p { font: 600 clamp(1.25rem, 1rem + 1vw, 1.75rem)/1.2 var(--font-display); letter-spacing: -.02em; }
+.has-motion .film__pin { height: 300svh; }
+.has-motion .film__stage { position: sticky; top: 0; height: 100svh; }
+.has-motion .film__lines { position: absolute; inset: 0; display: block; padding: 0; pointer-events: none; }
+.has-motion .film__lines p {
+  position: absolute; left: 0; right: 0; top: 89%; padding-inline: var(--gutter); opacity: 0;
+  color: var(--ink); font-size: clamp(2rem, 1.2rem + 3.4vw, 4.5rem); line-height: 1.05; letter-spacing: -.035em;
+  text-shadow: 0 0 24px rgb(255 255 255 / 90%), 0 0 60px rgb(255 255 255 / 70%);
+}
 .film__toggle {
-  position: absolute; right: max(var(--gutter), calc(50vw - 560px)); bottom: 16px; display: grid; place-items: center; width: 40px; height: 40px;
+  position: absolute; right: var(--gutter); bottom: 20px; z-index: 1; display: grid; place-items: center; width: 40px; height: 40px;
   border: 0; border-radius: 50%; background: rgb(236 236 240 / 88%); color: var(--ink); cursor: pointer;
   -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); transition: background-color .2s;
 }
@@ -777,7 +796,9 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--faint); }
   .product__pane { padding: 14px 16px 16px; }
   .product pre { font-size: 11.5px; line-height: 1.85; }
   .figures dd { font-size: .8125rem; }
-  .film__frame { aspect-ratio: 4 / 5; }
+  .film__stage { height: 86svh; }
+  .film__paint { --mask: url("../assets/film/paste-safe-stroke-tall.png"); }
+  .has-motion .film__lines p { top: 80%; }
   .film__video--wide { display: none; }
   .film__video--tall { display: block; }
   .compare__col { padding: 22px; }

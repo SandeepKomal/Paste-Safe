@@ -1,0 +1,61 @@
+<!doctype html>
+<!--
+  The brush-stroke stencil the home page shows the film through: a stack of
+  fat, smooth swipes with rounded ends, drawn in black on a transparent page.
+  `node tools/promo/render.mjs <out> --stencil` saves it as PNG for the wide
+  and the tall layout; only its alpha is used.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Paste-Safe brush stencil</title>
+<style>
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+  svg { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<svg id="paint" aria-hidden="true"></svg>
+<script>
+  /**
+   * One swipe of paint: a bowed band that is fullest in the middle and slightly
+   * narrower towards its rounded tips, like paint pushed by a broad brush.
+   */
+  const swipe = ([x0, x1, y, width, bow]) => {
+    const pts = [], back = [];
+    for (let i = 0; i <= 40; i++) {
+      const t = i / 40;
+      const x = x0 + (x1 - x0) * t, cy = y + bow * 4 * t * (1 - t);
+      const half = (width / 2) * (0.7 + 0.3 * Math.sin(Math.PI * t));
+      pts.push(`${x.toFixed(1)} ${(cy - half).toFixed(1)}`);
+      back.unshift(`${x.toFixed(1)} ${(cy + half).toFixed(1)}`);
+    }
+    const tip = width * 0.35;
+    return `<path d="M${pts.join(" L")} L${back.join(" L")} Z"/><circle cx="${x0}" cy="${y}" r="${tip}"/><circle cx="${x1}" cy="${y}" r="${tip}"/>`;
+  };
+
+  // Swipes as [start x, end x, y, width, bow], before the whole set is tilted up to the right.
+  // Frame is 1600 x 900 (wide) or 900 x 1600 (tall), from the centre. Neighbours overlap in the
+  // middle and part at the ends, so each side finishes in rounded fingers of paint.
+  const WIDE = [
+    [-400, 350, -300, 180, -14], [-545, 470, -160, 190, -18], [-605, 590, -20, 195, -16],
+    [-580, 540, 120, 195, -14], [-515, 580, 258, 190, -12], [-365, 395, 390, 170, -8],
+  ];
+  const TALL = [
+    [-175, 215, -560, 150, -8], [-265, 245, -430, 160, -10], [-290, 290, -295, 165, -10],
+    [-280, 280, -160, 165, -9], [-295, 265, -25, 165, -9], [-285, 290, 110, 165, -8],
+    [-270, 280, 245, 165, -8], [-285, 250, 380, 160, -7], [-200, 215, 505, 145, -6],
+  ];
+
+  window.draw = tall => {
+    const [W, H, list, tilt] = tall ? [900, 1600, TALL, -9] : [1600, 900, WIDE, -12];
+    const svg = document.querySelector("#paint");
+    svg.setAttribute("viewBox", `${-W / 2} ${-H / 2} ${W} ${H}`);
+    // A slow, gentle wobble keeps the edges from looking ruled.
+    svg.innerHTML = `<defs><filter id="r" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.005" numOctaves="2" seed="11"/><feDisplacementMap in="SourceGraphic" scale="14" xChannelSelector="R" yChannelSelector="G"/></filter></defs>`
+      + `<g filter="url(#r)"><g transform="rotate(${tilt})" fill="#000">${list.map(swipe).join("")}</g></g>`;
+  };
+  draw(innerHeight > innerWidth);
+</script>
+</body>
+</html>
