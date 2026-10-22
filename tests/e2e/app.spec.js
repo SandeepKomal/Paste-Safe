@@ -199,6 +199,32 @@ test("the phone action bar appears over the tool and copies the safe text", asyn
 });
 });
 
+test.describe("scroll effects", () => {
+test("sections fade in, headlines light up and the figure counts up", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveClass(/has-motion/);
+  const card = page.locator(".coverage__card");
+  await card.scrollIntoViewIfNeeded();
+  await expect(card).toHaveClass(/is-in/);
+  await expect.poll(() => card.evaluate(e => Number(getComputedStyle(e).opacity))).toBe(1);
+  const lastWord = page.locator("#coverageTitle .word").last();
+  await page.locator("#coverageTitle").evaluate(e => scrollTo(0, e.getBoundingClientRect().top + scrollY - innerHeight * 0.25));
+  await expect.poll(() => lastWord.evaluate(e => Number(getComputedStyle(e).opacity))).toBeGreaterThan(0.95);
+  await expect(page.locator("#coverageTitle")).toHaveText("What this copy catches.");
+  await page.locator(".figures").scrollIntoViewIfNeeded();
+  await expect(page.locator("#figRules")).toHaveText(/^\d{2,}$/);
+  await expect.poll(async () => Number(await page.locator("#figRules").textContent())).toBeGreaterThan(40);
+});
+
+test("reduced motion leaves everything in place", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await expect(page.locator("html")).not.toHaveClass(/has-motion/);
+  expect(await page.locator(".coverage__card").evaluate(e => getComputedStyle(e).opacity)).toBe("1");
+  expect(await page.locator("[data-product]").evaluate(e => getComputedStyle(e).transform)).toBe("none");
+});
+});
+
 test.describe("scroll story", () => {
 test("scrollytelling stage follows the Find, Mask and Restore chapters", async ({ page }) => {
   await page.goto("/#how");
