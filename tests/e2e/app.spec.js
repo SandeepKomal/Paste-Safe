@@ -317,6 +317,35 @@ test("the film pins and grows until it fills the screen", async ({ page }) => {
   expect(await page.locator(".film__stage").boundingBox().then(b => Math.abs(b?.y ?? 99))).toBeLessThan(2);
 });
 
+test("the film is not downloaded until it is near, and then only the cut that is shown", async ({ page, viewport }) => {
+  const fetched = [];
+  page.on("request", r => { if (/\/assets\/film\/.*\.(webm|mp4)$/.test(r.url())) fetched.push(r.url()); });
+  await page.goto("/");
+  await page.waitForLoadState("load");
+  await page.waitForTimeout(500);
+  expect(fetched).toEqual([]);
+  await page.locator(".film__frame").scrollIntoViewIfNeeded();
+  await expect.poll(() => page.locator("[data-film] source[src]").count()).toBeGreaterThan(0);
+  const other = (viewport?.width ?? 1280) <= 640 ? "-wide." : "-tall.";
+  expect(fetched.filter(u => u.includes(other))).toEqual([]);
+});
+
+test("the masking scene rises over the pinned film", async ({ page }) => {
+  await page.goto("/");
+  const film = page.locator("[data-pin=film]");
+  const end = await film.evaluate(e => e.getBoundingClientRect().top + scrollY + (e.offsetHeight - innerHeight) * 0.9);
+  await page.evaluate(y => scrollTo(0, y), end);
+  await expect.poll(() => film.evaluate(e => Number(e.style.getPropertyValue("--grow")))).toBe(1);
+  // The film is still pinned while the scene's sheet covers the lower part of the screen.
+  expect(await page.locator(".film__stage").boundingBox().then(b => Math.abs(b?.y ?? 99))).toBeLessThan(2);
+  const vh = page.viewportSize()?.height ?? 0;
+  const top = await page.locator("[data-pin=product]").evaluate(e => e.getBoundingClientRect().top);
+  expect(top).toBeGreaterThan(0);
+  expect(top).toBeLessThan(vh * 0.5);
+  const covered = await page.evaluate(h => document.elementFromPoint(innerWidth / 2, h * 0.9)?.closest("[data-pin]")?.getAttribute("data-pin"), vh);
+  expect(covered).toBe("product");
+});
+
 test("reduced motion leaves everything in place", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
