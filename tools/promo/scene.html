@@ -38,8 +38,6 @@
   }
   .key--wide { width: calc(var(--u) * 290); }
   .key--sq { width: calc(var(--u) * 196); }
-  .cable { position: absolute; left: 50%; top: 0; overflow: visible; width: 1px; height: 1px; z-index: -1; }
-  .cable path { fill: none; stroke: #dcdce1; stroke-width: calc(var(--u) * 9); stroke-linecap: round; }
 
   .win {
     width: calc(var(--u) * var(--w, 1240)); border: 1px solid var(--rule); border-radius: calc(var(--u) * 30); background: #fff; overflow: hidden;
@@ -68,6 +66,17 @@
   .bubble--ai { justify-self: start; border: 1px solid var(--rule); }
   .bubble .lab { color: var(--ink); font-weight: 700; border-radius: calc(var(--u) * 8); background: var(--label-bg); padding-inline: calc(var(--u) * 8); }
 
+  /* Each scene fills the frame but shows only through brush strokes, as if painted onto the white page.
+     The strokes are drawn per frame into an SVG mask; see paintMask(). */
+  .scene { position: absolute; inset: 0; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+  /* Light grey, a deeper grey, then graphite: bold paint, kept to the site's greys and ink. */
+  #sceneKeys { background: linear-gradient(160deg, #ececf0, #dedee4); }
+  #sceneLog { background: linear-gradient(160deg, #dcdce2, #c9c9d0); }
+  #sceneChat { background: linear-gradient(200deg, #3a3a3e, #1d1d1f); }
+  /* The ink line under the end card's headline. */
+  #endLine { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  #endLine path { fill: none; stroke-linecap: round; }
+
   .end { display: grid; justify-items: center; gap: calc(var(--u) * 34); text-align: center; }
   .end img { width: calc(var(--u) * 560); }
   .end h2 { font: 600 calc(var(--u) * 84)/1.05 "Inter Display", Inter, sans-serif; letter-spacing: -.04em; }
@@ -77,6 +86,39 @@
 </head>
 <body>
 <div id="stage">
+  <div class="scene" id="sceneKeys">
+    <div class="layer" id="plateC">
+      <div class="plate"><div class="key key--wide" id="ctrl1">Ctrl</div><div class="key key--sq" id="keyC">C</div></div>
+    </div>
+    <div class="layer" id="plateV">
+      <div class="plate"><div class="key key--wide" id="ctrl2">Ctrl</div><div class="key key--sq" id="keyV">V</div></div>
+    </div>
+  </div>
+
+  <div class="scene" id="sceneLog">
+    <div class="layer" id="log">
+      <div class="win">
+        <div class="win__bar"><i></i><i></i><i></i><span>deploy-error.log</span><b id="count">0 hidden</b></div>
+        <pre id="logText"><div><span class="c">09:12:44Z</span> connecting to orders db</div><div>  host=<s data-sw="prod-db.internal|[HOST_1]"></s></div><div>  user=app password=<s data-sw="Tr0ub4dor&amp;3xyz|[DB_PASSWORD_1]"></s></div><div><span class="c">09:12:49Z</span> ERROR timeout from <s data-sw="10.20.4.17|[IP_1]"></s></div><div>AWS_ACCESS_KEY_ID=<s data-sw="AKIAIOSFODNN7EXAMPLE|[AWS_KEY_1]"></s></div><div>alert sent to <s data-sw="ops@acme-pay.io|[EMAIL_1]"></s></div></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene" id="sceneChat">
+    <div class="layer" id="chat">
+      <div class="win">
+        <div class="win__bar"><i></i><i></i><i></i><span>any AI chat</span></div>
+        <div class="chat">
+          <div class="bubble bubble--you" id="ask"><small>You</small>Why does <span class="lab">[HOST_1]</span> time out
+from <span class="lab">[IP_1]</span>?</div>
+          <div class="bubble bubble--ai" id="reply"><small>AI</small><s data-sw="[HOST_1]|prod-db.internal" data-back></s> blocks <s data-sw="[IP_1]|10.20.4.17" data-back></s>.
+Allow it in the firewall,
+then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="cap" id="caps">
     <p data-cap="0">Ctrl C your logs.<span>Straight from the terminal, CI or browser.</span></p>
     <p data-cap="1">Ctrl V into Paste-Safe.<span>It runs in your browser. Nothing is uploaded.</span></p>
@@ -85,40 +127,12 @@
     <p data-cap="4">Paste the answer back.<span>Your real values return, on your device.</span></p>
   </div>
 
-  <div class="layer" id="plateC">
-    <svg class="cable" aria-hidden="true"><path id="cableC"/></svg>
-    <div class="plate"><div class="key key--wide" id="ctrl1">Ctrl</div><div class="key key--sq" id="keyC">C</div></div>
-  </div>
-  <div class="layer" id="plateV">
-    <svg class="cable" aria-hidden="true"><path id="cableV"/></svg>
-    <div class="plate"><div class="key key--wide" id="ctrl2">Ctrl</div><div class="key key--sq" id="keyV">V</div></div>
-  </div>
-
-  <div class="layer" id="log">
-    <div class="win">
-      <div class="win__bar"><i></i><i></i><i></i><span>deploy-error.log</span><b id="count">0 hidden</b></div>
-      <pre id="logText"><div><span class="c">09:12:44Z</span> connecting to orders db</div><div>  host=<s data-sw="prod-db.internal|[HOST_1]"></s></div><div>  user=app password=<s data-sw="Tr0ub4dor&amp;3xyz|[DB_PASSWORD_1]"></s></div><div><span class="c">09:12:49Z</span> ERROR timeout from <s data-sw="10.20.4.17|[IP_1]"></s></div><div>AWS_ACCESS_KEY_ID=<s data-sw="AKIAIOSFODNN7EXAMPLE|[AWS_KEY_1]"></s></div><div>alert sent to <s data-sw="ops@acme-pay.io|[EMAIL_1]"></s></div></pre>
-    </div>
-  </div>
-
-  <div class="layer" id="chat">
-    <div class="win">
-      <div class="win__bar"><i></i><i></i><i></i><span>any AI chat</span></div>
-      <div class="chat">
-        <div class="bubble bubble--you" id="ask"><small>You</small>Why does <span class="lab">[HOST_1]</span> time out
-from <span class="lab">[IP_1]</span>?</div>
-        <div class="bubble bubble--ai" id="reply"><small>AI</small><s data-sw="[HOST_1]|prod-db.internal" data-back></s> blocks <s data-sw="[IP_1]|10.20.4.17" data-back></s>.
-Allow it in the firewall,
-then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.</div>
-      </div>
-    </div>
-  </div>
-
   <div class="layer end" id="end">
     <img src="../../assets/logo.svg" alt="Paste-Safe">
     <h2>Ctrl C. Ctrl V. Stay private.</h2>
     <p>Mask secrets in your logs before any AI sees them.<br><b>Free, open source, works offline.</b></p>
   </div>
+  <svg id="endLine" aria-hidden="true"></svg>
 </div>
 
 <script>
@@ -152,9 +166,7 @@ then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.<
     return { el, back: restores };
   });
   const measure = () => {
-    for (const c of cells) {
-      c.w = [...c.el.children].map(x => /** @type {HTMLElement} */ (x).offsetWidth);
-    }
+    for (const c of cells) c.w = [...c.el.children].map(x => x.offsetWidth);
   };
 
   const portrait = () => innerHeight > innerWidth;
@@ -164,16 +176,79 @@ then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.<
     el.style.opacity = o;
   };
 
+  // Brush strokes. A stroke is a gentle curve painted as many parallel strands
+  // with ragged ends, so it reads as one swipe of a wide brush. Coordinates are
+  // in u from the centre of the frame, before the stroke's rotation.
+  const random = seed => () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+  const ROUGH = `<filter id="r" x="-10%" y="-40%" width="120%" height="180%"><feTurbulence type="fractalNoise" baseFrequency="0.011" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="26" xChannelSelector="R" yChannelSelector="G"/></filter>`;
+
+  function stroke({ x, y, angle, length, bend = 0, width, flip = false, seed = 1 }) {
+    const rnd = random(seed);
+    const count = Math.max(14, Math.round(width / 9));
+    const strands = [];
+    for (let i = 0; i < count; i++) {
+      const d = (i / (count - 1) - .5) * width;
+      const edge = Math.abs(d) / (width / 2);
+      // A loaded brush starts square and runs dry at the far end: the strands
+      // stop at very different points there, leaving streaks.
+      const x0 = -length / 2 + rnd() * 40 * (1 + edge * 3);
+      const x1 = length / 2 - (rnd() ** 1.6) * length * (.08 + edge * .22);
+      const streak = rnd() < .12;
+      strands.push({
+        d: `M${x0.toFixed(1)} ${d.toFixed(1)} Q0 ${(bend + d * .96).toFixed(1)} ${x1.toFixed(1)} ${d.toFixed(1)}`,
+        width: ((width / count) * (streak ? 1.1 : 1.9 + rnd() * .5)).toFixed(1),
+        opacity: (streak ? .35 + rnd() * .3 : edge > .85 ? .45 + rnd() * .45 : .92 + rnd() * .08).toFixed(2),
+        lag: rnd() * .06 + edge * .04,
+      });
+    }
+    return { transform: `translate(${x} ${y}) rotate(${angle})${flip ? " scale(-1 1)" : ""}`, strands };
+  }
+
+  /** SVG for strokes painted in to `paint` (0..1) and wiped away from their start by `wipe` (0..1). */
+  function strokeSvg(list, color) {
+    return list.map(([st, paint, wipe]) => `<g transform="${st.transform}">${st.strands.map(({ d, width, opacity, lag }) => {
+      const a = clamp(wipe * 1.12 - lag), b = clamp(paint * 1.12 - lag);
+      // A zero-length dash still draws its round caps as a dot, so empty strands are left out.
+      return b - a > .002 ? `<path d="${d}" pathLength="1" stroke="${color}" stroke-width="${width}" stroke-opacity="${opacity}" stroke-dasharray="${(b - a).toFixed(4)} 3" stroke-dashoffset="${(-a).toFixed(4)}" fill="none" stroke-linecap="round"/>` : "";
+    }).join("")}</g>`).join("");
+  }
+
+  /** Shows a scene only through its strokes. */
+  function paintMask(el, list) {
+    const visible = list.some(([, paint, wipe]) => paint > 0 && wipe < 1);
+    el.style.visibility = visible ? "visible" : "hidden";
+    if (!visible) return;
+    const W = innerWidth / u(), H = innerHeight / u();
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${-W / 2} ${-H / 2} ${W} ${H}" preserveAspectRatio="none"><defs>${ROUGH}</defs><g filter="url(#r)">${strokeSvg(list, "#000")}</g></svg>`;
+    el.style.maskImage = el.style.webkitMaskImage = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+  }
+
+  let S = {};
   function layout() {
     const p = portrait();
     $("#stage").style.setProperty("--w", p ? 1010 : 1180);
     $("#stage").style.setProperty("--code", p ? 36 : 38);
     $("#stage").style.setProperty("--cap", p ? 70 : 84);
     measure();
-    const path = (dx, dy) => `M0 0 C ${dx * .1} ${-dy * .45}, ${dx * .9} ${-dy * .4}, ${dx} ${-dy}`;
-    // In the tall cut the cables leave by the sides so they never cross the captions.
-    $("#cableC").setAttribute("d", p ? `M0 0 C 0 ${-90 * u()}, ${-300 * u()} ${-60 * u()}, ${-760 * u()} ${-140 * u()}` : path(-380 * u(), 640 * u()));
-    $("#cableV").setAttribute("d", p ? `M0 0 C 0 ${-90 * u()}, ${300 * u()} ${-40 * u()}, ${760 * u()} ${-120 * u()}` : path(360 * u(), 640 * u()));
+    const W = innerWidth / u(), H = innerHeight / u();
+    // The ink line sits under the end card's headline.
+    const end = $("#end"), title = $("#end h2");
+    const lineY = (-end.offsetHeight / 2 + title.offsetTop + title.offsetHeight) / u() + 14;
+    // Each scene sits inside two or three wide, overlapping strokes.
+    const set = (list, flip, seed) => list.map(([y, angle, width, length, x = 0], i) => stroke({ x, y, angle, length, bend: (flip ? 1 : -1) * 50, width, flip, seed: seed + i * 7 }));
+    S = p ? {
+      keys: set([[-70, -9, 400, 1300], [300, 6, 380, 1300, 40]], false, 3),
+      log: set([[-90, -7, 400, 1350], [150, -3, 420, 1400], [390, -8, 360, 1300]], false, 11),
+      chat: set([[-80, 6, 400, 1350], [160, 3, 420, 1400], [400, 8, 360, 1300]], true, 41),
+      endLine: stroke({ x: 0, y: lineY, angle: -1.5, length: title.offsetWidth / u() * 1.06, bend: 10, width: 30, seed: 29 }),
+    } : {
+      keys: set([[90, -9, 430, 1800, -120], [190, -4, 330, 1700, 160]], false, 3),
+      log: set([[-80, -6, 400, 2000], [160, -2, 420, 2100], [380, -7, 330, 1900]], false, 11),
+      chat: set([[-70, 5, 400, 2000], [170, 2, 420, 2100], [390, 6, 330, 1900]], true, 41),
+      endLine: stroke({ x: 0, y: lineY, angle: -1.5, length: title.offsetWidth / u() * 1.06, bend: 10, width: 30, seed: 29 }),
+    };
+    $("#endLine").setAttribute("viewBox", `${-W / 2} ${-H / 2} ${W} ${H}`);
+    $("#endLine").innerHTML = "";
   }
 
   function draw(t) {
@@ -188,12 +263,19 @@ then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.<
       c.style.filter = `blur(${(1 - o) * 6 * u()}px)`;
     });
 
-    // The two key plates drop in, get pressed, then lift away.
+    // Scenes show through brush strokes. Each stroke paints in after the one
+    // before; at a change of scene the next scene's strokes paint over the old
+    // ones while the old ones are wiped away, and the end card is left on white.
+    const strokes = (list, start, end, gap = .2, len = .5) => list.map((st, i) => [st, ease(span(t, start + i * gap, start + i * gap + len)), end == null ? 0 : ease(span(t, end + i * gap, end + i * gap + len))]);
+    paintMask($("#sceneKeys"), [[S.keys[0], ease(span(t, 0, .6)), ease(span(t, 4.15, 4.65))], [S.keys[1], ease(span(t, 1.7, 2.25)), ease(span(t, 4.3, 4.8))]]);
+    paintMask($("#sceneLog"), strokes(S.log, 3.95, 8.25));
+    paintMask($("#sceneChat"), strokes(S.chat, 8.0, 12.45));
+
+    // The two key plates drop in and get pressed.
     const keysY = p ? 120 : 110;
     const plate = (el, a, x, y, r) => {
       const k = back(span(t, a, a + .75));
-      const leave = ease(span(t, 4.0, 4.65));
-      place(el, x, lerp(y + 240, y, k) - leave * 160, lerp(.72, 1, k) - leave * .08, lerp(r - 18, r, k), out(span(t, a, a + .3)) * (1 - leave));
+      place(el, x, lerp(y + 240, y, k), lerp(.72, 1, k), lerp(r - 18, r, k), out(span(t, a, a + .3)));
     };
     // Ctrl C starts in the middle and makes room when Ctrl V arrives.
     const room = ease(span(t, 1.75, 2.5));
@@ -205,8 +287,7 @@ then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.<
 
     // The log is pasted in, then its secrets turn into labels one by one.
     const logIn = out(span(t, 4.25, 5.0));
-    const logOut = ease(span(t, 8.1, 8.7));
-    place($("#log"), 0, (p ? 110 : 110) + (1 - logIn) * 90 - logOut * 60, lerp(.94, 1, logIn) - logOut * .06, 0, logIn * (1 - logOut));
+    place($("#log"), 0, 110 + (1 - logIn) * 60, lerp(.96, 1, logIn), 0, 1);
     [...$("#logText").children].forEach((line, i) => line.style.setProperty("--in", out(span(t, 4.45 + i * .07, 4.85 + i * .07))));
     let hidden = 0;
     cells.filter(c => !c.back).forEach((c, i) => {
@@ -218,9 +299,8 @@ then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.<
     $("#count").textContent = `${hidden} hidden`;
 
     // The AI chat: the question goes out with labels, the reply comes back and is restored.
-    const chatIn = out(span(t, 8.45, 9.15));
-    const chatOut = ease(span(t, 12.55, 13.1));
-    place($("#chat"), 0, 120 + (1 - chatIn) * 90 - chatOut * 60, lerp(.94, 1, chatIn) - chatOut * .06, 0, chatIn * (1 - chatOut));
+    const chatIn = out(span(t, 8.3, 9.0));
+    place($("#chat"), 0, 120 + (1 - chatIn) * 60, lerp(.96, 1, chatIn), 0, 1);
     $("#ask").style.setProperty("--in", out(span(t, 8.75, 9.3)));
     $("#reply").style.setProperty("--in", out(span(t, 9.5, 10.05)));
     cells.filter(c => c.back).forEach((c, i) => {
@@ -229,10 +309,12 @@ then retry with <s data-sw="[DB_PASSWORD_1]|Tr0ub4dor&amp;3xyz" data-back></s>.<
       c.el.style.setProperty("--cw", `${lerp(c.w[0], c.w[1], k)}px`);
     });
 
-    // End card, then a fade to white so the loop starts clean.
+    // End card with its ink line, then a fade to white so the loop starts clean.
     const endIn = out(span(t, 13.05, 13.75));
     const endOut = ease(span(t, BEATS - .55, BEATS - .05));
     place($("#end"), 0, (1 - endIn) * 40, lerp(.96, 1, endIn), 0, endIn * (1 - endOut));
+    $("#endLine").innerHTML = strokeSvg([[S.endLine, ease(span(t, 13.55, 14.1)), 0]], "#1d1d1f");
+    $("#endLine").style.opacity = 1 - endOut;
   }
 
   window.render = t => draw(t / PACE);

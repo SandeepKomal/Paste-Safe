@@ -134,22 +134,20 @@
       </div>
     </section>
 
-    <section class="pin pin--film" aria-labelledby="filmTitle" data-pin="film">
-      <div class="pin__stage film__stage">
-        <h2 class="film__title" id="filmTitle">Ctrl C. Ctrl V. <span>Nothing leaves your screen.</span></h2>
-        <div class="film__frame">
-          <video class="film__video film__video--wide" data-film muted loop playsinline preload="metadata" poster="assets/film/paste-safe-wide.png" aria-describedby="filmText">
-            <source src="assets/film/paste-safe-wide.mp4" type="video/mp4">
-            <source src="assets/film/paste-safe-wide.webm" type="video/webm">
-          </video>
-          <video class="film__video film__video--tall" data-film muted loop playsinline preload="metadata" poster="assets/film/paste-safe-tall.png" aria-describedby="filmText">
-            <source src="assets/film/paste-safe-tall.mp4" type="video/mp4">
-            <source src="assets/film/paste-safe-tall.webm" type="video/webm">
-          </video>
-          <button class="film__toggle" type="button" data-film-toggle aria-label="Play the film"><i aria-hidden="true"></i></button>
-        </div>
+    <section class="film" aria-labelledby="filmTitle">
+      <h2 class="film__title" id="filmTitle" data-reveal>Ctrl C. Ctrl V. <span>Nothing leaves your screen.</span></h2>
+      <div class="film__frame">
+        <video class="film__video film__video--wide" data-film muted loop playsinline preload="metadata" poster="assets/film/paste-safe-wide.png" aria-describedby="filmText">
+          <source src="assets/film/paste-safe-wide.mp4" type="video/mp4">
+          <source src="assets/film/paste-safe-wide.webm" type="video/webm">
+        </video>
+        <video class="film__video film__video--tall" data-film muted loop playsinline preload="metadata" poster="assets/film/paste-safe-tall.png" aria-describedby="filmText">
+          <source src="assets/film/paste-safe-tall.mp4" type="video/mp4">
+          <source src="assets/film/paste-safe-tall.webm" type="video/webm">
+        </video>
+        <button class="film__toggle" type="button" data-film-toggle aria-label="Play the film"><i aria-hidden="true"></i></button>
       </div>
-      <p class="visually-hidden" id="filmText">A short film without sound that plays as you scroll. You copy a log with Ctrl C and paste it into Paste-Safe with Ctrl V. Its password, host, IP address, AWS key and email turn into labels such as [HOST_1]. You ask an AI about the masked log, paste its answer back, and the labels turn back into your real values.</p>
+      <p class="visually-hidden" id="filmText">A 24-second film without sound. You copy a log with Ctrl C and paste it into Paste-Safe with Ctrl V. Its password, host, IP address, AWS key and email turn into labels such as [HOST_1]. You ask an AI about the masked log, paste its answer back, and the labels turn back into your real values.</p>
     </section>
 
     <section class="pin pin--product" aria-labelledby="maskTitle" data-pin="product">

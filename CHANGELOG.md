@@ -1,8 +1,8 @@
 # Changelog
 
 ## Unreleased
-- The film is pinned full screen and scrolling plays it, frame by frame, the way product pages do: scroll down to move it along, scroll back to rewind. It stops on its end card. With reduced motion it stays an ordinary video with a play button
-- `npm start` and the browser tests use a small Node server that answers Range requests, so the film can seek, as on GitHub Pages
+- The film is painted: each scene shows through wide, dry-edged brush strokes in light grey, deeper grey and graphite, and the next scene's strokes paint over the last. It runs the full width of the window on white, so the strokes look painted on the page, and plays by itself while on screen, in 4K
+- `npm start` and the browser tests use a small Node server that answers Range requests, as GitHub Pages does, so videos can seek
 - A 24-second film under the hero: Ctrl C, Ctrl V, the secrets turn into labels, the AI answers and the values come back. Silent, with a wide cut for larger screens and a tall cut for phones, rendered from 4K frames. Its source is `tools/promo/`
 - The gallery moves on by one card every few seconds, holds under the pointer or focus, and stops once you scroll it or press pause
 - Reel cards are drawn at twice their size and scaled down, so their text stays sharp while the ring turns

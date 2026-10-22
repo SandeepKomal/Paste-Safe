@@ -64,7 +64,7 @@ export function wireMotion() {
 }
 
 /** How far a pinned section has scrolled: 0 as its stage pins, 1 as it lets go. */
-export function pinProgress(/** @type {HTMLElement} */ section, /** @type {number} */ vh) {
+function pinProgress(/** @type {HTMLElement} */ section, /** @type {number} */ vh) {
   const r = section.getBoundingClientRect();
   return clamp01(-r.top / Math.max(1, r.height - vh));
 }

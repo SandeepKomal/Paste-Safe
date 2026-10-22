@@ -286,47 +286,34 @@ const canPlayFilm = page => page.evaluate(() => {
   return Boolean(v.canPlayType('video/webm; codecs="vp9"') || v.canPlayType('video/mp4; codecs="avc1.640028"'));
 });
 
-test("the film shows the cut that fits the screen and, without motion, plays from its button", async ({ page, viewport }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
+test("the film runs the full width, shows the cut that fits and plays while on screen", async ({ page, viewport }) => {
   await page.goto("/");
   const frame = page.locator(".film__frame");
   await frame.scrollIntoViewIfNeeded();
   const tall = (viewport?.width ?? 1280) <= 640;
   await expect(page.locator(tall ? ".film__video--tall" : ".film__video--wide")).toBeVisible();
   await expect(page.locator(tall ? ".film__video--wide" : ".film__video--tall")).toBeHidden();
-  const ratio = await frame.evaluate(e => e.clientWidth / e.clientHeight);
-  expect(Math.abs(ratio - (tall ? 4 / 5 : 16 / 9))).toBeLessThan(0.02);
+  const box = await frame.boundingBox();
+  expect(Math.abs(box?.x ?? 99)).toBeLessThan(1);
+  expect(Math.abs((box?.width ?? 0) - (viewport?.width ?? 0))).toBeLessThan(2);
   test.skip(!(await canPlayFilm(page)), "This browser build has no video codecs.");
   const toggle = page.locator("[data-film-toggle]");
-  await expect(toggle).toHaveAttribute("data-state", "paused");
-  await toggle.click();
   await expect(toggle).toHaveAttribute("data-state", "playing", { timeout: 10000 });
   await toggle.click();
   await expect(toggle).toHaveAttribute("data-state", "paused");
   await expect(toggle).toHaveAttribute("aria-label", "Play the film");
 });
 
-test("the film fills the pinned screen and scrolling moves it along", async ({ page }) => {
+test("with reduced motion the film waits for its button", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  const section = page.locator("[data-pin=film]");
-  const at = share => section.evaluate((e, k) => e.getBoundingClientRect().top + scrollY + (e.offsetHeight - innerHeight) * k, share);
-  await page.evaluate(y => scrollTo(0, y), await at(0.5));
-  const box = await page.locator(".film__frame").boundingBox();
-  const vp = page.viewportSize();
-  expect(Math.abs((box?.width ?? 0) - (vp?.width ?? 0))).toBeLessThan(2);
-  expect(Math.abs((box?.height ?? 0) - (vp?.height ?? 0))).toBeLessThan(2);
-  expect(Math.abs(box?.y ?? 99)).toBeLessThan(2);
-  await expect(page.locator(".film__stage")).toHaveClass(/is-rolling/);
-  await expect(page.locator("[data-film-toggle]")).toBeHidden();
+  await page.locator(".film__frame").scrollIntoViewIfNeeded();
   test.skip(!(await canPlayFilm(page)), "This browser build has no video codecs.");
-  const time = () => page.locator("[data-film]").evaluateAll(vs => vs.find(v => /** @type {HTMLElement} */ (v).offsetParent)?.currentTime ?? 0);
-  await expect.poll(time, { timeout: 10000 }).toBeGreaterThan(8);
-  const middle = await time();
-  await page.evaluate(y => scrollTo(0, y), await at(0.9));
-  await expect.poll(time, { timeout: 10000 }).toBeGreaterThan(middle + 5);
-  // Scrolling back rewinds.
-  await page.evaluate(y => scrollTo(0, y), await at(0.2));
-  await expect.poll(time, { timeout: 10000 }).toBeLessThan(middle);
+  const toggle = page.locator("[data-film-toggle]");
+  await page.waitForTimeout(600);
+  await expect(toggle).toHaveAttribute("data-state", "paused");
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("data-state", "playing", { timeout: 10000 });
 });
 
 test("reduced motion leaves everything in place", async ({ page }) => {
