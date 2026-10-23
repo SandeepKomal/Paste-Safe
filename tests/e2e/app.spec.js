@@ -410,8 +410,9 @@ test("scrollytelling stage follows the Find, Mask and Restore chapters", async (
   }
 });
 
-test("scroll story scenes fit their stage without colliding with its footer", async ({ page }) => {
-  for (const viewport of [{ width: 767, height: 290 }, { width: 390, height: 844 }, { width: 820, height: 727 }]) {
+// One test per screen size, so the slowest engine gets the full time for each.
+for (const viewport of [{ width: 767, height: 290 }, { width: 390, height: 844 }, { width: 820, height: 727 }]) {
+  test(`scroll story scenes fit their stage without colliding with its footer at ${viewport.width}x${viewport.height}`, async ({ page }) => {
     await page.setViewportSize(viewport);
     await page.goto("/#how");
     const stage = page.locator("[data-story-stage]");
@@ -419,7 +420,8 @@ test("scroll story scenes fit their stage without colliding with its footer", as
       await page.locator(`[data-story-step="${step}"]`).evaluate(element => element.scrollIntoView({ block: "center", behavior: "instant" }));
       await expect(stage).toHaveAttribute("data-active-step", step, { timeout: 5000 });
       // Measure where the scene settles, not mid-way through its entrance.
-      await page.waitForFunction(() => !document.getAnimations().some(a => a instanceof CSSTransition));
+      // Only the stage's own transitions matter; fades elsewhere on the page don't move the scene.
+      await expect.poll(() => stage.evaluate(element => element.getAnimations({ subtree: true }).some(a => a instanceof CSSTransition))).toBe(false);
       const layout = await stage.evaluate(element => {
         const step = element.getAttribute("data-active-step") ?? "detect";
         const active = element.querySelector(`[data-story-scene="${step}"]`);
@@ -442,8 +444,8 @@ test("scroll story scenes fit their stage without colliding with its footer", as
       expect(layout.sceneScrollHeight).toBeLessThanOrEqual(layout.sceneClientHeight + 2);
       expect(layout.sceneBottom).toBeLessThanOrEqual(layout.footerTop + 1);
     }
-  }
-});
+  });
+}
 
 test("on narrow screens the stage stays pinned above the chapter being read", async ({ page, viewport }) => {
   test.skip((viewport?.width ?? 1280) > 960, "Desktop shows the stage beside the chapters.");
