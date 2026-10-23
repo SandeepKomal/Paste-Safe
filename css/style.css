@@ -109,6 +109,8 @@ code { font-family: var(--font-mono); font-size: .88em; }
 .nav a:hover { color: var(--ink); text-decoration: none; }
 .masthead__meta { display: flex; align-items: center; gap: 8px; }
 .menu-toggle { display: none; }
+/* The version pill has no room in the phone header, so phones show it at the foot of the menu. */
+.nav__build { display: none; }
 .framed { margin: 0; padding: 24px; color: var(--ink); font-size: 1rem; }
 .build, .netcheck {
   display: inline-flex; align-items: center; gap: 7px; height: 28px; padding: 0 11px; border-radius: 99px;
@@ -788,6 +790,10 @@ tr.is-shown .ph { text-decoration: line-through; color: var(--faint); }
   body { font-size: 16px; }
   .masthead__bar { height: 52px; gap: 12px; }
   .build { display: none; }
+  .nav:not(.nav--doc) .nav__build {
+    display: block; align-self: flex-start; margin-top: 14px; padding: 6px 11px !important; border: 0 !important; border-radius: 99px;
+    background: var(--bg-soft); color: var(--ink-soft) !important; font: 500 .75rem/1 var(--font-mono) !important; letter-spacing: 0;
+  }
   .netcheck__long { display: none; }
   .netcheck__short { display: inline; }
   .hero { padding-top: 44px; }

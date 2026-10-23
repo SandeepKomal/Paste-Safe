@@ -65,6 +65,7 @@ const el = {
   plainMode: req("#plainMode", HTMLInputElement),
   plainModeAnswer: req("#plainModeAnswer", HTMLInputElement),
   build: req("#build", HTMLAnchorElement),
+  buildMenu: req("#buildMenu", HTMLAnchorElement),
   verifyVersion: req("#verifyVersion", HTMLElement),
   verifyCommit: req("#verifyCommit", HTMLElement),
   coverageList: req("#coverageList", HTMLElement),
@@ -435,6 +436,7 @@ function paintCoverage() {
 
 const build = COMMIT === "dev" ? `v${VERSION}` : `v${VERSION} · ${COMMIT}`;
 el.build.textContent = build;
+el.buildMenu.textContent = build;
 el.verifyVersion.textContent = `v${VERSION}`;
 if (COMMIT !== "dev") {
   el.verifyCommit.replaceChildren(" from commit ", h("a", { text: COMMIT, attrs: { href: `${REPO}/commit/${COMMIT}` } }));

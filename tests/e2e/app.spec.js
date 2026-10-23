@@ -191,17 +191,21 @@ test("every reel card keeps its text inside its edges", async ({ page }) => {
 
 test("the page links are in the header, behind a menu button on narrow screens", async ({ page, viewport }) => {
   await page.goto("/");
-  const links = page.locator("#pageNav a");
+  const links = page.locator("#pageNav a:not(.nav__build)");
   const button = page.locator("[data-menu-toggle]");
   if ((viewport?.width ?? 1280) > 1000) {
     await expect(button).toBeHidden();
     await expect(links.first()).toBeVisible();
+    await expect(page.locator("#buildMenu")).toBeHidden();
     return;
   }
   await expect(links.first()).toBeHidden();
   await button.click();
   await expect(button).toHaveAttribute("aria-expanded", "true");
   await expect(links).toHaveText(["How it works", "Coverage", "Verify", "GitHub"]);
+  // Phones have no room for the version pill in the header, so the menu shows it.
+  await expect(page.locator("#buildMenu")).toHaveText(/^v\d+\.\d+\.\d+/);
+  await expect(page.locator("#buildMenu")).toBeVisible({ visible: (viewport?.width ?? 1280) <= 640 });
   await expect(page.getByRole("link", { name: "Coverage" })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(links.first()).toBeHidden();
