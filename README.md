@@ -46,6 +46,8 @@ By default, copying adds one line on top asking the AI to keep labels like `[IP_
 
 Things like `localhost`, commit hashes, UUIDs, file paths and `${VAR}` references are left alone.
 
+In a benchmark of 618 made-up secrets across 48 formats, 94.5% were hidden, and 2 of 30 harmless lines were masked by mistake. See [docs/ACCURACY.md](docs/ACCURACY.md) for the method, the misses and the known limits.
+
 Detection is pattern-based, so it can miss things. **Names of people and companies are not detected** unless they are on your word list. The page's "What this copy catches" section runs the detector on fake samples in your browser and lists what it misses. Check the output before you paste it anywhere.
 
 ## Privacy
@@ -79,7 +81,7 @@ cd paste-safe
 python3 -m http.server 8080   # or any static web server
 ```
 
-Review the files, then serve that folder. You can also fork it and turn on GitHub Pages (see below).
+Review the files, then serve that folder. You can also fork it and turn on GitHub Pages (see below). [docs/SELF-HOSTING.md](docs/SELF-HOSTING.md) covers which files to copy, security headers, and example nginx, Apache and Docker setups.
 
 **Is there a browser extension?** Not yet. An add-on that masks text as you paste it into an AI chat would use the same detection code and still have no server; the website stays the version anyone can audit.
 
